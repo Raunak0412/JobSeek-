@@ -11,17 +11,20 @@ import { Label } from "@/components/ui/label"
 import { DUMMY_CREDENTIALS, getDashboardPath, useAuth } from "@/lib/auth-context"
 
 function LoginContent() {
-  const { login } = useAuth()
+  const { authMode, login, signInWithGoogle } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   const banner = useMemo(() => {
     if (searchParams.get("verified")) return "Email verified. You can sign in now."
     if (searchParams.get("reset")) return "Password updated. Sign in with your new password."
+    if (searchParams.get("registered")) return "Account created. Sign in to continue."
+    if (searchParams.get("oauth") === "failed") return "Google sign-in could not be completed. Please try again."
     return ""
   }, [searchParams])
 
@@ -46,6 +49,17 @@ function LoginContent() {
     setPassword(demo.password)
   }
 
+  const handleGoogleSignIn = async () => {
+    setError("")
+    setIsGoogleLoading(true)
+    const result = await signInWithGoogle()
+    setIsGoogleLoading(false)
+
+    if (!result.success) {
+      setError(result.error ?? "Unable to continue with Google.")
+    }
+  }
+
   return (
     <AuthShell
       title="Sign in"
@@ -59,37 +73,50 @@ function LoginContent() {
           <div className="rounded-2xl border border-red-300/30 bg-red-300/10 px-4 py-3 text-sm text-red-100">{banner}</div>
         ) : null}
 
-        <div className="rounded-3xl border border-red-400/15 bg-red-400/10 p-4">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 rounded-2xl bg-white/10 p-2 text-red-100">
-              <Sparkles className="h-4 w-4" />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-red-100">Demo access</p>
-              <p className="mt-1 text-sm leading-6 text-red-50/80">
-                Quick-fill a test account while backend auth is still mocked.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => fillDemo("seeker")}
-                  className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10"
-                >
-                  Fill seeker
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => fillDemo("recruiter")}
-                  className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10"
-                >
-                  Fill recruiter
-                </Button>
+        {authMode === "demo" ? (
+          <div className="rounded-3xl border border-red-400/15 bg-red-400/10 p-4">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 rounded-2xl bg-white/10 p-2 text-red-100">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-red-100">Demo access</p>
+                <p className="mt-1 text-sm leading-6 text-red-50/80">
+                  Quick-fill a test account while backend auth is still mocked.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fillDemo("seeker")}
+                    className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10"
+                  >
+                    Fill seeker
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fillDemo("recruiter")}
+                    className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10"
+                  >
+                    Fill recruiter
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleGoogleSignIn}
+            disabled={isGoogleLoading}
+            className="h-12 w-full rounded-2xl border-white/10 bg-white/5 text-white hover:bg-white/10"
+          >
+            {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Continue with Google
+          </Button>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
@@ -140,7 +167,11 @@ function LoginContent() {
         <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <div className="flex items-start gap-3">
             <ShieldCheck className="mt-0.5 h-4 w-4 text-red-300" />
-            <p>OTP, verification, and reset states are mocked in local storage for end-to-end frontend flow testing.</p>
+            <p>
+              {authMode === "demo"
+                ? "OTP, verification, and reset states are mocked in local storage for end-to-end frontend flow testing."
+                : "Credentials, sessions, and OAuth are now handled by Supabase Auth."}
+            </p>
           </div>
         </div>
 
