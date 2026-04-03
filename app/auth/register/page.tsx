@@ -8,19 +8,20 @@ import { AuthShell } from "@/components/auth/auth-shell"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useAuth } from "@/lib/auth-context"
+import { getDashboardPath, useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/utils"
 
 function RegisterContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { register } = useAuth()
+  const { authMode, register, signInWithGoogle } = useAuth()
   const preferredRole = searchParams.get("role") ?? searchParams.get("type")
   const initialRole = preferredRole === "recruiter" ? "recruiter" : "seeker"
   const [role, setRole] = useState<"seeker" | "recruiter">(initialRole)
   const [form, setForm] = useState({ name: "", company: "", email: "", password: "" })
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -41,7 +42,23 @@ function RegisterContent() {
       return
     }
 
-    router.push(`/auth/verify-email?email=${encodeURIComponent(form.email)}&purpose=verify`)
+    if (result.requiresEmailVerification) {
+      router.push(`/auth/verify-email?email=${encodeURIComponent(form.email)}&purpose=verify`)
+      return
+    }
+
+    router.push(getDashboardPath(role))
+  }
+
+  const handleGoogleSignIn = async () => {
+    setError("")
+    setIsGoogleLoading(true)
+    const result = await signInWithGoogle(role)
+    setIsGoogleLoading(false)
+
+    if (!result.success) {
+      setError(result.error ?? "Unable to continue with Google.")
+    }
   }
 
   return (
@@ -85,6 +102,19 @@ function RegisterContent() {
             </button>
           ))}
         </div>
+
+        {authMode === "supabase" ? (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleGoogleSignIn}
+            disabled={isGoogleLoading}
+            className="h-12 w-full rounded-2xl border-white/10 bg-white/5 text-white hover:bg-white/10"
+          >
+            {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Continue with Google as {role}
+          </Button>
+        ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
@@ -153,7 +183,7 @@ function RegisterContent() {
 
           <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300">
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Continue to verification
+            {authMode === "supabase" ? "Create account" : "Continue to verification"}
           </Button>
         </form>
 
