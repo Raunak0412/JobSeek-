@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Bell, CheckCheck, ExternalLink, Menu, Search, Settings2, Sparkles, Trash2, X } from "lucide-react"
+import { Bell, BellRing, Briefcase, CheckCheck, ExternalLink, FileText, LayoutGrid, Menu, Search, Settings2, Sparkles, Trash2, UserRound, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -28,11 +28,19 @@ function formatNotificationTime(value: string) {
 }
 
 const typeLabel: Record<string, string> = {
-  page: "Page",
-  candidate: "Candidate",
-  job: "Vacancy",
-  application: "Application",
-  notification: "Notification",
+  page: "Pages",
+  candidate: "Candidates",
+  job: "Vacancies",
+  application: "Applications",
+  notification: "Alerts",
+}
+
+function getSearchTypeIcon(type: string) {
+  if (type === "page") return LayoutGrid
+  if (type === "candidate") return UserRound
+  if (type === "job") return Briefcase
+  if (type === "application") return FileText
+  return BellRing
 }
 
 export function Header({ title, onMenuClick }: HeaderProps) {
@@ -68,6 +76,16 @@ export function Header({ title, onMenuClick }: HeaderProps) {
     if (query.trim().length < 2) return []
     return searchWorkspace(query, role, 6)
   }, [query, role])
+  const groupedSearchResults = useMemo(() => {
+    const order = ["page", "candidate", "job", "application", "notification"] as const
+    return order
+      .map((type) => ({
+        type,
+        label: typeLabel[type],
+        items: searchResults.filter((item) => item.type === type),
+      }))
+      .filter((group) => group.items.length > 0)
+  }, [searchResults])
 
   const visibleNotifications = useMemo(
     () => [...notifications].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 8),
@@ -125,26 +143,48 @@ export function Header({ title, onMenuClick }: HeaderProps) {
               />
             </form>
             {searchOpen && query.trim().length >= 2 ? (
-              <div className="absolute right-0 top-[3.25rem] z-40 w-[420px] rounded-2xl border border-white/10 bg-[#1b0b0b] p-2 shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
-                <div className="mb-2 px-2 pt-1 text-xs uppercase tracking-[0.22em] text-slate-500">Search results</div>
+              <div
+                data-lenis-prevent=""
+                className="absolute right-0 top-[3.25rem] z-40 w-[440px] rounded-2xl border border-white/10 bg-[#1b0b0b] p-2 shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
+              >
+                <div className="mb-2 space-y-1 px-2 pt-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Search results</p>
+                    <p className="text-xs text-slate-500">{searchResults.length} match(es)</p>
+                  </div>
+                  <p className="text-xs text-slate-500">Pages, candidates, vacancies, applications, and alerts.</p>
+                </div>
                 <ScrollArea className="h-[290px]">
-                  <div className="space-y-1 pr-2">
-                    {searchResults.length ? (
-                      searchResults.map((result) => (
-                        <button
-                          key={result.id}
-                          type="button"
-                          onClick={() => openSearchResult(result.href)}
-                          className="w-full rounded-xl border border-transparent bg-white/0 px-3 py-2 text-left transition hover:border-white/10 hover:bg-white/5"
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <p className="truncate text-sm font-medium text-white">{result.title}</p>
-                            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-slate-400">
-                              {typeLabel[result.type] ?? result.type}
-                            </span>
-                          </div>
-                          <p className="mt-1 truncate text-xs text-slate-400">{result.subtitle}</p>
-                        </button>
+                  <div className="space-y-3 pr-2">
+                    {groupedSearchResults.length ? (
+                      groupedSearchResults.map((group) => (
+                        <div key={group.type} className="space-y-1">
+                          <p className="px-2 text-[10px] uppercase tracking-[0.22em] text-slate-500">{group.label}</p>
+                          {group.items.map((result) => {
+                            const TypeIcon = getSearchTypeIcon(result.type)
+                            return (
+                              <button
+                                key={result.id}
+                                type="button"
+                                onClick={() => openSearchResult(result.href)}
+                                className="w-full rounded-xl border border-transparent bg-white/0 px-3 py-2 text-left transition hover:border-white/10 hover:bg-white/5"
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-black/20 text-red-200">
+                                    <TypeIcon className="h-4 w-4" />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <p className="truncate text-sm font-medium text-white">{result.title}</p>
+                                      <span className="text-[10px] uppercase tracking-[0.2em] text-slate-500">open</span>
+                                    </div>
+                                    <p className="mt-1 truncate text-xs text-slate-400">{result.subtitle}</p>
+                                  </div>
+                                </div>
+                              </button>
+                            )
+                          })}
+                        </div>
                       ))
                     ) : (
                       <div className="px-3 py-6 text-sm text-slate-500">No results found for this search.</div>
@@ -170,7 +210,12 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                 ) : null}
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" sideOffset={10} className="w-[390px] border-white/10 bg-[#1b0b0b] p-0 text-white">
+            <PopoverContent
+              data-lenis-prevent=""
+              align="end"
+              sideOffset={10}
+              className="w-[390px] overscroll-contain border-white/10 bg-[#1b0b0b] p-0 text-white"
+            >
               <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
                 <div>
                   <p className="font-heading text-xl">Notifications</p>
