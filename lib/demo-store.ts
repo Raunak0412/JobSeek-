@@ -10,6 +10,8 @@ const OUTREACH_KEY = "jobseek_outreach_history"
 const RESUME_KEY = "jobseek_resume"
 const RESUME_META_KEY = "jobseek_resume_meta"
 const NOTIFICATIONS_KEY = "jobseek_notifications"
+const NOTIFICATIONS_BOOTSTRAPPED_KEY = "jobseek_notifications_bootstrapped"
+const NOTIFICATIONS_CLEARED_KEY = "jobseek_notifications_cleared"
 const SETTINGS_KEY = "jobseek_settings"
 const JOBS_EVENT = "jobseek:jobs:update"
 const OUTREACH_EVENT = "jobseek:outreach:update"
@@ -314,6 +316,8 @@ export function resetDemoData() {
   window.localStorage.removeItem(RESUME_KEY)
   window.localStorage.removeItem(RESUME_META_KEY)
   window.localStorage.removeItem(NOTIFICATIONS_KEY)
+  window.localStorage.removeItem(NOTIFICATIONS_BOOTSTRAPPED_KEY)
+  window.localStorage.removeItem(NOTIFICATIONS_CLEARED_KEY)
   window.localStorage.removeItem(SETTINGS_KEY)
   notifyJobsUpdate()
   notifyOutreachUpdate()
@@ -367,12 +371,24 @@ export function useAppSettings() {
 }
 
 export function getNotifications() {
-  const stored = safeRead<AppNotification[]>(NOTIFICATIONS_KEY, [])
-  if (stored.length) {
-    return stored.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  const stored = safeRead<AppNotification[] | null>(NOTIFICATIONS_KEY, null)
+  if (stored) {
+    return [...stored].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  }
+  if (typeof window !== "undefined") {
+    const wasCleared = window.localStorage.getItem(NOTIFICATIONS_CLEARED_KEY) === "1"
+    const wasBootstrapped = window.localStorage.getItem(NOTIFICATIONS_BOOTSTRAPPED_KEY) === "1"
+    if (wasCleared || wasBootstrapped) {
+      safeWrite(NOTIFICATIONS_KEY, [])
+      return []
+    }
   }
   const seeded = buildSeedNotifications()
   safeWrite(NOTIFICATIONS_KEY, seeded)
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(NOTIFICATIONS_BOOTSTRAPPED_KEY, "1")
+    window.localStorage.removeItem(NOTIFICATIONS_CLEARED_KEY)
+  }
   return seeded
 }
 
@@ -385,6 +401,10 @@ export function addNotification(input: Omit<AppNotification, "id" | "createdAt" 
   }
   const notifications = [next, ...getNotifications()]
   safeWrite(NOTIFICATIONS_KEY, notifications)
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(NOTIFICATIONS_BOOTSTRAPPED_KEY, "1")
+    window.localStorage.removeItem(NOTIFICATIONS_CLEARED_KEY)
+  }
   notifyNotificationsUpdate()
   return next
 }
@@ -412,6 +432,10 @@ export function markAllNotificationsRead() {
 
 export function clearAllNotifications() {
   safeWrite(NOTIFICATIONS_KEY, [])
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(NOTIFICATIONS_BOOTSTRAPPED_KEY, "1")
+    window.localStorage.setItem(NOTIFICATIONS_CLEARED_KEY, "1")
+  }
   notifyNotificationsUpdate()
   return []
 }
