@@ -12,7 +12,7 @@ import { useAuth } from "@/lib/auth-context"
 function ResetPasswordContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { resetPassword } = useAuth()
+  const { authMode, resetPassword } = useAuth()
   const email = searchParams.get("email") ?? ""
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -56,7 +56,7 @@ function ResetPasswordContent() {
         <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
           <div className="flex items-center gap-3">
             <ShieldCheck className="h-4 w-4 text-red-300" />
-            <span>Updating password for {email}</span>
+            <span>{authMode === "demo" ? `Updating password for ${email}` : "Set a new password for your Supabase account session."}</span>
           </div>
         </div>
 
