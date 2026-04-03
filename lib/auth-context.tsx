@@ -47,10 +47,10 @@ interface AuthContextType {
 }
 
 const STORAGE_KEYS = {
-  session: "smartrecruit_session",
-  users: "smartrecruit_users",
-  otps: "smartrecruit_otps",
-  resetEmail: "smartrecruit_reset_email",
+  session: "JobSeek_session",
+  users: "JobSeek_users",
+  otps: "JobSeek_otps",
+  resetEmail: "JobSeek_reset_email",
 } as const
 
 const DEMO_USERS: StoredUser[] = [
@@ -66,7 +66,7 @@ const DEMO_USERS: StoredUser[] = [
     password: "recruiter123",
     name: "Riya Kapoor",
     type: "recruiter",
-    company: "SmartRecruit Labs",
+    company: "JobSeek Labs",
     verified: true,
   },
 ]

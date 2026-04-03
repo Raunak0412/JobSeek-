@@ -56,7 +56,7 @@ function VerifyOtpContent() {
       <div className="space-y-6">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-200">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
@@ -90,7 +90,7 @@ function VerifyOtpContent() {
           type="button"
           disabled={value.length !== 6 || isLoading}
           onClick={handleSubmit}
-          className="h-12 w-full rounded-2xl bg-cyan-400 text-slate-950 hover:bg-cyan-300"
+          className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300"
         >
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Verify OTP

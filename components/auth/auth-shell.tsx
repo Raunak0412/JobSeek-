@@ -23,20 +23,20 @@ export function AuthShell({
   description,
   backHref,
   backLabel,
-  eyebrow = "Smart Recruitment System",
+  eyebrow = "JobSeek Recruitment System",
   asideTitle = "AI-assisted hiring, end to end",
   asideBody = "From resume routing and skill extraction to rankings, recruiter workflows, and formal outreach, every step stays connected.",
   children,
 }: AuthShellProps) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#07111f] px-4 py-8 text-white sm:px-6 lg:px-8">
+    <div className="relative min-h-screen overflow-hidden bg-[#150707] px-4 py-8 text-white sm:px-6 lg:px-8">
       <MeshGradient />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),transparent_30%),linear-gradient(180deg,rgba(7,17,31,0.35),rgba(7,17,31,0.95))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(248,113,113,0.26),transparent_35%),linear-gradient(180deg,rgba(21,7,7,0.35),rgba(21,7,7,0.92))]" />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:90px_90px] opacity-[0.12]" />
 
       <Link
         href={backHref}
-        className="relative z-10 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:border-cyan-400/40 hover:bg-white/10 hover:text-white"
+        className="relative z-10 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:border-red-400/40 hover:bg-white/10 hover:text-white"
       >
         <ArrowLeft className="h-4 w-4" />
         {backLabel}
@@ -49,17 +49,17 @@ export function AuthShell({
           transition={{ duration: 0.5 }}
           className="hidden rounded-[2rem] border border-white/10 bg-white/5 p-8 backdrop-blur-xl lg:block"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-200">
+          <div className="inline-flex items-center gap-2 rounded-full border border-red-400/20 bg-red-400/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.28em] text-red-200">
             <Sparkles className="h-3.5 w-3.5" />
             {eyebrow}
           </div>
           <div className="mt-8 flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600 shadow-[0_18px_50px_rgba(14,165,233,0.35)]">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-red-400 via-rose-500 to-orange-400 shadow-[0_18px_50px_rgba(248,113,113,0.35)]">
               <Briefcase className="h-7 w-7 text-white" />
             </div>
             <div>
-              <p className="font-heading text-3xl font-semibold tracking-tight">SmartRecruit</p>
-              <p className="text-sm text-cyan-200/80">Recruitment intelligence workspace</p>
+              <p className="font-heading text-3xl font-semibold tracking-tight">JobSeek</p>
+              <p className="text-sm text-red-200/80">Recruitment intelligence workspace</p>
             </div>
           </div>
           <h2 className="mt-10 font-heading text-4xl font-semibold leading-tight tracking-tight text-white">
@@ -88,8 +88,8 @@ export function AuthShell({
           transition={{ duration: 0.5, delay: 0.05 }}
           className={cn("w-full")}
         >
-          <div className="rounded-[2rem] border border-white/10 bg-[#081321]/85 p-6 shadow-[0_32px_120px_rgba(2,6,23,0.55)] backdrop-blur-2xl sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">{eyebrow}</p>
+          <div className="rounded-[2rem] border border-white/10 bg-[#1b0b0b]/85 p-6 shadow-[0_32px_120px_rgba(11,2,2,0.55)] backdrop-blur-2xl sm:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-red-300">{eyebrow}</p>
             <h1 className="mt-4 font-heading text-3xl font-semibold tracking-tight text-white sm:text-4xl">
               {title}
             </h1>

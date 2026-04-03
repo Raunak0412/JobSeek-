@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/lib/auth-context"
-import { recruiterJobs } from "@/lib/mock-data"
+import { addJob, useJobs } from "@/lib/demo-store"
 
 const templates = {
   frontend: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion"],
@@ -28,9 +28,10 @@ export default function PostJobPage() {
   const [skills, setSkills] = useState<string[]>([])
   const [skillInput, setSkillInput] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const jobs = useJobs()
   const [form, setForm] = useState({
     title: "",
-    company: user?.company ?? "SmartRecruit Labs",
+    company: user?.company ?? "JobSeek Labs",
     location: "Remote",
     type: "Full-time",
     vacancies: "2",
@@ -64,7 +65,17 @@ export default function PostJobPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1100))
+    await new Promise((resolve) => setTimeout(resolve, 700))
+    addJob({
+      title: form.title,
+      company: form.company,
+      location: form.location,
+      type: form.type,
+      vacancies: Number(form.vacancies || 1),
+      salary: form.salary,
+      description: form.description,
+      requiredSkills: skills.length ? skills : templates[suggestedType],
+    })
     setIsSubmitting(false)
     router.push("/dashboard/recruiter/candidates")
   }
@@ -72,14 +83,14 @@ export default function PostJobPage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#07111f] text-white">
+    <div className="flex min-h-screen bg-[#150707] text-white">
       <Sidebar type="recruiter" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Post vacancy" onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 space-y-6 p-4 lg:p-6">
           <form onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#081321]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Vacancy details</CardTitle>
                   <p className="text-sm text-slate-400">The agent router will compare this job description with uploaded resumes and score candidates automatically.</p>
@@ -120,7 +131,7 @@ export default function PostJobPage() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#081321]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="font-heading text-2xl">Required skills</CardTitle>
@@ -134,7 +145,7 @@ export default function PostJobPage() {
                 <CardContent className="space-y-4">
                   <div className="flex gap-3">
                     <Input value={skillInput} onChange={(event) => setSkillInput(event.target.value)} placeholder="Add a skill" className="h-12 rounded-2xl border-white/10 bg-white/5 text-white" />
-                    <Button type="button" onClick={addSkill} className="rounded-2xl bg-cyan-400 px-5 text-slate-950 hover:bg-cyan-300">
+                    <Button type="button" onClick={addSkill} className="rounded-2xl bg-red-400 px-5 text-slate-950 hover:bg-red-300">
                       Add
                     </Button>
                   </div>
@@ -150,7 +161,7 @@ export default function PostJobPage() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="space-y-6">
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#081321]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">What happens next</CardTitle>
                 </CardHeader>
@@ -168,12 +179,12 @@ export default function PostJobPage() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#081321]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Existing roles</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {recruiterJobs.map((job) => (
+                  {jobs.map((job) => (
                     <div key={job.id} className="rounded-3xl border border-white/10 bg-white/5 p-4">
                       <p className="font-medium text-white">{job.title}</p>
                       <p className="mt-1 text-sm text-slate-400">
@@ -184,7 +195,7 @@ export default function PostJobPage() {
                 </CardContent>
               </Card>
 
-              <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full bg-cyan-400 text-slate-950 hover:bg-cyan-300">
+              <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
                 {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
                 Publish and open candidates
               </Button>

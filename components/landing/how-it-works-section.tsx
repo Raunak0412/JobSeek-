@@ -23,14 +23,14 @@ const steps = [
     icon: CheckCircle,
     title: "Get Ranked & Scored",
     description: "Receive a score out of 10 based on how well you match each position. Understand your strengths and areas for improvement.",
-    color: "from-pink-500 to-cyan-500",
+    color: "from-pink-500 to-red-500",
   },
   {
     step: "04",
     icon: Send,
     title: "Connect with Recruiters",
     description: "Top candidates receive automated formal emails from recruiters. Track your application status in real-time.",
-    color: "from-cyan-500 to-indigo-500",
+    color: "from-red-500 to-indigo-500",
   },
 ]
 
@@ -62,7 +62,7 @@ export function HowItWorksSection() {
         <div className="mt-16 lg:mt-24">
           <div className="relative">
             {/* Connection line */}
-            <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-indigo-500 via-purple-500 to-cyan-500 opacity-20 lg:block" />
+            <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-indigo-500 via-purple-500 to-red-500 opacity-20 lg:block" />
             
             <div className="space-y-12 lg:space-y-24">
               {steps.map((step, index) => (

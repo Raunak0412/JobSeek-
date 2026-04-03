@@ -29,7 +29,7 @@ const features = [
     icon: BarChart3,
     title: "Intelligent Ranking",
     description: "Get scored out of 10 based on how well your profile matches job descriptions. See where you stand.",
-    gradient: "from-cyan-500 to-teal-500",
+    gradient: "from-red-500 to-teal-500",
   },
   {
     icon: Target,
@@ -98,12 +98,12 @@ export function FeaturesSection() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <span className="inline-block rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-medium text-cyan-400">
+          <span className="inline-block rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1.5 text-sm font-medium text-red-400">
             Features
           </span>
           <h2 className="mt-6 text-balance text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
             Everything you need to{" "}
-            <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-400 to-red-400 bg-clip-text text-transparent">
               land your dream job
             </span>
           </h2>

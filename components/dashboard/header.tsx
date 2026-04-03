@@ -14,7 +14,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const { user } = useAuth()
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/10 bg-[#07111f]/90 backdrop-blur-2xl">
+    <header className="sticky top-0 z-30 border-b border-white/10 bg-[#150707]/90 backdrop-blur-2xl">
       <div className="flex h-18 items-center justify-between gap-4 px-4 py-3 lg:px-6">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={onMenuClick} className="rounded-2xl text-slate-300 hover:bg-white/10 lg:hidden">
@@ -23,12 +23,12 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="font-heading text-xl font-semibold tracking-tight text-white">{title}</h1>
-              <span className="hidden rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-200 sm:inline-flex">
+              <span className="hidden rounded-full border border-red-400/20 bg-red-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-red-200 sm:inline-flex">
                 AI active
               </span>
             </div>
             <p className="mt-1 flex items-center gap-1 text-xs text-slate-400">
-              <Sparkles className="h-3 w-3 text-cyan-300" />
+              <Sparkles className="h-3 w-3 text-red-300" />
               Signed in as {user?.name?.split(" ")[0] ?? "user"}
             </p>
           </div>
@@ -45,7 +45,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           </div>
           <Button variant="ghost" size="icon" className="relative rounded-2xl text-slate-300 hover:bg-white/10">
             <Bell className="h-4.5 w-4.5" />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-cyan-300" />
+            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-300" />
           </Button>
         </div>
       </div>

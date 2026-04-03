@@ -26,7 +26,7 @@ export function Navbar() {
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mt-4 flex h-16 items-center justify-between rounded-2xl border border-white/10 bg-black/30 px-4 backdrop-blur-xl">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-red-500">
               <Briefcase className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold text-white">Jobseek</span>
@@ -51,7 +51,7 @@ export function Navbar() {
               </Button>
             </Link>
             <Link href="/auth/register">
-              <Button className="bg-gradient-to-r from-indigo-500 to-cyan-500 text-white hover:from-indigo-600 hover:to-cyan-600">
+              <Button className="bg-gradient-to-r from-indigo-500 to-red-500 text-white hover:from-indigo-600 hover:to-red-600">
                 Get Started
               </Button>
             </Link>
@@ -92,7 +92,7 @@ export function Navbar() {
                   </Button>
                 </Link>
                 <Link href="/auth/register" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full bg-gradient-to-r from-indigo-500 to-cyan-500">
+                  <Button className="w-full bg-gradient-to-r from-indigo-500 to-red-500">
                     Get Started
                   </Button>
                 </Link>

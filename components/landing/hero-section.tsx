@@ -39,8 +39,8 @@ export function HeroSection() {
             transition={{ duration: 4, repeat: Infinity, delay: index * 0.5 }}
             className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/20">
-              <card.icon className="h-5 w-5 text-cyan-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/20 to-red-500/20">
+              <card.icon className="h-5 w-5 text-red-400" />
             </div>
             <span className="text-sm font-medium text-white">{card.label}</span>
           </motion.div>
@@ -68,7 +68,7 @@ export function HeroSection() {
           {/* Main heading */}
           <h1 className="mx-auto max-w-4xl text-balance text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
             Find Your{" "}
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-red-400 bg-clip-text text-transparent">
               Dream Career
             </span>{" "}
             with AI Precision
@@ -95,7 +95,7 @@ export function HeroSection() {
             <Link href="/auth/register?type=seeker">
               <Button
                 size="lg"
-                className="group h-12 gap-2 bg-gradient-to-r from-indigo-500 to-cyan-500 px-8 text-base font-semibold text-white transition-all hover:from-indigo-600 hover:to-cyan-600 hover:shadow-lg hover:shadow-indigo-500/25"
+                className="group h-12 gap-2 bg-gradient-to-r from-indigo-500 to-red-500 px-8 text-base font-semibold text-white transition-all hover:from-indigo-600 hover:to-red-600 hover:shadow-lg hover:shadow-indigo-500/25"
               >
                 I'm a Job Seeker
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

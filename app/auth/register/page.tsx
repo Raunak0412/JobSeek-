@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Building2, Loader2, UserRound } from "lucide-react"
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/utils"
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { register } = useAuth()
@@ -45,7 +45,7 @@ export default function RegisterPage() {
 
   return (
     <AuthShell
-      title="Create your SmartRecruit account"
+      title="Create your JobSeek account"
       description="Choose whether you are a job seeker or recruiter, then continue into the verification flow."
       backHref="/auth/login"
       backLabel="Back to sign in"
@@ -73,11 +73,11 @@ export default function RegisterPage() {
               className={cn(
                 "rounded-3xl border p-5 text-left transition",
                 role === item.key
-                  ? "border-cyan-400/40 bg-cyan-400/10 text-white"
+                  ? "border-red-400/40 bg-red-400/10 text-white"
                   : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10"
               )}
             >
-              <item.icon className="h-5 w-5 text-cyan-300" />
+              <item.icon className="h-5 w-5 text-red-300" />
               <p className="mt-4 font-medium">{item.title}</p>
               <p className="mt-2 text-sm leading-6 text-slate-400">{item.detail}</p>
             </button>
@@ -151,7 +151,7 @@ export default function RegisterPage() {
             </div>
           ) : null}
 
-          <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-cyan-400 text-slate-950 hover:bg-cyan-300">
+          <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-red-950 hover:bg-red-300">
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Continue to verification
           </Button>
@@ -159,11 +159,19 @@ export default function RegisterPage() {
 
         <p className="text-sm text-slate-400">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-cyan-300 hover:text-cyan-200">
+          <Link href="/auth/login" className="text-red-300 hover:text-red-200">
             Sign in
           </Link>
         </p>
       </div>
     </AuthShell>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterContent />
+    </Suspense>
   )
 }

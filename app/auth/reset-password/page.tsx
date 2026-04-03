@@ -48,14 +48,14 @@ function ResetPasswordContent() {
   return (
     <AuthShell
       title="Create a new password"
-      description="Finish the reset flow with a new password for your SmartRecruit account."
+      description="Finish the reset flow with a new password for your JobSeek account."
       backHref="/auth/verify-otp"
       backLabel="Back to OTP"
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
           <div className="flex items-center gap-3">
-            <ShieldCheck className="h-4 w-4 text-cyan-300" />
+            <ShieldCheck className="h-4 w-4 text-red-300" />
             <span>Updating password for {email}</span>
           </div>
         </div>
@@ -96,7 +96,7 @@ function ResetPasswordContent() {
           </div>
         ) : null}
 
-        <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-cyan-400 text-slate-950 hover:bg-cyan-300">
+        <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300">
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Save new password
         </Button>

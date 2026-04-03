@@ -135,6 +135,34 @@ export const recruiterJobs: JobPosting[] = [
     description: "Design LangChain pipelines, OpenRouter-powered ranking agents, and evaluation loops.",
     requiredSkills: ["Python", "LangChain", "OpenRouter", "Prompt engineering", "Embeddings", "Evaluation"],
   },
+  {
+    id: "job-data-1",
+    title: "Data Platform Engineer",
+    company: "Atlas Analytics",
+    location: "Remote",
+    type: "Full-time",
+    salary: "$120k - $150k",
+    vacancies: 3,
+    applicants: 31,
+    posted: "5 days ago",
+    category: "Data",
+    description: "Build data pipelines that feed the ranking and resume analytics services.",
+    requiredSkills: ["Python", "SQL", "Airflow", "ETL", "BigQuery", "Data modeling"],
+  },
+  {
+    id: "job-design-1",
+    title: "Product Design Lead",
+    company: "Clarity Studios",
+    location: "New York, NY",
+    type: "Full-time",
+    salary: "$130k - $160k",
+    vacancies: 1,
+    applicants: 19,
+    posted: "1 week ago",
+    category: "Design",
+    description: "Own the recruiter and candidate experience across the JobSeek platform.",
+    requiredSkills: ["Product design", "Figma", "Design systems", "User research", "Prototyping"],
+  },
 ]
 
 export const candidates: CandidateProfile[] = [
@@ -352,6 +380,11 @@ export const seekerResumeExtraction = {
     { name: "Framer Motion", confidence: 81 },
     { name: "Node.js", confidence: 68 },
   ],
+  softSkills: [
+    { name: "Communication", confidence: 86 },
+    { name: "Collaboration", confidence: 84 },
+    { name: "Problem Solving", confidence: 82 },
+  ],
   sections: [
     { name: "Contact and links", completion: "Complete" },
     { name: "Experience", completion: "Strong" },
@@ -486,6 +519,6 @@ export function buildOfferTemplate(candidateName: string, jobTitle: string, comp
     "Please reply to this email with your availability for an interview this week.",
     "",
     "Best regards,",
-    "Smart Recruitment Hiring Team",
+    "JobSeek Hiring Team",
   ].join("\n")
 }

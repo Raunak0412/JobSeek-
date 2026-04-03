@@ -38,16 +38,16 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* Brand colors - LinkedIn-inspired dark blue */
-  --brand-900: #0a0f1e;
-  --brand-800: #0d1426;
-  --brand-700: #101a30;
-  --brand-600: #141f38;
-  --brand-500: #0077b5;
-  --brand-400: #0a8ccf;
-  --brand-300: #5bb8f5;
-  --brand-200: #a8d8f0;
-  --brand-100: #e1f3fc;
+  /* Brand colors - warm red palette */
+  --brand-900: #150707;
+  --brand-800: #1b0b0b;
+  --brand-700: #240d0d;
+  --brand-600: #2b0f0f;
+  --brand-500: #ef4444;
+  --brand-400: #f87171;
+  --brand-300: #fca5a5;
+  --brand-200: #fecaca;
+  --brand-100: #fee2e2;
 }
 
 .dark {
@@ -86,8 +86,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-manrope), 'Manrope', 'Inter', sans-serif;
-  --font-heading: var(--font-space), 'Space Grotesk', 'Manrope', sans-serif;
+  --font-sans: 'Aptos', 'Segoe UI', 'Trebuchet MS', sans-serif;
+  --font-heading: 'Bahnschrift', 'Trebuchet MS', 'Aptos', sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -137,12 +137,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background:
-      radial-gradient(circle at top, rgba(14, 165, 233, 0.12), transparent 30%),
-      linear-gradient(180deg, #07111f 0%, #09192b 55%, #07111f 100%);
+      radial-gradient(circle at top, rgba(248, 113, 113, 0.22), transparent 32%),
+      linear-gradient(180deg, #1b0a0a 0%, #220b0b 55%, #150707 100%);
     min-height: 100vh;
   }
   ::selection {
-    background: rgba(34, 211, 238, 0.25);
+    background: rgba(248, 113, 113, 0.35);
     color: white;
   }
 }
@@ -165,30 +165,35 @@
 
 /* Glow utilities */
 .glow-blue {
-  box-shadow: 0 0 20px rgba(0, 119, 181, 0.3), 0 0 40px rgba(0, 119, 181, 0.1);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3), 0 0 40px rgba(239, 68, 68, 0.1);
 }
 .glow-sm-blue {
-  box-shadow: 0 0 10px rgba(0, 119, 181, 0.2);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
 }
 .text-gradient-blue {
-  background: linear-gradient(135deg, #5bb8f5 0%, #0077b5 50%, #00a0dc 100%);
+  background: linear-gradient(135deg, #fca5a5 0%, #ef4444 50%, #f97316 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .text-gradient-brand {
-  background: linear-gradient(135deg, #38bdf8 0%, #0077b5 60%, #a78bfa 100%);
+  background: linear-gradient(135deg, #fca5a5 0%, #ef4444 60%, #fb7185 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .bg-brand-mesh {
   background:
-    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(0, 119, 181, 0.25) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(91, 184, 245, 0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(248, 113, 113, 0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(252, 165, 165, 0.18) 0%, transparent 60%),
     oklch(0.08 0.02 240);
 }
 
 .font-heading {
   font-family: var(--font-heading), 'Space Grotesk', sans-serif;
+}
+
+.font-fun {
+  font-family: 'Trebuchet MS', 'Segoe UI', 'Aptos', sans-serif;
+  letter-spacing: 0.02em;
 }

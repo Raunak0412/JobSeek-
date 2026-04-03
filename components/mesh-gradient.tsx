@@ -25,11 +25,11 @@ export function MeshGradient() {
     window.addEventListener("resize", resize)
 
     const colors = [
-      { r: 99, g: 102, b: 241 },   // Indigo
-      { r: 139, g: 92, b: 246 },   // Purple
-      { r: 59, g: 130, b: 246 },   // Blue
-      { r: 6, g: 182, b: 212 },    // Cyan
-      { r: 16, g: 185, b: 129 },   // Emerald
+      { r: 239, g: 68, b: 68 },   // Red
+      { r: 248, g: 113, b: 113 }, // Rose
+      { r: 251, g: 146, b: 60 },  // Orange
+      { r: 254, g: 202, b: 202 }, // Soft red
+      { r: 244, g: 63, b: 94 },   // Pink
     ]
 
     interface Blob {

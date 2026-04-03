@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {demoCode ? (
-          <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-100">
+          <div className="rounded-2xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-100">
             Demo OTP generated: <span className="font-semibold tracking-[0.3em]">{demoCode}</span>
           </div>
         ) : null}
@@ -74,14 +74,14 @@ export default function ForgotPasswordPage() {
           </div>
         ) : null}
 
-        <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-cyan-400 text-slate-950 hover:bg-cyan-300">
+        <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300">
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MailOpen className="mr-2 h-4 w-4" />}
           Send reset OTP
         </Button>
 
         <p className="text-sm text-slate-400">
           Remember your password?{" "}
-          <Link href="/auth/login" className="text-cyan-300 hover:text-cyan-200">
+          <Link href="/auth/login" className="text-red-300 hover:text-red-200">
             Sign in
           </Link>
         </p>
