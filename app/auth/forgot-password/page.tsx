@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { Loader2, MailOpen } from "lucide-react"
 import { AuthShell } from "@/components/auth/auth-shell"
 import { Button } from "@/components/ui/button"
@@ -11,16 +10,16 @@ import { Label } from "@/components/ui/label"
 import { useAuth } from "@/lib/auth-context"
 
 export default function ForgotPasswordPage() {
-  const router = useRouter()
-  const { requestPasswordReset } = useAuth()
+  const { authMode, requestPasswordReset } = useAuth()
   const [email, setEmail] = useState("")
   const [error, setError] = useState("")
-  const [demoCode, setDemoCode] = useState("")
+  const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError("")
+    setMessage("")
     setIsLoading(true)
 
     const result = await requestPasswordReset(email)
@@ -31,8 +30,12 @@ export default function ForgotPasswordPage() {
       return
     }
 
-    setDemoCode(result.code ?? "")
-    router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}&purpose=reset`)
+    if (authMode === "demo") {
+      setMessage(`Demo OTP generated: ${result.code ?? ""}`)
+      return
+    }
+
+    setMessage("Password reset email sent. Open the link in your inbox to set a new password.")
   }
 
   return (
@@ -44,7 +47,9 @@ export default function ForgotPasswordPage() {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
-          This flow is mocked on the frontend. For demo purposes, the reset OTP is generated immediately and stored in local storage.
+          {authMode === "demo"
+            ? "This flow is mocked on the frontend. A reset OTP is generated and shown immediately."
+            : "We use Supabase Auth recovery links. Submit your email and check your inbox."}
         </div>
 
         <div className="space-y-2">
@@ -62,10 +67,8 @@ export default function ForgotPasswordPage() {
           />
         </div>
 
-        {demoCode ? (
-          <div className="rounded-2xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-100">
-            Demo OTP generated: <span className="font-semibold tracking-[0.3em]">{demoCode}</span>
-          </div>
+        {message ? (
+          <div className="rounded-2xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-100">{message}</div>
         ) : null}
 
         {error ? (
@@ -76,7 +79,7 @@ export default function ForgotPasswordPage() {
 
         <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300">
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MailOpen className="mr-2 h-4 w-4" />}
-          Send reset OTP
+          {authMode === "demo" ? "Send reset OTP" : "Send reset link"}
         </Button>
 
         <p className="text-sm text-slate-400">
