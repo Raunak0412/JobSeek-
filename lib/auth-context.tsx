@@ -1,8 +1,12 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
+import type { User as SupabaseAuthUser } from "@supabase/supabase-js"
 import type { UserRole } from "@/lib/mock-data"
+import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase-browser"
+
+export type AuthMode = "supabase" | "demo"
 
 interface User {
   email: string
@@ -24,16 +28,18 @@ interface OtpRecord {
 }
 
 interface AuthContextType {
+  authMode: AuthMode
   user: User | null
   isLoading: boolean
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>
+  signInWithGoogle: (preferredRole?: UserRole) => Promise<{ success: boolean; error?: string }>
   register: (data: {
     email: string
     password: string
     name: string
     type: UserRole
     company?: string
-  }) => Promise<{ success: boolean; error?: string }>
+  }) => Promise<{ success: boolean; error?: string; requiresEmailVerification?: boolean }>
   requestPasswordReset: (email: string) => Promise<{ success: boolean; error?: string; code?: string }>
   verifyOtp: (params: {
     email: string
@@ -51,6 +57,7 @@ const STORAGE_KEYS = {
   users: "JobSeek_users",
   otps: "JobSeek_otps",
   resetEmail: "JobSeek_reset_email",
+  pendingGoogleRole: "JobSeek_pending_google_role",
 } as const
 
 const DEMO_USERS: StoredUser[] = [
@@ -96,6 +103,12 @@ function safeRead<T>(key: string, fallback: T): T {
 function safeWrite<T>(key: string, value: T) {
   if (typeof window === "undefined") return
   window.localStorage.setItem(key, JSON.stringify(value))
+}
+
+function normalizeRole(value: unknown, fallback: UserRole = "seeker") {
+  if (value === "recruiter") return "recruiter"
+  if (value === "seeker") return "seeker"
+  return fallback
 }
 
 function toPublicUser(user: StoredUser): User {
@@ -144,32 +157,223 @@ function issueOtp(email: string, purpose: "verify" | "reset") {
   return otp
 }
 
+function getPendingGoogleRole() {
+  if (typeof window === "undefined") return null
+  return normalizeRole(window.localStorage.getItem(STORAGE_KEYS.pendingGoogleRole), "seeker")
+}
+
+function setPendingGoogleRole(role: UserRole) {
+  if (typeof window === "undefined") return
+  window.localStorage.setItem(STORAGE_KEYS.pendingGoogleRole, role)
+}
+
+function clearPendingGoogleRole() {
+  if (typeof window === "undefined") return
+  window.localStorage.removeItem(STORAGE_KEYS.pendingGoogleRole)
+}
+
+function extractNameFromAuthUser(authUser: SupabaseAuthUser) {
+  const metadata = authUser.user_metadata as Record<string, unknown> | undefined
+  const fromMetadata =
+    (typeof metadata?.name === "string" && metadata.name) ||
+    (typeof metadata?.full_name === "string" && metadata.full_name) ||
+    (typeof metadata?.user_name === "string" && metadata.user_name) ||
+    ""
+  if (fromMetadata) return fromMetadata
+
+  const email = authUser.email ?? ""
+  if (!email) return "User"
+  return email.split("@")[0]
+}
+
+type ProfileRow = {
+  id: string
+  email: string | null
+  full_name: string | null
+  role: UserRole | null
+  company: string | null
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+  const authMode: AuthMode = useMemo(() => (isSupabaseConfigured ? "supabase" : "demo"), [])
 
-  useEffect(() => {
-    safeWrite(STORAGE_KEYS.users, getUsers())
-    const session = safeRead<User | null>(STORAGE_KEYS.session, null)
-    setUser(session)
-    setIsLoading(false)
-  }, [])
-
-  const login = async (email: string, password: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 450))
-    const existing = getUsers().find((entry) => entry.email.toLowerCase() === email.toLowerCase())
-    if (!existing || existing.password !== password) {
-      return { success: false, error: "Invalid email or password" }
-    }
-    if (!existing.verified) {
-      return { success: false, error: "Please verify your email before signing in." }
+  const syncSupabaseUser = async (authUser: SupabaseAuthUser | null) => {
+    if (!authUser) {
+      setUser(null)
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(STORAGE_KEYS.session)
+      }
+      return null
     }
 
-    const nextUser = toPublicUser(existing)
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) return null
+
+    const metadata = authUser.user_metadata as Record<string, unknown> | undefined
+    const metadataRole = normalizeRole(metadata?.type ?? metadata?.role, "seeker")
+    const pendingRole = getPendingGoogleRole()
+    let profile: ProfileRow | null = null
+
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("id,email,full_name,role,company")
+      .eq("id", authUser.id)
+      .maybeSingle()
+
+    if (profileData) {
+      profile = profileData as ProfileRow
+    }
+
+    const role = normalizeRole(profile?.role ?? pendingRole ?? metadataRole, "seeker")
+    const companyFromMetadata = typeof metadata?.company === "string" ? metadata.company : null
+    const nameFromMetadata =
+      typeof metadata?.name === "string"
+        ? metadata.name
+        : typeof metadata?.full_name === "string"
+          ? metadata.full_name
+          : null
+
+    const nextName = profile?.full_name ?? nameFromMetadata ?? extractNameFromAuthUser(authUser)
+    const nextCompany = profile?.company ?? companyFromMetadata
+
+    const nextProfile: ProfileRow = {
+      id: authUser.id,
+      email: authUser.email ?? profile?.email ?? "",
+      full_name: nextName,
+      role,
+      company: nextCompany,
+    }
+
+    const shouldUpsert =
+      !profile ||
+      Boolean(pendingRole) ||
+      profile.email !== nextProfile.email ||
+      profile.full_name !== nextProfile.full_name ||
+      profile.role !== nextProfile.role ||
+      profile.company !== nextProfile.company
+
+    if (shouldUpsert) {
+      await supabase.from("profiles").upsert(nextProfile, { onConflict: "id" })
+    }
+
+    if (pendingRole) clearPendingGoogleRole()
+
+    const nextUser: User = {
+      email: nextProfile.email ?? authUser.email ?? "",
+      name: nextName,
+      type: role,
+      company: nextCompany ?? undefined,
+      verified: Boolean(authUser.email_confirmed_at),
+    }
+
     setUser(nextUser)
     safeWrite(STORAGE_KEYS.session, nextUser)
-    return { success: true, user: nextUser }
+    return nextUser
+  }
+
+  useEffect(() => {
+    if (authMode === "demo") {
+      safeWrite(STORAGE_KEYS.users, getUsers())
+      const session = safeRead<User | null>(STORAGE_KEYS.session, null)
+      setUser(session)
+      setIsLoading(false)
+      return
+    }
+
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) {
+      setIsLoading(false)
+      return
+    }
+
+    let mounted = true
+
+    const initialize = async () => {
+      const { data } = await supabase.auth.getSession()
+      if (!mounted) return
+      await syncSupabaseUser(data.session?.user ?? null)
+      if (mounted) setIsLoading(false)
+    }
+
+    void initialize()
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      void syncSupabaseUser(session?.user ?? null)
+    })
+
+    return () => {
+      mounted = false
+      listener.subscription.unsubscribe()
+    }
+  }, [authMode])
+
+  const login = async (email: string, password: string) => {
+    if (authMode === "demo") {
+      await new Promise((resolve) => setTimeout(resolve, 450))
+      const existing = getUsers().find((entry) => entry.email.toLowerCase() === email.toLowerCase())
+      if (!existing || existing.password !== password) {
+        return { success: false, error: "Invalid email or password" }
+      }
+      if (!existing.verified) {
+        return { success: false, error: "Please verify your email before signing in." }
+      }
+
+      const nextUser = toPublicUser(existing)
+      setUser(nextUser)
+      safeWrite(STORAGE_KEYS.session, nextUser)
+      return { success: true, user: nextUser }
+    }
+
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) {
+      return { success: false, error: "Supabase is not configured. Add env keys first." }
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) {
+      return { success: false, error: error.message }
+    }
+
+    const nextUser = await syncSupabaseUser(data.user)
+    return { success: true, user: nextUser ?? undefined }
+  }
+
+  const signInWithGoogle = async (preferredRole?: UserRole) => {
+    if (authMode === "demo") {
+      return { success: false, error: "Google sign in requires Supabase mode. Add env keys first." }
+    }
+
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) {
+      return { success: false, error: "Supabase is not configured. Add env keys first." }
+    }
+
+    if (preferredRole) {
+      setPendingGoogleRole(preferredRole)
+    } else {
+      setPendingGoogleRole("seeker")
+    }
+
+    const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo,
+        queryParams: {
+          prompt: "select_account",
+        },
+      },
+    })
+
+    if (error) {
+      clearPendingGoogleRole()
+      return { success: false, error: error.message }
+    }
+
+    return { success: true }
   }
 
   const register = async (data: {
@@ -179,36 +383,85 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     type: UserRole
     company?: string
   }) => {
-    await new Promise((resolve) => setTimeout(resolve, 450))
-    const users = getUsers()
-    const exists = users.some((entry) => entry.email.toLowerCase() === data.email.toLowerCase())
-    if (exists) {
-      return { success: false, error: "An account already exists for this email." }
+    if (authMode === "demo") {
+      await new Promise((resolve) => setTimeout(resolve, 450))
+      const users = getUsers()
+      const exists = users.some((entry) => entry.email.toLowerCase() === data.email.toLowerCase())
+      if (exists) {
+        return { success: false, error: "An account already exists for this email." }
+      }
+
+      saveUsers([
+        ...users,
+        {
+          email: data.email,
+          password: data.password,
+          name: data.name,
+          type: data.type,
+          company: data.company,
+          verified: false,
+        },
+      ])
+      issueOtp(data.email, "verify")
+      return { success: true, requiresEmailVerification: true }
     }
 
-    saveUsers([
-      ...users,
-      {
-        email: data.email,
-        password: data.password,
-        name: data.name,
-        type: data.type,
-        company: data.company,
-        verified: false,
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) {
+      return { success: false, error: "Supabase is not configured. Add env keys first." }
+    }
+
+    const emailRedirectTo = typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined
+    const { data: signUpData, error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        data: {
+          name: data.name,
+          type: data.type,
+          company: data.company ?? null,
+        },
+        emailRedirectTo,
       },
-    ])
-    issueOtp(data.email, "verify")
-    return { success: true }
+    })
+
+    if (error) {
+      return { success: false, error: error.message }
+    }
+
+    if (signUpData.session?.user) {
+      await syncSupabaseUser(signUpData.session.user)
+    }
+
+    return {
+      success: true,
+      requiresEmailVerification: !signUpData.session,
+    }
   }
 
   const requestPasswordReset = async (email: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 450))
-    const existing = getUsers().find((entry) => entry.email.toLowerCase() === email.toLowerCase())
-    if (!existing) {
-      return { success: false, error: "We could not find an account for that email." }
+    if (authMode === "demo") {
+      await new Promise((resolve) => setTimeout(resolve, 450))
+      const existing = getUsers().find((entry) => entry.email.toLowerCase() === email.toLowerCase())
+      if (!existing) {
+        return { success: false, error: "We could not find an account for that email." }
+      }
+      const otp = issueOtp(existing.email, "reset")
+      return { success: true, code: otp.code }
     }
-    const otp = issueOtp(existing.email, "reset")
-    return { success: true, code: otp.code }
+
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) {
+      return { success: false, error: "Supabase is not configured. Add env keys first." }
+    }
+
+    const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/auth/reset-password` : undefined
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
+    if (error) {
+      return { success: false, error: error.message }
+    }
+
+    return { success: true }
   }
 
   const verifyOtp = async ({
@@ -220,69 +473,122 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     code: string
     purpose: "verify" | "reset"
   }) => {
-    await new Promise((resolve) => setTimeout(resolve, 450))
-    const otp = getOtps().find(
-      (item) => item.email.toLowerCase() === email.toLowerCase() && item.purpose === purpose
-    )
-    if (!otp) {
-      return { success: false, error: "The OTP has expired. Please request a new one." }
-    }
-    if (otp.code !== code) {
-      return { success: false, error: "Incorrect OTP code." }
+    if (authMode === "demo") {
+      await new Promise((resolve) => setTimeout(resolve, 450))
+      const otp = getOtps().find((item) => item.email.toLowerCase() === email.toLowerCase() && item.purpose === purpose)
+      if (!otp) {
+        return { success: false, error: "The OTP has expired. Please request a new one." }
+      }
+      if (otp.code !== code) {
+        return { success: false, error: "Incorrect OTP code." }
+      }
+
+      if (purpose === "verify") {
+        saveUsers(getUsers().map((entry) => (entry.email.toLowerCase() === email.toLowerCase() ? { ...entry, verified: true } : entry)))
+      } else if (typeof window !== "undefined") {
+        window.localStorage.setItem(STORAGE_KEYS.resetEmail, email)
+      }
+
+      saveOtps(getOtps().filter((item) => !(item.email.toLowerCase() === email.toLowerCase() && item.purpose === purpose)))
+      return { success: true }
     }
 
-    if (purpose === "verify") {
-      saveUsers(
-        getUsers().map((entry) =>
-          entry.email.toLowerCase() === email.toLowerCase() ? { ...entry, verified: true } : entry
-        )
-      )
-    } else if (typeof window !== "undefined") {
-      window.localStorage.setItem(STORAGE_KEYS.resetEmail, email)
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) {
+      return { success: false, error: "Supabase is not configured. Add env keys first." }
     }
 
-    saveOtps(
-      getOtps().filter(
-        (item) => !(item.email.toLowerCase() === email.toLowerCase() && item.purpose === purpose)
-      )
-    )
+    const type = purpose === "verify" ? "signup" : "recovery"
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: code,
+      type,
+    })
+
+    if (error) {
+      return { success: false, error: error.message }
+    }
+
+    const { data } = await supabase.auth.getSession()
+    await syncSupabaseUser(data.session?.user ?? null)
     return { success: true }
   }
 
   const resendOtp = async (email: string, purpose: "verify" | "reset") => {
-    await new Promise((resolve) => setTimeout(resolve, 450))
-    const otp = issueOtp(email, purpose)
-    return { success: true, code: otp.code }
+    if (authMode === "demo") {
+      await new Promise((resolve) => setTimeout(resolve, 450))
+      const otp = issueOtp(email, purpose)
+      return { success: true, code: otp.code }
+    }
+
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) {
+      return { success: false, code: undefined }
+    }
+
+    if (purpose === "reset") {
+      return { success: false, code: undefined }
+    }
+
+    const { error } = await supabase.auth.resend({ email, type: "signup" })
+    if (error) {
+      return { success: false, code: undefined }
+    }
+
+    return { success: true, code: undefined }
   }
 
-  const resetPassword = async (email: string, password: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 450))
-    if (typeof window === "undefined") {
-      return { success: false, error: "Reset is only available in the browser." }
+  const resetPassword = async (_email: string, password: string) => {
+    if (authMode === "demo") {
+      await new Promise((resolve) => setTimeout(resolve, 450))
+      if (typeof window === "undefined") {
+        return { success: false, error: "Reset is only available in the browser." }
+      }
+
+      const approvedEmail = window.localStorage.getItem(STORAGE_KEYS.resetEmail)
+      if (!approvedEmail) {
+        return { success: false, error: "Please verify the OTP before setting a new password." }
+      }
+
+      saveUsers(getUsers().map((entry) => (entry.email.toLowerCase() === approvedEmail.toLowerCase() ? { ...entry, password } : entry)))
+      window.localStorage.removeItem(STORAGE_KEYS.resetEmail)
+      return { success: true }
     }
 
-    const approvedEmail = window.localStorage.getItem(STORAGE_KEYS.resetEmail)
-    if (!approvedEmail || approvedEmail.toLowerCase() !== email.toLowerCase()) {
-      return { success: false, error: "Please verify the OTP before setting a new password." }
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) {
+      return { success: false, error: "Supabase is not configured. Add env keys first." }
     }
 
-    saveUsers(
-      getUsers().map((entry) =>
-        entry.email.toLowerCase() === email.toLowerCase() ? { ...entry, password } : entry
-      )
-    )
-    window.localStorage.removeItem(STORAGE_KEYS.resetEmail)
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) {
+      return { success: false, error: error.message }
+    }
+
     return { success: true }
   }
 
   const getOtpPreview = (email: string, purpose: "verify" | "reset") => {
-    const otp = getOtps().find(
-      (item) => item.email.toLowerCase() === email.toLowerCase() && item.purpose === purpose
-    )
+    if (authMode !== "demo") return null
+    const otp = getOtps().find((item) => item.email.toLowerCase() === email.toLowerCase() && item.purpose === purpose)
     return otp?.code ?? null
   }
 
   const logout = () => {
+    if (authMode === "demo") {
+      setUser(null)
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(STORAGE_KEYS.session)
+      }
+      router.push("/")
+      return
+    }
+
+    const supabase = getSupabaseBrowserClient()
+    if (supabase) {
+      void supabase.auth.signOut()
+    }
+
     setUser(null)
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(STORAGE_KEYS.session)
@@ -293,9 +599,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
+        authMode,
         user,
         isLoading,
         login,
+        signInWithGoogle,
         register,
         requestPasswordReset,
         verifyOtp,
