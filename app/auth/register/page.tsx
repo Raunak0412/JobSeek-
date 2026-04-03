@@ -15,7 +15,8 @@ function RegisterContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { register } = useAuth()
-  const initialRole = searchParams.get("role") === "recruiter" ? "recruiter" : "seeker"
+  const preferredRole = searchParams.get("role") ?? searchParams.get("type")
+  const initialRole = preferredRole === "recruiter" ? "recruiter" : "seeker"
   const [role, setRole] = useState<"seeker" | "recruiter">(initialRole)
   const [form, setForm] = useState({ name: "", company: "", email: "", password: "" })
   const [error, setError] = useState("")
@@ -45,10 +46,11 @@ function RegisterContent() {
 
   return (
     <AuthShell
-      title="Create your JobSeek account"
-      description="Choose whether you are a job seeker or recruiter, then continue into the verification flow."
+      title="Create account"
+      description="Choose your role and set up your workspace in under a minute."
       backHref="/auth/login"
       backLabel="Back to sign in"
+      eyebrow="New Account Setup"
     >
       <div className="space-y-6">
         <div className="grid gap-3 sm:grid-cols-2">
@@ -146,12 +148,10 @@ function RegisterContent() {
           </div>
 
           {error ? (
-            <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
-              {error}
-            </div>
+            <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">{error}</div>
           ) : null}
 
-          <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-red-950 hover:bg-red-300">
+          <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300">
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Continue to verification
           </Button>

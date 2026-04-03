@@ -326,6 +326,21 @@ export const candidates: CandidateProfile[] = [
       },
     ],
   },
+  {
+    id: "cand-arjun",
+    name: "Arjun Nair",
+    email: "arjun.nair@email.com",
+    currentRole: "Game Developer",
+    location: "Bengaluru, India",
+    experience: "5 years",
+    category: "Game Development",
+    availability: "2 weeks",
+    sentiment: "Confident",
+    summary: "Builds gameplay systems, performance-aware rendering pipelines, and production-ready Unity/Unreal features.",
+    skills: ["Unity", "Unreal Engine", "C#", "C++", "Gameplay Systems", "Shader Programming", "Blender"],
+    strengths: ["Gameplay architecture", "Engine optimization", "Cross-platform shipping"],
+    scorecard: [],
+  },
 ]
 
 export const seekerProfile = {
@@ -522,3 +537,5 @@ export function buildOfferTemplate(candidateName: string, jobTitle: string, comp
     "JobSeek Hiring Team",
   ].join("\n")
 }
+
+

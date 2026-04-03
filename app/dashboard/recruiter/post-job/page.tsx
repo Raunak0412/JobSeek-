@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Loader2, Sparkles, WandSparkles } from "lucide-react"
+import { ArrowRight, Loader2, Mail, Sparkles, Trophy, Users, WandSparkles } from "lucide-react"
 import { Header } from "@/components/dashboard/header"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Badge } from "@/components/ui/badge"
@@ -13,13 +14,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/lib/auth-context"
-import { addJob, useJobs } from "@/lib/demo-store"
+import { addJob, getPreferredRecruiterJobId, useJobs } from "@/lib/demo-store"
 
-const templates = {
-  frontend: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion"],
-  backend: ["Python", "FastAPI", "PostgreSQL", "Redis", "Docker"],
-  ai: ["Python", "LangChain", "OpenRouter", "Prompt engineering", "Embeddings"],
-}
+const skillMatchers: Array<{ keywords: string[]; skills: string[] }> = [
+  {
+    keywords: ["frontend", "react", "next", "ui", "web", "javascript", "typescript", "tailwind"],
+    skills: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion"],
+  },
+  {
+    keywords: ["backend", "api", "server", "microservice", "node", "python", "database", "sql", "fastapi", "django"],
+    skills: ["Python", "FastAPI", "PostgreSQL", "Redis", "Docker"],
+  },
+  {
+    keywords: ["ai", "ml", "machine learning", "llm", "langchain", "openrouter", "prompt", "nlp", "rag"],
+    skills: ["Python", "LangChain", "OpenRouter", "Prompt engineering", "Embeddings"],
+  },
+  {
+    keywords: ["devops", "cloud", "aws", "azure", "gcp", "kubernetes", "terraform", "cicd", "ci/cd"],
+    skills: ["AWS", "Docker", "Kubernetes", "CI/CD", "Terraform"],
+  },
+  {
+    keywords: ["game", "game dev", "game developer", "unity", "unreal", "godot", "gameplay", "c++", "c#", "shader", "blender"],
+    skills: ["Unity", "Unreal Engine", "C#", "C++", "Gameplay Systems", "Shader Programming"],
+  },
+]
 
 export default function PostJobPage() {
   const router = useRouter()
@@ -43,12 +61,21 @@ export default function PostJobPage() {
     if (!isLoading && !user) router.push("/auth/login")
   }, [isLoading, router, user])
 
-  const suggestedType = useMemo(() => {
-    const title = form.title.toLowerCase()
-    if (title.includes("ai")) return "ai"
-    if (title.includes("backend")) return "backend"
-    return "frontend"
-  }, [form.title])
+  const suggestedSkills = useMemo(() => {
+    const text = `${form.title} ${form.description}`.toLowerCase().trim()
+    if (!text) return []
+
+    const matchedSkills = new Set<string>()
+    skillMatchers.forEach((matcher) => {
+      if (matcher.keywords.some((keyword) => text.includes(keyword))) {
+        matcher.skills.forEach((skill) => matchedSkills.add(skill))
+      }
+    })
+
+    return Array.from(matchedSkills)
+  }, [form.description, form.title])
+  const activeJobId = useMemo(() => getPreferredRecruiterJobId(jobs), [jobs])
+  const activeJob = useMemo(() => jobs.find((job) => job.id === activeJobId) ?? null, [activeJobId, jobs])
 
   const addSkill = () => {
     const next = skillInput.trim()
@@ -58,7 +85,9 @@ export default function PostJobPage() {
   }
 
   const applyTemplate = () => {
-    const templateSkills = templates[suggestedType].filter((item) => !skills.includes(item))
+    if (!suggestedSkills.length) return
+    const templateSkills = suggestedSkills.filter((item) => !skills.includes(item))
+    if (!templateSkills.length) return
     setSkills((current) => [...current, ...templateSkills])
   }
 
@@ -66,7 +95,8 @@ export default function PostJobPage() {
     event.preventDefault()
     setIsSubmitting(true)
     await new Promise((resolve) => setTimeout(resolve, 700))
-    addJob({
+
+    const createdJob = addJob({
       title: form.title,
       company: form.company,
       location: form.location,
@@ -74,10 +104,11 @@ export default function PostJobPage() {
       vacancies: Number(form.vacancies || 1),
       salary: form.salary,
       description: form.description,
-      requiredSkills: skills.length ? skills : templates[suggestedType],
+      requiredSkills: skills.length ? skills : suggestedSkills,
     })
+
     setIsSubmitting(false)
-    router.push("/dashboard/recruiter/candidates")
+    router.push(`/dashboard/recruiter/candidates?jobId=${createdJob.id}`)
   }
 
   if (isLoading) return null
@@ -93,40 +124,85 @@ export default function PostJobPage() {
               <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Vacancy details</CardTitle>
-                  <p className="text-sm text-slate-400">The agent router will compare this job description with uploaded resumes and score candidates automatically.</p>
+                  <p className="text-sm text-slate-400">The agent router compares this job description with uploaded resumes and scores matching candidates.</p>
                 </CardHeader>
                 <CardContent className="grid gap-5">
                   <div className="space-y-2">
                     <Label htmlFor="title">Job title</Label>
-                    <Input id="title" value={form.title} onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))} className="h-12 rounded-2xl border-white/10 bg-white/5 text-white" placeholder="Senior Frontend Engineer" required />
+                    <Input
+                      id="title"
+                      value={form.title}
+                      onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
+                      className="h-12 rounded-2xl border-white/10 bg-white/5 text-white"
+                      placeholder="Game Developer"
+                      required
+                    />
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="company">Company</Label>
-                      <Input id="company" value={form.company} onChange={(event) => setForm((current) => ({ ...current, company: event.target.value }))} className="h-12 rounded-2xl border-white/10 bg-white/5 text-white" required />
+                      <Input
+                        id="company"
+                        value={form.company}
+                        onChange={(event) => setForm((current) => ({ ...current, company: event.target.value }))}
+                        className="h-12 rounded-2xl border-white/10 bg-white/5 text-white"
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="location">Location</Label>
-                      <Input id="location" value={form.location} onChange={(event) => setForm((current) => ({ ...current, location: event.target.value }))} className="h-12 rounded-2xl border-white/10 bg-white/5 text-white" required />
+                      <Input
+                        id="location"
+                        value={form.location}
+                        onChange={(event) => setForm((current) => ({ ...current, location: event.target.value }))}
+                        className="h-12 rounded-2xl border-white/10 bg-white/5 text-white"
+                        required
+                      />
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-3">
                     <div className="space-y-2">
                       <Label htmlFor="type">Type</Label>
-                      <Input id="type" value={form.type} onChange={(event) => setForm((current) => ({ ...current, type: event.target.value }))} className="h-12 rounded-2xl border-white/10 bg-white/5 text-white" required />
+                      <Input
+                        id="type"
+                        value={form.type}
+                        onChange={(event) => setForm((current) => ({ ...current, type: event.target.value }))}
+                        className="h-12 rounded-2xl border-white/10 bg-white/5 text-white"
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="vacancies">Vacancies</Label>
-                      <Input id="vacancies" value={form.vacancies} onChange={(event) => setForm((current) => ({ ...current, vacancies: event.target.value }))} className="h-12 rounded-2xl border-white/10 bg-white/5 text-white" required />
+                      <Input
+                        id="vacancies"
+                        value={form.vacancies}
+                        onChange={(event) => setForm((current) => ({ ...current, vacancies: event.target.value }))}
+                        className="h-12 rounded-2xl border-white/10 bg-white/5 text-white"
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="salary">Salary</Label>
-                      <Input id="salary" value={form.salary} onChange={(event) => setForm((current) => ({ ...current, salary: event.target.value }))} className="h-12 rounded-2xl border-white/10 bg-white/5 text-white" placeholder="$120k - $140k" required />
+                      <Input
+                        id="salary"
+                        value={form.salary}
+                        onChange={(event) => setForm((current) => ({ ...current, salary: event.target.value }))}
+                        className="h-12 rounded-2xl border-white/10 bg-white/5 text-white"
+                        placeholder="$120k - $140k"
+                        required
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="description">Job description</Label>
-                    <Textarea id="description" value={form.description} onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))} className="min-h-40 rounded-[1.5rem] border-white/10 bg-white/5 text-white" placeholder="Describe responsibilities, required skills, and seniority expectations." required />
+                    <Textarea
+                      id="description"
+                      value={form.description}
+                      onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
+                      className="min-h-40 rounded-[1.5rem] border-white/10 bg-white/5 text-white"
+                      placeholder="Describe responsibilities, seniority, and required skills."
+                      required
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -135,16 +211,32 @@ export default function PostJobPage() {
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="font-heading text-2xl">Required skills</CardTitle>
-                    <p className="text-sm text-slate-400">Use AI suggestions to seed the ranker system with the right signals.</p>
+                    <p className="text-sm text-slate-400">Suggestions are matched from vacancy details, not a fixed frontend default.</p>
                   </div>
-                  <Button type="button" variant="outline" onClick={applyTemplate} className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={applyTemplate}
+                    disabled={!suggestedSkills.length}
+                    className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10"
+                  >
                     <WandSparkles className="mr-2 h-4 w-4" />
-                    Suggest skills
+                    Match skills
                   </Button>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <p className="text-xs text-slate-400">
+                    {suggestedSkills.length
+                      ? `Detected: ${suggestedSkills.join(", ")}`
+                      : "Add vacancy title and description, then click Match skills."}
+                  </p>
                   <div className="flex gap-3">
-                    <Input value={skillInput} onChange={(event) => setSkillInput(event.target.value)} placeholder="Add a skill" className="h-12 rounded-2xl border-white/10 bg-white/5 text-white" />
+                    <Input
+                      value={skillInput}
+                      onChange={(event) => setSkillInput(event.target.value)}
+                      placeholder="Add a skill"
+                      className="h-12 rounded-2xl border-white/10 bg-white/5 text-white"
+                    />
                     <Button type="button" onClick={addSkill} className="rounded-2xl bg-red-400 px-5 text-slate-950 hover:bg-red-300">
                       Add
                     </Button>
@@ -161,44 +253,73 @@ export default function PostJobPage() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="space-y-6">
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
-                <CardHeader>
-                  <CardTitle className="font-heading text-2xl">What happens next</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 text-sm leading-7 text-slate-300">
-                  {[
-                    "Uploaded resumes are routed into the matching category first.",
-                    "The ranker compares resume skills, experience, and tone with your vacancy.",
-                    "Candidates get a score out of 10 and appear in the dedicated rankings view.",
-                    "Top candidates can be auto-selected in the mail studio based on vacancies.",
-                  ].map((item) => (
-                    <div key={item} className="rounded-3xl border border-white/10 bg-white/5 px-4 py-3">
-                      {item}
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
-                <CardHeader>
-                  <CardTitle className="font-heading text-2xl">Existing roles</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {jobs.map((job) => (
-                    <div key={job.id} className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <p className="font-medium text-white">{job.title}</p>
-                      <p className="mt-1 text-sm text-slate-400">
-                        {job.company} · {job.vacancies} openings · {job.applicants} applicants
-                      </p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
               <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
                 {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                Publish and open candidates
+                Post vacancy
               </Button>
+
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                <CardHeader>
+                  <CardTitle className="font-heading text-2xl">Launch controls</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <p className="text-sm text-slate-400">Current focus vacancy</p>
+                    <p className="mt-2 font-medium text-white">{activeJob?.title ?? "Post a vacancy to activate controls"}</p>
+                    <p className="mt-1 text-xs text-slate-500">{activeJob ? `${activeJob.company} - ${activeJob.vacancies} openings` : "No active role yet"}</p>
+                  </div>
+
+                  <div className="grid gap-3">
+                    <Link
+                      href={activeJobId ? `/dashboard/recruiter/rankings?jobId=${activeJobId}` : "/dashboard/recruiter/rankings"}
+                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-red-400/30 hover:bg-white/10"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <Trophy className="h-4 w-4 text-red-300" />
+                        Open rank list
+                      </span>
+                      <ArrowRight className="h-4 w-4 text-slate-400" />
+                    </Link>
+                    <Link
+                      href={activeJobId ? `/dashboard/recruiter/candidates?jobId=${activeJobId}` : "/dashboard/recruiter/candidates"}
+                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-red-400/30 hover:bg-white/10"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <Users className="h-4 w-4 text-red-300" />
+                        Review candidates
+                      </span>
+                      <ArrowRight className="h-4 w-4 text-slate-400" />
+                    </Link>
+                    <Link
+                      href={activeJobId ? `/dashboard/recruiter/mail?jobId=${activeJobId}` : "/dashboard/recruiter/mail"}
+                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-red-400/30 hover:bg-white/10"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-red-300" />
+                        Open outreach studio
+                      </span>
+                      <ArrowRight className="h-4 w-4 text-slate-400" />
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="relative overflow-hidden rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                <div className="pointer-events-none absolute -left-14 -top-14 h-40 w-40 rounded-full bg-red-500/20 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-14 -right-10 h-44 w-44 rounded-full bg-orange-400/20 blur-3xl" />
+                <CardHeader>
+                  <CardTitle className="font-heading text-2xl">3D activity deck</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative h-44 rounded-[1.5rem] border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-4 [perspective:900px]">
+                    <div className="absolute left-4 top-4 h-24 w-24 rounded-3xl border border-white/20 bg-gradient-to-br from-red-400/30 to-rose-500/10 shadow-[0_24px_80px_rgba(248,113,113,0.35)] [transform:rotateY(-24deg)_rotateX(10deg)]" />
+                    <div className="absolute right-5 top-12 h-20 w-20 rounded-[1.2rem] border border-white/15 bg-gradient-to-br from-orange-400/25 to-transparent shadow-[0_20px_60px_rgba(251,146,60,0.28)] [transform:rotateY(22deg)_rotateX(-8deg)]" />
+                    <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-200">
+                      Vacancy posted jobs automatically sync into rank list, candidates, and outreach.
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           </form>
         </main>

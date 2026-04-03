@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
 import { Loader2, Mail, Send, Sparkles } from "lucide-react"
 import { Header } from "@/components/dashboard/header"
@@ -12,15 +12,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/lib/auth-context"
+import {
+  addOutreachRecord,
+  getPreferredRecruiterJobId,
+  getTopCandidatesForOpenings,
+  setActiveRecruiterJobId,
+  useOutreachHistory,
+  useJobs,
+} from "@/lib/demo-store"
 import { buildOfferTemplate } from "@/lib/mock-data"
-import { getTopCandidatesForOpenings, useJobs } from "@/lib/demo-store"
 
 export default function MailPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const { toast } = useToast()
   const { user, isLoading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const jobs = useJobs()
+  const outreachHistory = useOutreachHistory()
   const [jobId, setJobId] = useState("")
   const [selected, setSelected] = useState<string[]>([])
   const [subject, setSubject] = useState("")
@@ -31,26 +42,57 @@ export default function MailPage() {
     if (!isLoading && !user) router.push("/auth/login")
   }, [isLoading, router, user])
 
-  const job = jobs.find((item) => item.id === jobId) ?? jobs[0]
-  const shortlist = useMemo(() => getTopCandidatesForOpenings(job.id), [job.id])
+  const preferredJobId = searchParams.get("jobId") ?? ""
 
   useEffect(() => {
-    if (!jobId && jobs.length) {
-      setJobId(jobs[0].id)
-    }
-  }, [jobId, jobs])
+    if (!jobs.length) return
+
+    const currentValid = jobId && jobs.some((job) => job.id === jobId)
+    if (currentValid) return
+
+    const nextJobId = getPreferredRecruiterJobId(jobs, preferredJobId)
+    if (!nextJobId) return
+
+    setJobId(nextJobId)
+    setActiveRecruiterJobId(nextJobId)
+  }, [jobId, jobs, preferredJobId])
+
+  const job = jobs.find((item) => item.id === jobId) ?? null
+  const shortlist = useMemo(() => (job ? getTopCandidatesForOpenings(job.id) : []), [job])
+  const recentOutreach = useMemo(() => outreachHistory.filter((item) => item.jobId === jobId).slice(0, 5), [jobId, outreachHistory])
 
   useEffect(() => {
     if (!job) return
-    const nextIds = shortlist.map((candidate) => candidate!.id)
+    const nextIds = shortlist.map((candidate) => candidate.id)
     setSelected(nextIds)
     setSubject(`Shortlist update for ${job.title}`)
     setBody(buildOfferTemplate(shortlist[0]?.name ?? "[Candidate Name]", job.title, job.company))
   }, [job, shortlist])
 
   const handleSend = async () => {
+    if (!job) return
+
     setIsSending(true)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 450))
+
+    const selectedCandidates = shortlist.filter((candidate) => selected.includes(candidate.id))
+    selectedCandidates.forEach((candidate) => {
+      addOutreachRecord({
+        jobId: job.id,
+        candidateId: candidate.id,
+        candidateName: candidate.name,
+        candidateEmail: candidate.email,
+        subject,
+        body,
+        source: "mail-studio",
+      })
+    })
+
+    toast({
+      title: "Outreach sent",
+      description: `${selectedCandidates.length} candidate(s) marked as contacted for ${job.title}.`,
+    })
+
     setIsSending(false)
   }
 
@@ -66,7 +108,7 @@ export default function MailPage() {
             <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">Formal shortlist system</Badge>
             <h2 className="mt-5 font-heading text-4xl font-semibold tracking-tight">Send polished recruiter mail to the top candidates for each vacancy.</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
-              The page automatically pre-selects candidates according to the number of openings. This matches your requirement where the top 10 candidates get mail if a job has 10 openings.
+              The page automatically pre-selects candidates according to the number of openings for the currently selected vacancy.
             </p>
           </motion.section>
 
@@ -77,7 +119,15 @@ export default function MailPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="rounded-full border border-white/10 bg-white/5 px-4 py-3">
-                  <select value={jobId} onChange={(event) => setJobId(event.target.value)} className="w-full bg-transparent text-sm text-white outline-none">
+                  <select
+                    value={jobId}
+                    onChange={(event) => {
+                      const nextJobId = event.target.value
+                      setJobId(nextJobId)
+                      setActiveRecruiterJobId(nextJobId)
+                    }}
+                    className="w-full bg-transparent text-sm text-white outline-none"
+                  >
                     {jobs.map((item) => (
                       <option key={item.id} value={item.id} className="bg-[#1b0b0b]">
                         {item.title}
@@ -93,23 +143,27 @@ export default function MailPage() {
                 ) : null}
 
                 {shortlist.map((candidate) => (
-                  <div key={candidate!.id} className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
+                  <div key={candidate.id} className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <Checkbox checked={selected.includes(candidate!.id)} onCheckedChange={() => {
-                          setSelected((current) =>
-                            current.includes(candidate!.id)
-                              ? current.filter((item) => item !== candidate!.id)
-                              : [...current, candidate!.id]
-                          )
-                        }} className="border-white/20 data-[state=checked]:border-red-300 data-[state=checked]:bg-red-300" />
+                        <Checkbox
+                          checked={selected.includes(candidate.id)}
+                          onCheckedChange={() => {
+                            setSelected((current) =>
+                              current.includes(candidate.id)
+                                ? current.filter((item) => item !== candidate.id)
+                                : [...current, candidate.id]
+                            )
+                          }}
+                          className="border-white/20 data-[state=checked]:border-red-300 data-[state=checked]:bg-red-300"
+                        />
                         <div>
-                          <p className="font-medium text-white">{candidate!.name}</p>
-                          <p className="text-sm text-slate-400">{candidate!.email}</p>
+                          <p className="font-medium text-white">{candidate.name}</p>
+                          <p className="text-sm text-slate-400">{candidate.email}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-heading text-3xl font-semibold tracking-tight text-white">{candidate!.jobScore.score}</p>
+                        <p className="font-heading text-3xl font-semibold tracking-tight text-white">{candidate.jobScore.score}</p>
                         <p className="text-xs uppercase tracking-[0.24em] text-red-200">out of 10</p>
                       </div>
                     </div>
@@ -134,7 +188,7 @@ export default function MailPage() {
                 <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
                   <div className="flex items-start gap-3">
                     <Sparkles className="mt-0.5 h-4 w-4 text-red-300" />
-                    <p>Selected candidates: {selected.length}. The current message body is initialized with a formal shortlist template.</p>
+                    <p>Selected candidates: {selected.length}. The message body is initialized with a formal shortlist template.</p>
                   </div>
                 </div>
                 <Button onClick={handleSend} disabled={isSending || selected.length === 0} className="h-12 w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
@@ -145,6 +199,22 @@ export default function MailPage() {
                   <Mail className="mr-2 h-4 w-4" />
                   Save draft
                 </Button>
+
+                <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
+                  <p className="text-sm font-medium text-white">Recent outreach status</p>
+                  <div className="mt-3 space-y-2 text-sm text-slate-300">
+                    {recentOutreach.length ? (
+                      recentOutreach.map((entry) => (
+                        <div key={entry.id} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/10 px-3 py-2">
+                          <p className="truncate">{entry.candidateName}</p>
+                          <p className="text-xs text-slate-400">{new Date(entry.sentAt).toLocaleString()}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-slate-400">No outreach sent for this vacancy yet.</p>
+                    )}
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>

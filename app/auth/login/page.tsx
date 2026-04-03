@@ -21,7 +21,7 @@ function LoginContent() {
 
   const banner = useMemo(() => {
     if (searchParams.get("verified")) return "Email verified. You can sign in now."
-    if (searchParams.get("reset")) return "Password updated successfully. Use your new password to continue."
+    if (searchParams.get("reset")) return "Password updated. Sign in with your new password."
     return ""
   }, [searchParams])
 
@@ -48,16 +48,15 @@ function LoginContent() {
 
   return (
     <AuthShell
-      title="Sign in to your workspace"
-      description="Access the seeker flow, recruiter dashboard, AI rankings, routed resumes, and formal outreach tools."
+      title="Sign in"
+      description="Welcome back. Access your dashboard and continue your hiring workflow."
       backHref="/"
       backLabel="Back to home"
+      eyebrow="Secure Workspace Access"
     >
       <div className="space-y-6">
         {banner ? (
-          <div className="rounded-2xl border border-red-300/30 bg-red-300/10 px-4 py-3 text-sm text-red-100">
-            {banner}
-          </div>
+          <div className="rounded-2xl border border-red-300/30 bg-red-300/10 px-4 py-3 text-sm text-red-100">{banner}</div>
         ) : null}
 
         <div className="rounded-3xl border border-red-400/15 bg-red-400/10 p-4">
@@ -68,13 +67,23 @@ function LoginContent() {
             <div className="flex-1">
               <p className="font-medium text-red-100">Demo access</p>
               <p className="mt-1 text-sm leading-6 text-red-50/80">
-                Use the built-in seeker or recruiter account while we keep the UI fully frontend-driven.
+                Quick-fill a test account while backend auth is still mocked.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <Button type="button" variant="outline" onClick={() => fillDemo("seeker")} className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fillDemo("seeker")}
+                  className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10"
+                >
                   Fill seeker
                 </Button>
-                <Button type="button" variant="outline" onClick={() => fillDemo("recruiter")} className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fillDemo("recruiter")}
+                  className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10"
+                >
                   Fill recruiter
                 </Button>
               </div>
@@ -119,9 +128,7 @@ function LoginContent() {
           </div>
 
           {error ? (
-            <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
-              {error}
-            </div>
+            <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">{error}</div>
           ) : null}
 
           <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300">
@@ -133,7 +140,7 @@ function LoginContent() {
         <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <div className="flex items-start gap-3">
             <ShieldCheck className="mt-0.5 h-4 w-4 text-red-300" />
-            <p>OTP, verification, and password reset states are mocked in local storage so the full frontend flow works end to end.</p>
+            <p>OTP, verification, and reset states are mocked in local storage for end-to-end frontend flow testing.</p>
           </div>
         </div>
 
