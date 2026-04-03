@@ -18,6 +18,13 @@ export function SmoothScrollProvider() {
           wheelMultiplier: 0.9,
           touchMultiplier: 1.15,
           syncTouch: true,
+          prevent: (node) => {
+            const target = node as Node | null
+            const element = target instanceof Element ? target : target?.parentElement ?? null
+            return !!element?.closest(
+              "[data-lenis-prevent], [data-slot='scroll-area'], [data-slot='scroll-area-viewport'], [data-radix-scroll-area-viewport]"
+            )
+          },
         })
         document.documentElement.classList.add("js-smooth-scroll")
 
