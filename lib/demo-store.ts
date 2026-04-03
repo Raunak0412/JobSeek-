@@ -1,17 +1,21 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import type { CandidateProfile, JobPosting } from "@/lib/mock-data"
-import { candidates as defaultCandidates, recruiterJobs as defaultJobs } from "@/lib/mock-data"
+import type { CandidateProfile, JobPosting, UserRole } from "@/lib/mock-data"
+import { candidates as defaultCandidates, recruiterJobs as defaultJobs, seekerApplications } from "@/lib/mock-data"
 
 const JOBS_KEY = "jobseek_jobs"
 const ACTIVE_RECRUITER_JOB_KEY = "jobseek_active_recruiter_job"
 const OUTREACH_KEY = "jobseek_outreach_history"
 const RESUME_KEY = "jobseek_resume"
 const RESUME_META_KEY = "jobseek_resume_meta"
+const NOTIFICATIONS_KEY = "jobseek_notifications"
+const SETTINGS_KEY = "jobseek_settings"
 const JOBS_EVENT = "jobseek:jobs:update"
 const OUTREACH_EVENT = "jobseek:outreach:update"
 const RESUME_EVENT = "jobseek:resume:update"
+const NOTIFICATIONS_EVENT = "jobseek:notifications:update"
+const SETTINGS_EVENT = "jobseek:settings:update"
 
 export type ResumeSkill = { name: string; confidence: number }
 export type ResumeExtraction = {
@@ -54,6 +58,42 @@ export type OutreachRecord = {
   source: "contact-page" | "mail-studio"
 }
 
+export type NotificationChannel = "system" | "recruitment" | "applications" | "profile" | "workspace"
+
+export type AppNotification = {
+  id: string
+  app: string
+  title: string
+  message: string
+  createdAt: string
+  read: boolean
+  channel: NotificationChannel
+  deepLink?: string
+  extraCount?: number
+}
+
+export type AppSettings = {
+  emailAlerts: boolean
+  inAppAlerts: boolean
+  weeklyDigest: boolean
+  shortlistDigest: boolean
+  candidateProfileVisibility: boolean
+  recruiterContactVisibility: boolean
+  compactCards: boolean
+  autoOpenSearchResults: boolean
+}
+
+export type WorkspaceSearchType = "page" | "candidate" | "job" | "application" | "notification"
+
+export type WorkspaceSearchResult = {
+  id: string
+  type: WorkspaceSearchType
+  title: string
+  subtitle: string
+  href: string
+  score: number
+}
+
 function safeRead<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback
   const raw = window.localStorage.getItem(key)
@@ -80,6 +120,16 @@ function notifyOutreachUpdate() {
   window.dispatchEvent(new Event(OUTREACH_EVENT))
 }
 
+function notifyNotificationsUpdate() {
+  if (typeof window === "undefined") return
+  window.dispatchEvent(new Event(NOTIFICATIONS_EVENT))
+}
+
+function notifySettingsUpdate() {
+  if (typeof window === "undefined") return
+  window.dispatchEvent(new Event(SETTINGS_EVENT))
+}
+
 function inferCategory(title: string) {
   const lower = title.toLowerCase()
   if (lower.includes("front")) return "Frontend"
@@ -90,6 +140,91 @@ function inferCategory(title: string) {
   if (lower.includes("ai") || lower.includes("ml")) return "AI"
   if (lower.includes("game") || lower.includes("unity") || lower.includes("unreal")) return "Game Development"
   return "General"
+}
+
+const defaultSettings: AppSettings = {
+  emailAlerts: true,
+  inAppAlerts: true,
+  weeklyDigest: true,
+  shortlistDigest: true,
+  candidateProfileVisibility: true,
+  recruiterContactVisibility: true,
+  compactCards: false,
+  autoOpenSearchResults: true,
+}
+
+function buildSeedNotifications(): AppNotification[] {
+  const now = Date.now()
+  const jobs = getJobs()
+  const latestJob = jobs[0]
+  const latestOutreach = getOutreachHistory()[0]
+  const latestApplication = seekerApplications[0]
+
+  const generated: AppNotification[] = [
+    {
+      id: "notif-system-start",
+      app: "JobSeek",
+      title: "Workspace ready",
+      message: "Recruiter and seeker dashboards are synced for search, notifications, and profile updates.",
+      createdAt: new Date(now - 1000 * 60 * 22).toISOString(),
+      read: false,
+      channel: "system",
+      deepLink: "/dashboard/search?q=workspace",
+    },
+  ]
+
+  if (latestJob) {
+    generated.push({
+      id: "notif-job-openings",
+      app: "Recruitment flow",
+      title: `Vacancy live: ${latestJob.title}`,
+      message: `${latestJob.vacancies} opening(s) active at ${latestJob.company}.`,
+      createdAt: new Date(now - 1000 * 60 * 44).toISOString(),
+      read: false,
+      channel: "recruitment",
+      deepLink: `/dashboard/recruiter/candidates?jobId=${latestJob.id}`,
+      extraCount: latestJob.applicants > 1 ? Math.min(4, latestJob.applicants - 1) : undefined,
+    })
+  }
+
+  if (latestOutreach) {
+    generated.push({
+      id: "notif-outreach-latest",
+      app: "Outreach",
+      title: `Mail sent to ${latestOutreach.candidateName}`,
+      message: "Outreach history has been updated from the recruiter contact flow.",
+      createdAt: latestOutreach.sentAt,
+      read: false,
+      channel: "recruitment",
+      deepLink: `/dashboard/recruiter/contact?jobId=${latestOutreach.jobId}&candidateId=${latestOutreach.candidateId}`,
+    })
+  }
+
+  if (latestApplication) {
+    generated.push({
+      id: "notif-seeker-application",
+      app: "Applications",
+      title: `${latestApplication.company} status: ${latestApplication.status}`,
+      message: `${latestApplication.position} was updated in the seeker application tracker.`,
+      createdAt: new Date(now - 1000 * 60 * 70).toISOString(),
+      read: true,
+      channel: "applications",
+      deepLink: "/dashboard/seeker/applications",
+    })
+  }
+
+  generated.push({
+    id: "notif-profile-visibility",
+    app: "Profile",
+    title: "Profile visibility is on",
+    message: "Recruiters can view social links, skill depth, and resume highlights you shared.",
+    createdAt: new Date(now - 1000 * 60 * 95).toISOString(),
+    read: true,
+    channel: "profile",
+    deepLink: "/dashboard/seeker/profile",
+  })
+
+  return generated.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 }
 
 export function getJobs(): JobPosting[] {
@@ -160,6 +295,13 @@ export function addJob(input: {
   const jobs = [...getJobs(), job]
   safeWrite(JOBS_KEY, jobs)
   setActiveRecruiterJobId(job.id)
+  addNotification({
+    app: "Recruitment flow",
+    title: `New vacancy: ${job.title}`,
+    message: `${job.company} added ${job.vacancies} opening(s) in ${job.location}.`,
+    channel: "recruitment",
+    deepLink: `/dashboard/recruiter/candidates?jobId=${job.id}`,
+  })
   notifyJobsUpdate()
   return job
 }
@@ -171,8 +313,12 @@ export function resetDemoData() {
   window.localStorage.removeItem(OUTREACH_KEY)
   window.localStorage.removeItem(RESUME_KEY)
   window.localStorage.removeItem(RESUME_META_KEY)
+  window.localStorage.removeItem(NOTIFICATIONS_KEY)
+  window.localStorage.removeItem(SETTINGS_KEY)
   notifyJobsUpdate()
   notifyOutreachUpdate()
+  notifyNotificationsUpdate()
+  notifySettingsUpdate()
   window.dispatchEvent(new Event(RESUME_EVENT))
 }
 
@@ -186,6 +332,229 @@ export function useJobs() {
   }, [])
 
   return jobs
+}
+
+export function getAppSettings() {
+  const stored = safeRead<AppSettings | null>(SETTINGS_KEY, null)
+  if (stored) return { ...defaultSettings, ...stored }
+  safeWrite(SETTINGS_KEY, defaultSettings)
+  return defaultSettings
+}
+
+export function updateAppSettings(input: Partial<AppSettings>) {
+  const next = { ...getAppSettings(), ...input }
+  safeWrite(SETTINGS_KEY, next)
+  notifySettingsUpdate()
+  return next
+}
+
+export function resetAppSettings() {
+  safeWrite(SETTINGS_KEY, defaultSettings)
+  notifySettingsUpdate()
+  return defaultSettings
+}
+
+export function useAppSettings() {
+  const [settings, setSettings] = useState<AppSettings>(() => getAppSettings())
+
+  useEffect(() => {
+    const handler = () => setSettings(getAppSettings())
+    window.addEventListener(SETTINGS_EVENT, handler)
+    return () => window.removeEventListener(SETTINGS_EVENT, handler)
+  }, [])
+
+  return settings
+}
+
+export function getNotifications() {
+  const stored = safeRead<AppNotification[]>(NOTIFICATIONS_KEY, [])
+  if (stored.length) {
+    return stored.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  }
+  const seeded = buildSeedNotifications()
+  safeWrite(NOTIFICATIONS_KEY, seeded)
+  return seeded
+}
+
+export function addNotification(input: Omit<AppNotification, "id" | "createdAt" | "read"> & { read?: boolean }) {
+  const next: AppNotification = {
+    ...input,
+    id: `notif-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    createdAt: new Date().toISOString(),
+    read: input.read ?? false,
+  }
+  const notifications = [next, ...getNotifications()]
+  safeWrite(NOTIFICATIONS_KEY, notifications)
+  notifyNotificationsUpdate()
+  return next
+}
+
+export function markNotificationRead(notificationId: string) {
+  const next = getNotifications().map((item) => (item.id === notificationId ? { ...item, read: true } : item))
+  safeWrite(NOTIFICATIONS_KEY, next)
+  notifyNotificationsUpdate()
+  return next
+}
+
+export function dismissNotification(notificationId: string) {
+  const next = getNotifications().filter((item) => item.id !== notificationId)
+  safeWrite(NOTIFICATIONS_KEY, next)
+  notifyNotificationsUpdate()
+  return next
+}
+
+export function markAllNotificationsRead() {
+  const next = getNotifications().map((item) => ({ ...item, read: true }))
+  safeWrite(NOTIFICATIONS_KEY, next)
+  notifyNotificationsUpdate()
+  return next
+}
+
+export function clearAllNotifications() {
+  safeWrite(NOTIFICATIONS_KEY, [])
+  notifyNotificationsUpdate()
+  return []
+}
+
+export function useNotifications() {
+  const [notifications, setNotifications] = useState<AppNotification[]>(() => getNotifications())
+
+  useEffect(() => {
+    const handler = () => setNotifications(getNotifications())
+    window.addEventListener(NOTIFICATIONS_EVENT, handler)
+    return () => window.removeEventListener(NOTIFICATIONS_EVENT, handler)
+  }, [])
+
+  return notifications
+}
+
+export function useUnreadNotificationCount() {
+  const notifications = useNotifications()
+  return useMemo(() => notifications.filter((item) => !item.read).length, [notifications])
+}
+
+const pageSearchEntries: Record<UserRole, { id: string; title: string; subtitle: string; href: string }[]> = {
+  seeker: [
+    { id: "p-seeker-overview", title: "Seeker overview", subtitle: "Dashboard summary", href: "/dashboard/seeker" },
+    { id: "p-seeker-upload", title: "Resume intake", subtitle: "Upload and parse resume", href: "/dashboard/seeker/upload" },
+    { id: "p-seeker-jobs", title: "Matched jobs", subtitle: "Ranked opportunities", href: "/dashboard/seeker/jobs" },
+    { id: "p-seeker-apps", title: "Applications", subtitle: "Track your applications", href: "/dashboard/seeker/applications" },
+    { id: "p-seeker-profile", title: "Profile", subtitle: "Public seeker profile", href: "/dashboard/seeker/profile" },
+    { id: "p-shared-notifications-seeker", title: "Notifications", subtitle: "Alert center", href: "/dashboard/notifications" },
+    { id: "p-shared-settings-seeker", title: "Settings", subtitle: "Workspace preferences", href: "/dashboard/settings" },
+  ],
+  recruiter: [
+    { id: "p-rec-overview", title: "Recruiter overview", subtitle: "Hiring cockpit", href: "/dashboard/recruiter" },
+    { id: "p-rec-post", title: "Post vacancy", subtitle: "Create job postings", href: "/dashboard/recruiter/post-job" },
+    { id: "p-rec-candidates", title: "Candidates", subtitle: "AI-ranked candidate list", href: "/dashboard/recruiter/candidates" },
+    { id: "p-rec-rankings", title: "Rankings", subtitle: "Leaderboard by role", href: "/dashboard/recruiter/rankings" },
+    { id: "p-rec-mail", title: "Mail studio", subtitle: "Formal outreach", href: "/dashboard/recruiter/mail" },
+    { id: "p-shared-notifications-recruiter", title: "Notifications", subtitle: "Alert center", href: "/dashboard/notifications" },
+    { id: "p-shared-settings-recruiter", title: "Settings", subtitle: "Workspace preferences", href: "/dashboard/settings" },
+  ],
+}
+
+function scoreSearchMatch(text: string, query: string) {
+  const normalizedText = text.toLowerCase()
+  const normalizedQuery = query.toLowerCase().trim()
+  if (!normalizedQuery) return 0
+  if (normalizedText === normalizedQuery) return 100
+  if (normalizedText.startsWith(normalizedQuery)) return 78
+  if (normalizedText.includes(normalizedQuery)) return 55
+
+  const tokens = normalizedQuery.split(/\s+/).filter(Boolean)
+  const tokenHits = tokens.filter((token) => normalizedText.includes(token)).length
+  if (!tokens.length || tokenHits === 0) return 0
+  return 24 + tokenHits * 10
+}
+
+export function searchWorkspace(query: string, role: UserRole, limit = 16): WorkspaceSearchResult[] {
+  const q = query.trim()
+  if (!q) return []
+
+  const jobResults: WorkspaceSearchResult[] = getJobs().map((job) => {
+    const score = Math.max(
+      scoreSearchMatch(job.title, q),
+      scoreSearchMatch(job.company, q),
+      scoreSearchMatch(job.requiredSkills.join(" "), q)
+    )
+    return {
+      id: `job-${job.id}`,
+      type: "job",
+      title: job.title,
+      subtitle: `${job.company} - ${job.location}`,
+      href: role === "recruiter" ? `/dashboard/recruiter/candidates?jobId=${job.id}` : `/dashboard/seeker/jobs`,
+      score,
+    }
+  })
+
+  const candidateResults: WorkspaceSearchResult[] =
+    role === "recruiter"
+      ? defaultCandidates.map((candidate) => {
+          const score = Math.max(
+            scoreSearchMatch(candidate.name, q),
+            scoreSearchMatch(candidate.currentRole, q),
+            scoreSearchMatch(candidate.skills.join(" "), q)
+          )
+          return {
+            id: `candidate-${candidate.id}`,
+            type: "candidate",
+            title: candidate.name,
+            subtitle: `${candidate.currentRole} - ${candidate.location}`,
+            href: `/dashboard/recruiter/candidates/${candidate.id}`,
+            score,
+          }
+        })
+      : []
+
+  const applicationResults: WorkspaceSearchResult[] =
+    role === "seeker"
+      ? seekerApplications.map((application) => {
+          const score = Math.max(
+            scoreSearchMatch(application.company, q),
+            scoreSearchMatch(application.position, q),
+            scoreSearchMatch(application.status, q)
+          )
+          return {
+            id: `application-${application.id}`,
+            type: "application",
+            title: `${application.company} - ${application.position}`,
+            subtitle: `Status: ${application.status}`,
+            href: "/dashboard/seeker/applications",
+            score,
+          }
+        })
+      : []
+
+  const notificationResults: WorkspaceSearchResult[] = getNotifications().map((notification) => {
+    const score = Math.max(
+      scoreSearchMatch(notification.title, q),
+      scoreSearchMatch(notification.message, q),
+      scoreSearchMatch(notification.app, q)
+    )
+    return {
+      id: `notification-${notification.id}`,
+      type: "notification",
+      title: notification.title,
+      subtitle: `${notification.app} - ${notification.message}`,
+      href: notification.deepLink ?? "/dashboard/notifications",
+      score,
+    }
+  })
+
+  const pageResults: WorkspaceSearchResult[] = pageSearchEntries[role].map((page) => ({
+    id: page.id,
+    type: "page",
+    title: page.title,
+    subtitle: page.subtitle,
+    href: page.href,
+    score: Math.max(scoreSearchMatch(page.title, q), scoreSearchMatch(page.subtitle, q)),
+  }))
+
+  return [...pageResults, ...jobResults, ...candidateResults, ...applicationResults, ...notificationResults]
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
 }
 
 function yearsFromExperience(value: string) {
@@ -312,6 +681,13 @@ export function addOutreachRecord(input: Omit<OutreachRecord, "id" | "sentAt">) 
 
   const history = [record, ...getOutreachHistory()]
   safeWrite(OUTREACH_KEY, history)
+  addNotification({
+    app: "Outreach",
+    title: `Outreach sent to ${record.candidateName}`,
+    message: `Subject: ${record.subject}`,
+    channel: "recruitment",
+    deepLink: `/dashboard/recruiter/contact?jobId=${record.jobId}&candidateId=${record.candidateId}`,
+  })
   notifyOutreachUpdate()
   return record
 }
@@ -346,6 +722,13 @@ export function getResumeMeta(): ResumeMeta | null {
 
 export function saveResumeExtraction(extraction: ResumeExtraction) {
   safeWrite(RESUME_KEY, extraction)
+  addNotification({
+    app: "Resume parser",
+    title: `Resume parsed as ${extraction.routedCategory}`,
+    message: `${extraction.extractedSkills.length} skill signal(s) detected with ${extraction.confidence}% confidence.`,
+    channel: "profile",
+    deepLink: "/dashboard/seeker/profile",
+  })
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event(RESUME_EVENT))
   }

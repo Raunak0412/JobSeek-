@@ -4,12 +4,15 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { ArrowRight, Mail, Radar, Sparkles, Trophy, Users } from "lucide-react"
+import { ArrowRight, Brain, Mail, Radar, Sparkles, Target, Trophy, Users, Workflow } from "lucide-react"
 import { Header } from "@/components/dashboard/header"
 import { Sidebar } from "@/components/dashboard/sidebar"
+import { WorkflowTree } from "@/components/dashboard/workflow-tree"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/lib/auth-context"
 import { getPreferredRecruiterJobId, getRankedCandidatesForJob, getRecruiterSummary, resetDemoData, useJobs } from "@/lib/demo-store"
 
@@ -22,7 +25,7 @@ export default function RecruiterDashboard() {
   const summary = getRecruiterSummary()
   const featuredJobId = getPreferredRecruiterJobId(jobs)
   const featuredJob = jobs.find((job) => job.id === featuredJobId) ?? jobs[0]
-  const topCandidates = featuredJob ? getRankedCandidatesForJob(featuredJob.id).slice(0, 3) : []
+  const topCandidates = featuredJob ? getRankedCandidatesForJob(featuredJob.id).slice(0, 4) : []
   const featuredJobTitle = featuredJob?.title ?? "your vacancy"
 
   useEffect(() => {
@@ -91,110 +94,143 @@ export default function RecruiterDashboard() {
             </div>
           </motion.section>
 
-          <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="font-heading text-2xl">Vacancy pipeline</CardTitle>
-                    <p className="mt-1 text-sm text-slate-400">The AI router is already matching incoming resumes to these roles.</p>
-                  </div>
-                  <Link href="/dashboard/recruiter/post-job">
-                    <Button variant="outline" className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
-                      Manage jobs
-                    </Button>
-                  </Link>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {jobs.map((job) => (
-                    <div key={job.id} className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className="font-medium text-white">{job.title}</p>
-                          <p className="mt-1 text-sm text-slate-400">
-                            {job.company} - {job.location} - {job.vacancies} openings
-                          </p>
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {job.requiredSkills.slice(0, 4).map((skill) => (
-                              <Badge key={skill} className="rounded-full border-white/10 bg-white/5 text-slate-200">
-                                {skill}
-                              </Badge>
-                            ))}
+          <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <CardHeader>
+                <CardTitle className="font-heading text-2xl">Overview workbench</CardTitle>
+                <p className="text-sm text-slate-400">Tabbed cards for graph flow, vacancy board, and shortlist execution.</p>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="graph" className="space-y-4">
+                  <TabsList className="h-auto flex-wrap rounded-full border border-white/10 bg-white/5 p-1">
+                    <TabsTrigger value="graph" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-red-400/15 data-[state=active]:text-red-100">
+                      Workflow graph
+                    </TabsTrigger>
+                    <TabsTrigger value="vacancies" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-red-400/15 data-[state=active]:text-red-100">
+                      Vacancy board
+                    </TabsTrigger>
+                    <TabsTrigger value="shortlist" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-red-400/15 data-[state=active]:text-red-100">
+                      Shortlist radar
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="graph" className="space-y-4">
+                    <div className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
+                      <WorkflowTree />
+                      <div className="space-y-3">
+                        {[
+                          {
+                            icon: Workflow,
+                            title: "Agent flow connected",
+                            detail: "Resume intake, role routing, score computation, and notifications now operate as one linked execution tree.",
+                          },
+                          {
+                            icon: Brain,
+                            title: "Decision nodes active",
+                            detail: "Each node emits recruiter-facing signals: match confidence, missing skills, and sentiment context.",
+                          },
+                          {
+                            icon: Target,
+                            title: "Action endpoints ready",
+                            detail: "Every branch leads to concrete actions: profile review, direct contact, or shortlist mail handoff.",
+                          },
+                        ].map((signal) => (
+                          <div key={signal.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                            <p className="inline-flex items-center gap-2 text-sm font-medium text-white">
+                              <signal.icon className="h-4 w-4 text-red-300" />
+                              {signal.title}
+                            </p>
+                            <p className="mt-2 text-sm leading-6 text-slate-300">{signal.detail}</p>
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-red-200">{job.applicants} applicants</p>
-                          <p className="mt-1 text-xs text-slate-500">{job.posted}</p>
-                        </div>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </motion.div>
+                  </TabsContent>
 
-            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="font-heading text-2xl">Top candidates for {featuredJobTitle}</CardTitle>
-                    <p className="mt-1 text-sm text-slate-400">Scores are generated directly against the selected job description.</p>
-                  </div>
-                  <Link href={featuredJob ? `/dashboard/recruiter/candidates?jobId=${featuredJob.id}` : "/dashboard/recruiter/candidates"}>
-                    <Button variant="outline" className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
-                      Open candidates
-                    </Button>
-                  </Link>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {topCandidates.map((candidate) => (
-                    <div key={candidate.id} className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-sm font-semibold text-white">
-                              {candidate.name.charAt(0)}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="truncate font-medium text-white">{candidate.name}</p>
-                              <p className="truncate text-sm text-slate-400">{candidate.currentRole}</p>
+                  <TabsContent value="vacancies">
+                    <ScrollArea className="h-[min(62vh,620px)] pr-4">
+                      <div className="space-y-3 pr-1">
+                        {jobs.map((job) => (
+                          <div key={job.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                              <div>
+                                <p className="font-medium text-white">{job.title}</p>
+                                <p className="mt-1 text-sm text-slate-400">{job.company} - {job.location} - {job.vacancies} openings</p>
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                  {job.requiredSkills.slice(0, 5).map((skill) => (
+                                    <Badge key={skill} className="rounded-full border-white/10 bg-black/20 text-slate-200">
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="text-left sm:text-right">
+                                <p className="text-sm font-medium text-red-200">{job.applicants} applicants</p>
+                                <p className="mt-1 text-xs text-slate-500">Posted {job.posted}</p>
+                                <Link href={`/dashboard/recruiter/candidates?jobId=${job.id}`}>
+                                  <Button variant="outline" size="sm" className="mt-3 rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
+                                    Open ranked list
+                                  </Button>
+                                </Link>
+                              </div>
                             </div>
                           </div>
-                          <p className="mt-3 text-sm leading-6 text-slate-300">{candidate.jobScore.routeReason}</p>
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {candidate.jobScore.matchedSkills.map((skill) => (
-                              <Badge key={skill} className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
-                                {skill}
-                              </Badge>
-                            ))}
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </TabsContent>
+
+                  <TabsContent value="shortlist" className="space-y-4">
+                    <p className="text-sm text-slate-400">Top candidates currently routed for <span className="text-red-200">{featuredJobTitle}</span>.</p>
+                    <div className="space-y-3">
+                      {topCandidates.map((candidate) => (
+                        <div key={candidate.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                            <div>
+                              <p className="font-medium text-white">{candidate.name}</p>
+                              <p className="mt-1 text-sm text-slate-400">{candidate.currentRole}</p>
+                              <p className="mt-2 text-sm leading-6 text-slate-300">{candidate.jobScore.routeReason}</p>
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                {candidate.jobScore.matchedSkills.map((skill) => (
+                                  <Badge key={skill} className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                                    {skill}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="text-left sm:text-right">
+                              <p className="font-heading text-3xl font-semibold tracking-tight text-white">{candidate.jobScore.score}</p>
+                              <p className="text-xs uppercase tracking-[0.22em] text-red-200">score</p>
+                              <p className="mt-2 text-sm text-slate-400">{candidate.sentiment} tone</p>
+                              <Link href={`/dashboard/recruiter/candidates/${candidate.id}?jobId=${featuredJob?.id ?? ""}`}>
+                                <Button variant="outline" size="sm" className="mt-3 rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
+                                  Open profile
+                                </Button>
+                              </Link>
+                            </div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-heading text-3xl font-semibold tracking-tight text-white">{candidate.jobScore.score}</p>
-                          <p className="text-xs uppercase tracking-[0.22em] text-red-200">out of 10</p>
-                          <p className="mt-2 text-sm text-slate-400">{candidate.sentiment}</p>
-                        </div>
+                      ))}
+                    </div>
+
+                    <div className="rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
+                      <div className="flex items-start gap-3">
+                        <Sparkles className="mt-0.5 h-4 w-4" />
+                        <p>The mail studio can instantly use these ranked candidates based on vacancy openings.</p>
                       </div>
                     </div>
-                  ))}
 
-                  <div className="rounded-3xl border border-red-400/20 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
-                    <div className="flex items-start gap-3">
-                      <Sparkles className="mt-0.5 h-4 w-4" />
-                      <p>The recruiter mail studio auto-selects the top {featuredJob?.vacancies ?? 0} candidates for this role.</p>
-                    </div>
-                  </div>
-
-                  <Link href={featuredJob ? `/dashboard/recruiter/mail?jobId=${featuredJob.id}` : "/dashboard/recruiter/mail"}>
-                    <Button className="w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
-                      Continue to shortlist mail
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </section>
+                    <Link href={featuredJob ? `/dashboard/recruiter/mail?jobId=${featuredJob.id}` : "/dashboard/recruiter/mail"}>
+                      <Button className="w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
+                        Continue to shortlist mail
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+          </motion.section>
         </main>
       </div>
     </div>

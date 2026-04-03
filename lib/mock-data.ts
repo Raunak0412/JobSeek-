@@ -41,6 +41,49 @@ export interface CandidateProfile {
   scorecard: CandidateScore[]
 }
 
+export interface CandidatePublicSkill {
+  name: string
+  level: number
+}
+
+export interface CandidateTimelineItem {
+  role: string
+  company: string
+  period: string
+  highlights: string[]
+}
+
+export interface CandidateEducationItem {
+  degree: string
+  school: string
+  year: string
+}
+
+export interface CandidateSocialLinks {
+  github?: string
+  linkedin?: string
+  portfolio?: string
+  website?: string
+}
+
+export interface CandidateResumeCard {
+  fileName: string
+  updatedAt: string
+  highlights: string[]
+  projects: string[]
+}
+
+export interface CandidatePublicProfile {
+  headline: string
+  about: string
+  photoUrl?: string
+  techSkills: CandidatePublicSkill[]
+  timeline: CandidateTimelineItem[]
+  education: CandidateEducationItem[]
+  socialLinks: CandidateSocialLinks
+  resume: CandidateResumeCard
+}
+
 export const platformStats = [
   { value: "92%", label: "resume routing accuracy", detail: "Agent router sorts candidates before recruiter review starts." },
   { value: "8.9/10", label: "average match quality", detail: "Scoring blends skills, experience, and communication tone." },
@@ -342,6 +385,259 @@ export const candidates: CandidateProfile[] = [
     scorecard: [],
   },
 ]
+
+export const candidatePublicProfiles: Record<string, CandidatePublicProfile> = {
+  "cand-sarah": {
+    headline: "Frontend architecture lead focused on design systems and polished UX.",
+    about:
+      "I build reusable interfaces that scale across product teams, with strong ownership from discovery to shipped UI.",
+    photoUrl: "/placeholder-user.jpg",
+    techSkills: [
+      { name: "React", level: 97 },
+      { name: "TypeScript", level: 95 },
+      { name: "Next.js", level: 93 },
+      { name: "Tailwind CSS", level: 91 },
+      { name: "Framer Motion", level: 88 },
+      { name: "GraphQL", level: 84 },
+    ],
+    timeline: [
+      {
+        role: "Lead Frontend Developer",
+        company: "Vistara Grid",
+        period: "2023 - Present",
+        highlights: [
+          "Led migration to a shared component platform used by 5 product squads.",
+          "Cut dashboard interaction latency by 28% with rendering and state optimizations.",
+        ],
+      },
+      {
+        role: "Senior UI Engineer",
+        company: "CloudSeat",
+        period: "2020 - 2023",
+        highlights: ["Built accessibility-first enterprise surfaces.", "Introduced motion patterns aligned to product workflows."],
+      },
+    ],
+    education: [{ degree: "B.E. in Information Technology", school: "PICT Pune", year: "2019" }],
+    socialLinks: {
+      github: "https://github.com/sarah-j",
+      linkedin: "https://linkedin.com/in/sarah-johnson-ui",
+      portfolio: "https://sarahui.dev",
+      website: "https://dribbble.com/sarah-j",
+    },
+    resume: {
+      fileName: "Sarah_Johnson_Frontend_Lead_Resume.pdf",
+      updatedAt: "March 30, 2026",
+      highlights: [
+        "Scaled a design system to 120+ production components.",
+        "Mentored 6 frontend engineers and defined review quality standards.",
+        "Partnered with product and research teams on measurable UX outcomes.",
+      ],
+      projects: ["Design System Command Center", "Real-time recruiter analytics dashboard", "Accessibility QA toolkit"],
+    },
+  },
+  "cand-michael": {
+    headline: "Full-stack builder shipping product features with measurable business impact.",
+    about: "I enjoy owning features from API contracts to polished frontend delivery, backed by strong metrics.",
+    photoUrl: "/placeholder-user.jpg",
+    techSkills: [
+      { name: "React", level: 92 },
+      { name: "Node.js", level: 91 },
+      { name: "TypeScript", level: 94 },
+      { name: "PostgreSQL", level: 88 },
+      { name: "AWS", level: 84 },
+      { name: "Docker", level: 85 },
+    ],
+    timeline: [
+      {
+        role: "Full Stack Engineer",
+        company: "TrackMint",
+        period: "2022 - Present",
+        highlights: ["Delivered onboarding revamp that improved activation by 19%.", "Built job analytics APIs and event pipelines end-to-end."],
+      },
+      {
+        role: "Software Engineer",
+        company: "Prodline Labs",
+        period: "2020 - 2022",
+        highlights: ["Built internal release tooling for faster QA handoff.", "Improved query efficiency across candidate search features."],
+      },
+    ],
+    education: [{ degree: "B.Sc. in Computer Science", school: "National University of Singapore", year: "2020" }],
+    socialLinks: {
+      github: "https://github.com/michael-chen-dev",
+      linkedin: "https://linkedin.com/in/michaelchen-dev",
+      portfolio: "https://michaelchen.dev",
+    },
+    resume: {
+      fileName: "Michael_Chen_FullStack_Resume.pdf",
+      updatedAt: "March 28, 2026",
+      highlights: [
+        "Led release of a billing workflow used by 30k+ monthly users.",
+        "Shipped frontend and backend improvements in a single sprint cadence.",
+      ],
+      projects: ["Product growth experiments platform", "Usage insights API suite", "Subscription reliability dashboard"],
+    },
+  },
+  "cand-emily": {
+    headline: "Backend platform specialist for reliable services and high-throughput APIs.",
+    about: "I design resilient backend systems with a strong focus on observability, performance, and scale.",
+    photoUrl: "/placeholder-user.jpg",
+    techSkills: [
+      { name: "Python", level: 95 },
+      { name: "FastAPI", level: 92 },
+      { name: "PostgreSQL", level: 90 },
+      { name: "Redis", level: 86 },
+      { name: "Docker", level: 86 },
+      { name: "Kubernetes", level: 82 },
+    ],
+    timeline: [
+      {
+        role: "Backend Platform Engineer",
+        company: "Orbit Services",
+        period: "2021 - Present",
+        highlights: ["Reduced p95 API latency by 33% through query and cache strategy changes.", "Implemented service-level SLO monitors and alerting."],
+      },
+      {
+        role: "Backend Developer",
+        company: "ScaleRoot",
+        period: "2019 - 2021",
+        highlights: ["Built async job workers for high-volume intake pipelines.", "Owned internal API gateway integrations."],
+      },
+    ],
+    education: [{ degree: "B.Tech in Computer Science", school: "IIIT Hyderabad", year: "2018" }],
+    socialLinks: {
+      github: "https://github.com/emilyd-api",
+      linkedin: "https://linkedin.com/in/emily-davis-platform",
+      portfolio: "https://emilydavis.dev",
+    },
+    resume: {
+      fileName: "Emily_Davis_Backend_Platform_Resume.pdf",
+      updatedAt: "March 25, 2026",
+      highlights: ["Built scalable API foundations for recruiter workflow products.", "Focused on uptime, debugging clarity, and operational readiness."],
+      projects: ["FastAPI service mesh migration", "Redis-backed session accelerator", "Backend reliability scorecard"],
+    },
+  },
+  "cand-priya": {
+    headline: "Applied AI engineer shipping LLM workflows from prototype to production.",
+    about: "My work blends prompt strategy, evaluation rigor, and production architecture for AI-enabled products.",
+    photoUrl: "/placeholder-user.jpg",
+    techSkills: [
+      { name: "Python", level: 94 },
+      { name: "LangChain", level: 92 },
+      { name: "OpenRouter", level: 90 },
+      { name: "FastAPI", level: 86 },
+      { name: "Embeddings", level: 88 },
+      { name: "Evaluation", level: 89 },
+    ],
+    timeline: [
+      {
+        role: "AI Product Engineer",
+        company: "PromptGrid",
+        period: "2023 - Present",
+        highlights: ["Designed LLM assistant workflows with regression evals for release gating.", "Cut support resolution time by 31% using AI routing systems."],
+      },
+      {
+        role: "Machine Learning Engineer",
+        company: "NexaLabs",
+        period: "2021 - 2023",
+        highlights: ["Built semantic search and retrieval layers for enterprise knowledge apps.", "Maintained experiment tracking and quality dashboards."],
+      },
+    ],
+    education: [{ degree: "M.Tech in AI", school: "Delhi Technological University", year: "2021" }],
+    socialLinks: {
+      github: "https://github.com/priya-ai",
+      linkedin: "https://linkedin.com/in/priya-sharma-ai",
+      portfolio: "https://priyasharma.ai",
+    },
+    resume: {
+      fileName: "Priya_Sharma_Applied_AI_Resume.pdf",
+      updatedAt: "March 31, 2026",
+      highlights: [
+        "Productionized multi-step LLM pipelines with robust quality checks.",
+        "Strong experimentation and evaluation documentation habits.",
+      ],
+      projects: ["LLM routing orchestrator", "Prompt evaluation harness", "Recruiter signal summarizer"],
+    },
+  },
+  "cand-david": {
+    headline: "Frontend engineer with deep testing discipline and performance tuning.",
+    about: "I specialize in maintainable React codebases, predictable releases, and measurable frontend quality.",
+    photoUrl: "/placeholder-user.jpg",
+    techSkills: [
+      { name: "React", level: 91 },
+      { name: "Redux", level: 87 },
+      { name: "Next.js", level: 88 },
+      { name: "TypeScript", level: 89 },
+      { name: "Jest", level: 90 },
+      { name: "Cypress", level: 86 },
+    ],
+    timeline: [
+      {
+        role: "Frontend Engineer",
+        company: "BlueFrame",
+        period: "2022 - Present",
+        highlights: ["Introduced CI UI test suites that reduced regression issues by 26%.", "Improved dashboard render throughput for large tables and charts."],
+      },
+      {
+        role: "UI Developer",
+        company: "CanvasBit",
+        period: "2020 - 2022",
+        highlights: ["Delivered reusable frontend modules for client-facing portals.", "Worked closely with design QA and accessibility checks."],
+      },
+    ],
+    education: [{ degree: "B.S. in Software Engineering", school: "Korea University", year: "2020" }],
+    socialLinks: {
+      github: "https://github.com/davidpark-ui",
+      linkedin: "https://linkedin.com/in/david-park-frontend",
+      portfolio: "https://davidpark.dev",
+    },
+    resume: {
+      fileName: "David_Park_Frontend_Resume.pdf",
+      updatedAt: "March 26, 2026",
+      highlights: ["Strong testing-first frontend process with high release confidence.", "Solid ownership of performance fixes and UI stability improvements."],
+      projects: ["Frontend test quality dashboard", "Reusable table virtualization toolkit", "UI release checklist automation"],
+    },
+  },
+  "cand-arjun": {
+    headline: "Game developer building performant gameplay systems across modern engines.",
+    about: "I focus on cross-platform gameplay architecture, rendering efficiency, and polished player experiences.",
+    photoUrl: "/placeholder-user.jpg",
+    techSkills: [
+      { name: "Unity", level: 93 },
+      { name: "Unreal Engine", level: 90 },
+      { name: "C#", level: 92 },
+      { name: "C++", level: 86 },
+      { name: "Shader Programming", level: 84 },
+      { name: "Blender", level: 81 },
+    ],
+    timeline: [
+      {
+        role: "Game Developer",
+        company: "ArcForge Studio",
+        period: "2022 - Present",
+        highlights: ["Shipped gameplay feature packs on PC and console targets.", "Optimized scene loading and memory usage for stable framerates."],
+      },
+      {
+        role: "Gameplay Programmer",
+        company: "RiftByte",
+        period: "2020 - 2022",
+        highlights: ["Implemented combat systems and player progression loops.", "Built tool scripts for faster level-designer iteration."],
+      },
+    ],
+    education: [{ degree: "B.Tech in Computer Science", school: "PES University", year: "2020" }],
+    socialLinks: {
+      github: "https://github.com/arjun-games",
+      linkedin: "https://linkedin.com/in/arjun-nair-dev",
+      portfolio: "https://arjunnair.games",
+      website: "https://itch.io/profile/arjunnair",
+    },
+    resume: {
+      fileName: "Arjun_Nair_Game_Developer_Resume.pdf",
+      updatedAt: "March 22, 2026",
+      highlights: ["Built gameplay systems tuned for responsiveness and replayability.", "Hands-on optimization of rendering and memory-heavy scenes."],
+      projects: ["Networked arena prototype", "Shader-driven environment pack", "Cross-platform input framework"],
+    },
+  },
+}
 
 export const seekerProfile = {
   name: "Aarav Mehta",

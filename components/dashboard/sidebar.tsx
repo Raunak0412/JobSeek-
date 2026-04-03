@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 import {
+  Bell,
   Briefcase,
   ChevronRight,
   FileText,
@@ -12,6 +13,7 @@ import {
   LogOut,
   Mail,
   Search,
+  Settings2,
   Trophy,
   Upload,
   User,
@@ -34,6 +36,8 @@ const seekerLinks = [
   { href: "/dashboard/seeker/jobs", label: "Matched jobs", icon: Search },
   { href: "/dashboard/seeker/applications", label: "Applications", icon: FileText },
   { href: "/dashboard/seeker/profile", label: "Profile", icon: User },
+  { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings2 },
 ]
 
 const recruiterLinks = [
@@ -42,6 +46,8 @@ const recruiterLinks = [
   { href: "/dashboard/recruiter/candidates", label: "Candidates", icon: Users },
   { href: "/dashboard/recruiter/rankings", label: "Rankings", icon: Trophy },
   { href: "/dashboard/recruiter/mail", label: "Mail studio", icon: Mail },
+  { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings2 },
 ]
 
 export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
@@ -90,7 +96,7 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
           {type === "recruiter" ? "Recruitment flow" : "Career flow"}
         </p>
         {links.map((link) => {
-          const active = pathname === link.href
+          const active = link.label === "Overview" ? pathname === link.href : pathname === link.href || pathname.startsWith(`${link.href}/`)
           return (
             <Link
               key={link.href}

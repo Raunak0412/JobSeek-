@@ -13,10 +13,13 @@ export function SmoothScrollProvider() {
         if (destroyed) return
 
         const lenis = new Lenis({
-          duration: 1.05,
+          duration: 0.95,
           smoothWheel: true,
-          touchMultiplier: 1.1,
+          wheelMultiplier: 0.9,
+          touchMultiplier: 1.15,
+          syncTouch: true,
         })
+        document.documentElement.classList.add("js-smooth-scroll")
 
         const loop = (time: number) => {
           lenis.raf(time)
@@ -27,6 +30,7 @@ export function SmoothScrollProvider() {
         cleanup = () => {
           window.cancelAnimationFrame(frame)
           lenis.destroy()
+          document.documentElement.classList.remove("js-smooth-scroll")
         }
       })
       .catch(() => {

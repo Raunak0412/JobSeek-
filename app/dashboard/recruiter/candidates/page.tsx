@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
-import { Download, Mail, Sparkles } from "lucide-react"
+import { Download, ExternalLink, Loader2, Mail, Sparkles } from "lucide-react"
 import { Header } from "@/components/dashboard/header"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Badge } from "@/components/ui/badge"
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { useAuth } from "@/lib/auth-context"
 import {
   buildCandidateResumeText,
@@ -92,7 +93,21 @@ export default function CandidatesPage() {
     URL.revokeObjectURL(blobUrl)
   }
 
-  if (isLoading) return null
+  const openCandidateProfile = (candidateId: string) => {
+    const query = jobId ? `?jobId=${jobId}` : ""
+    router.push(`/dashboard/recruiter/candidates/${candidateId}${query}`)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#150707] text-slate-300">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm">
+          <Loader2 className="h-4 w-4 animate-spin text-red-300" />
+          Loading candidates...
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen bg-[#150707] text-white">
@@ -148,77 +163,104 @@ export default function CandidatesPage() {
               <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">{selected.length} selected</Badge>
             </CardHeader>
             <CardContent className="space-y-4">
-              {rankedCandidates.map((candidate, index) => (
-                <div key={candidate.id} className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
-                  <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                    <div className="flex items-start gap-4">
-                      <Checkbox
-                        checked={selected.includes(candidate.id)}
-                        onCheckedChange={() =>
-                          setSelected((current) =>
-                            current.includes(candidate.id) ? current.filter((item) => item !== candidate.id) : [...current, candidate.id]
-                          )
-                        }
-                        className="mt-1 border-white/20 data-[state=checked]:border-red-300 data-[state=checked]:bg-red-300"
-                      />
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-sm font-semibold text-white">#{index + 1}</div>
-                          <div>
-                            <p className="font-medium text-white">{candidate.name}</p>
-                            <p className="text-sm text-slate-400">
-                              {candidate.currentRole} - {candidate.experience}
-                            </p>
+              <ScrollArea className="h-[min(66vh,720px)] pr-4">
+                <div className="space-y-4 pr-1">
+                  {rankedCandidates.map((candidate, index) => (
+                    <div key={candidate.id} className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
+                      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                        <div className="flex items-start gap-4">
+                          <Checkbox
+                            checked={selected.includes(candidate.id)}
+                            onCheckedChange={() =>
+                              setSelected((current) =>
+                                current.includes(candidate.id) ? current.filter((item) => item !== candidate.id) : [...current, candidate.id]
+                              )
+                            }
+                            className="mt-1 border-white/20 data-[state=checked]:border-red-300 data-[state=checked]:bg-red-300"
+                          />
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-sm font-semibold text-white">#{index + 1}</div>
+                              <div>
+                                <button
+                                  type="button"
+                                  onClick={() => openCandidateProfile(candidate.id)}
+                                  className="inline-flex items-center gap-1 font-medium text-white transition hover:text-red-200"
+                                >
+                                  {candidate.name}
+                                  <ExternalLink className="h-3.5 w-3.5" />
+                                </button>
+                                <p className="text-sm text-slate-400">
+                                  {candidate.currentRole} - {candidate.experience}
+                                </p>
+                              </div>
+                            </div>
+                            <p className="mt-3 text-sm leading-7 text-slate-300">{candidate.jobScore.routeReason}</p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {candidate.jobScore.matchedSkills.map((skill) => (
+                                <Badge key={skill} className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                                  {skill}
+                                </Badge>
+                              ))}
+                              {candidate.jobScore.missingSkills.map((skill) => (
+                                <Badge key={skill} className="rounded-full border-rose-400/20 bg-rose-400/10 text-rose-100">
+                                  Missing: {skill}
+                                </Badge>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                        <p className="mt-3 text-sm leading-7 text-slate-300">{candidate.jobScore.routeReason}</p>
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {candidate.jobScore.matchedSkills.map((skill) => (
-                            <Badge key={skill} className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
-                              {skill}
-                            </Badge>
-                          ))}
-                          {candidate.jobScore.missingSkills.map((skill) => (
-                            <Badge key={skill} className="rounded-full border-rose-400/20 bg-rose-400/10 text-rose-100">
-                              Missing: {skill}
-                            </Badge>
-                          ))}
+
+                        <div className="flex flex-col gap-3 xl:min-w-[220px] xl:items-end">
+                          <div className="text-right">
+                            <p className="font-heading text-4xl font-semibold tracking-tight text-white">{candidate.jobScore.score}</p>
+                            <p className="text-xs uppercase tracking-[0.24em] text-red-200">out of 10</p>
+                            <p className="mt-2 text-sm text-slate-400">{candidate.sentiment} tone</p>
+                          </div>
+                          <div className="flex flex-wrap gap-2 xl:justify-end">
+                            <Button
+                              variant="outline"
+                              className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10"
+                              onClick={() => openCandidateProfile(candidate.id)}
+                            >
+                              <ExternalLink className="mr-2 h-4 w-4" />
+                              Profile
+                            </Button>
+                            <Button
+                              variant="outline"
+                              className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10"
+                              onClick={() => handleDownloadResume(candidate)}
+                            >
+                              <Download className="mr-2 h-4 w-4" />
+                              Resume
+                            </Button>
+                            <Button
+                              className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300"
+                              onClick={() => {
+                                const query = jobId ? `?jobId=${jobId}&candidateId=${candidate.id}` : `?candidateId=${candidate.id}`
+                                router.push(`/dashboard/recruiter/contact${query}`)
+                              }}
+                            >
+                              <Mail className="mr-2 h-4 w-4" />
+                              Contact
+                            </Button>
+                          </div>
+                          {outreachByCandidate.has(candidate.id) ? (
+                            <p className="text-xs text-red-200">
+                              Contacted on {new Date(outreachByCandidate.get(candidate.id) ?? "").toLocaleString()}
+                            </p>
+                          ) : null}
                         </div>
                       </div>
                     </div>
-
-                    <div className="flex flex-col gap-3 xl:min-w-[220px] xl:items-end">
-                      <div className="text-right">
-                        <p className="font-heading text-4xl font-semibold tracking-tight text-white">{candidate.jobScore.score}</p>
-                        <p className="text-xs uppercase tracking-[0.24em] text-red-200">out of 10</p>
-                        <p className="mt-2 text-sm text-slate-400">{candidate.sentiment} tone</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10"
-                          onClick={() => handleDownloadResume(candidate)}
-                        >
-                          <Download className="mr-2 h-4 w-4" />
-                          Resume
-                        </Button>
-                        <Button
-                          className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300"
-                          onClick={() => router.push(`/dashboard/recruiter/contact?jobId=${jobId}&candidateId=${candidate.id}`)}
-                        >
-                          <Mail className="mr-2 h-4 w-4" />
-                          Contact
-                        </Button>
-                      </div>
-                      {outreachByCandidate.has(candidate.id) ? (
-                        <p className="text-xs text-red-200">
-                          Contacted on {new Date(outreachByCandidate.get(candidate.id) ?? "").toLocaleString()}
-                        </p>
-                      ) : null}
+                  ))}
+                  {rankedCandidates.length === 0 ? (
+                    <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-6 text-sm text-slate-400">
+                      No candidates matched your search. Try another skill keyword or change vacancy.
                     </div>
-                  </div>
+                  ) : null}
                 </div>
-              ))}
+              </ScrollArea>
 
               <div className="rounded-[1.6rem] border border-red-400/15 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
                 <div className="flex items-start gap-3">
