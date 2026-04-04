@@ -59,12 +59,12 @@ export function TestimonialsSection() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <span className="inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-sm font-medium text-amber-400">
+          <span className="inline-block rounded-full border border-lime-500/30 bg-lime-500/10 px-4 py-1.5 text-sm font-medium text-lime-300">
             Testimonials
           </span>
           <h2 className="mt-6 text-balance text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
             Loved by{" "}
-            <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-lime-300 to-lime-400 bg-clip-text text-transparent">
               thousands
             </span>
           </h2>
@@ -86,7 +86,7 @@ export function TestimonialsSection() {
               {/* Rating */}
               <div className="flex gap-1">
                 {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  <Star key={i} className="h-4 w-4 fill-lime-300 text-lime-300" />
                 ))}
               </div>
               
@@ -95,7 +95,7 @@ export function TestimonialsSection() {
               
               {/* Author */}
               <div className="mt-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-red-500 text-sm font-bold text-white">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-violet-600 text-sm font-bold text-white">
                   {testimonial.avatar}
                 </div>
                 <div>
