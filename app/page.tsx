@@ -67,18 +67,18 @@ const recruiterFlow = [
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#150707] text-white">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(248,113,113,0.26),transparent_30%),radial-gradient(circle_at_80%_20%,rgba(251,146,60,0.18),transparent_25%),linear-gradient(180deg,rgba(21,7,7,0.2),rgba(21,7,7,0.95))]" />
+    <div className="relative min-h-screen overflow-hidden bg-[#121212] text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(139,92,246,0.26),transparent_30%),radial-gradient(circle_at_80%_20%,rgba(191,226,100,0.18),transparent_25%),linear-gradient(180deg,rgba(18,18,18,0.2),rgba(18,18,18,0.95))]" />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:88px_88px] opacity-[0.12]" />
 
       <header className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 lg:px-10">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-red-400 via-rose-500 to-orange-400 shadow-[0_18px_48px_rgba(248,113,113,0.35)]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 via-violet-600 to-lime-400 shadow-[0_18px_48px_rgba(139,92,246,0.35)]">
             <Briefcase className="h-5 w-5 text-white" />
           </div>
           <div>
             <p className="font-heading text-lg font-semibold tracking-tight">JobSeek</p>
-            <p className="text-xs uppercase tracking-[0.25em] text-red-200/75">Smart recruitment system</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-violet-200/75">Smart recruitment system</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -88,7 +88,7 @@ export default function LandingPage() {
             </Button>
           </Link>
           <Link href="/auth/register">
-            <Button className="rounded-full bg-white text-red-900 hover:bg-red-50">Create account</Button>
+            <Button className="rounded-full bg-white text-violet-950 hover:bg-violet-100">Create account</Button>
           </Link>
         </div>
       </header>
@@ -96,7 +96,7 @@ export default function LandingPage() {
       <main className="relative z-10">
         <section className="mx-auto grid max-w-7xl gap-10 px-6 pb-16 pt-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:pb-24">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-400/20 bg-red-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-red-200">
+            <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-violet-200">
               <ShieldCheck className="h-3.5 w-3.5" />
               Secure access only
             </div>
@@ -106,10 +106,10 @@ export default function LandingPage() {
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200">
               This front page is now focused on authentication. Use your credentials to access the recruiter dashboard or the job seeker portal with routed resumes, ranked candidates, and formal outreach tools.
             </p>
-            <p className="mt-4 text-sm text-red-200/80 font-fun">Serious hiring. Slightly playful UI.</p>
+            <p className="mt-4 text-sm text-violet-200/80 font-fun">Serious hiring. Slightly playful UI.</p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link href="/auth/login">
-                <Button size="lg" className="rounded-full bg-red-400 px-7 text-red-950 hover:bg-red-300">
+                <Button size="lg" className="rounded-full bg-violet-500 px-7 text-white hover:bg-violet-400">
                   Sign in now
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -123,7 +123,7 @@ export default function LandingPage() {
             <div className="mt-10 grid gap-3 sm:grid-cols-2">
               {highlights.map((item) => (
                 <div key={item} className="flex items-start gap-3 rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200">
-                  <BadgeCheck className="mt-0.5 h-4 w-4 text-red-200" />
+                  <BadgeCheck className="mt-0.5 h-4 w-4 text-violet-200" />
                   <span>{item}</span>
                 </div>
               ))}
@@ -134,15 +134,15 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08 }}
-            className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_25px_120px_rgba(11,2,2,0.45)] backdrop-blur-2xl"
+            className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_25px_120px_rgba(8,8,8,0.45)] backdrop-blur-2xl"
           >
-            <div className="rounded-[1.75rem] border border-white/10 bg-[#1b0b0b] p-6">
+            <div className="rounded-[1.75rem] border border-white/10 bg-[#171717] p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.26em] text-red-200/70">Access control</p>
+                  <p className="text-xs uppercase tracking-[0.26em] text-violet-200/70">Access control</p>
                   <h2 className="mt-2 font-heading text-2xl font-semibold">Sign in required</h2>
                 </div>
-                <div className="rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1 text-xs font-medium text-red-100">OTP verified</div>
+                <div className="rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-100">OTP verified</div>
               </div>
 
               <div className="mt-6 space-y-4">
@@ -158,7 +158,7 @@ export default function LandingPage() {
                 ))}
               </div>
 
-              <div className="mt-6 rounded-3xl border border-red-400/15 bg-red-400/10 p-4 text-sm text-red-100">
+              <div className="mt-6 rounded-3xl border border-violet-500/15 bg-violet-500/10 p-4 text-sm text-violet-100">
                 <div className="flex items-start gap-3">
                   <KeyRound className="mt-0.5 h-4 w-4" />
                   <p>Use the demo credentials on the sign-in page if you want to explore both roles instantly.</p>
@@ -172,7 +172,7 @@ export default function LandingPage() {
               >
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-white">Quick sign-in preview</p>
-                  <span className="text-xs text-red-200/70">Mock UI</span>
+                  <span className="text-xs text-violet-200/70">Mock UI</span>
                 </div>
                 <div className="mt-4 space-y-3">
                   <input
@@ -189,13 +189,13 @@ export default function LandingPage() {
                   />
                   <button
                     type="button"
-                    className="h-11 w-full rounded-2xl bg-red-400 text-sm font-semibold text-red-950 shadow-[0_14px_36px_rgba(248,113,113,0.35)]"
+                    className="h-11 w-full rounded-2xl bg-violet-500 text-sm font-semibold text-white shadow-[0_14px_36px_rgba(139,92,246,0.35)]"
                   >
                     Sign in to workspace
                   </button>
                 </div>
-                <p className="mt-4 text-xs text-red-200/80 font-fun">
-                  We made the button bright red so you never miss the way in.
+                <p className="mt-4 text-xs text-violet-200/80 font-fun">
+                  We made the button bright violet so you never miss the way in.
                 </p>
               </motion.div>
             </div>
@@ -204,7 +204,7 @@ export default function LandingPage() {
 
         <section className="mx-auto max-w-7xl space-y-12 px-6 pb-20 lg:px-10">
           <div className="flex flex-col gap-3">
-            <p className="text-xs uppercase tracking-[0.3em] text-red-200/70">How JobSeek works</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-violet-200/70">How JobSeek works</p>
             <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">Every flow is connected end to end.</h2>
             <p className="max-w-3xl text-sm leading-7 text-slate-300">
               JobSeek is designed to keep the seeker journey and recruiter workflow in sync. Resume parsing, routing, ranking, and outreach all happen
@@ -215,7 +215,7 @@ export default function LandingPage() {
           <div className="grid gap-4 lg:grid-cols-4">
             {systemFlow.map((step) => (
               <div key={step.title} className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-200">
                   <step.icon className="h-5 w-5" />
                 </div>
                 <h3 className="mt-4 font-heading text-lg font-semibold">{step.title}</h3>
@@ -225,13 +225,13 @@ export default function LandingPage() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-[2rem] border border-white/10 bg-[#1b0b0b] p-6">
+            <div className="rounded-[2rem] border border-white/10 bg-[#171717] p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-200">
                   <Users className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-red-200/70">Job seeker flow</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-violet-200/70">Job seeker flow</p>
                   <h3 className="font-heading text-2xl font-semibold">From upload to offer-ready.</h3>
                 </div>
               </div>
@@ -245,13 +245,13 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-[#1b0b0b] p-6">
+            <div className="rounded-[2rem] border border-white/10 bg-[#171717] p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-200">
                   <ClipboardList className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-red-200/70">Recruiter flow</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-violet-200/70">Recruiter flow</p>
                   <h3 className="font-heading text-2xl font-semibold">From vacancy to shortlist.</h3>
                 </div>
               </div>
@@ -269,11 +269,11 @@ export default function LandingPage() {
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-200">
                   <Sparkles className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-red-200/70">Ranking clarity</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-violet-200/70">Ranking clarity</p>
                   <h3 className="font-heading text-2xl font-semibold">Scores that explain themselves.</h3>
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function LandingPage() {
                   { label: "Format quality", value: "10%", note: "ATS readiness and structure" },
                 ].map((item) => (
                   <div key={item.label} className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-xs uppercase tracking-[0.24em] text-red-200/70">{item.label}</p>
+                    <p className="text-xs uppercase tracking-[0.24em] text-violet-200/70">{item.label}</p>
                     <p className="mt-2 font-heading text-2xl font-semibold text-white">{item.value}</p>
                     <p className="mt-2 text-xs text-slate-400">{item.note}</p>
                   </div>
@@ -297,13 +297,13 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-[#1b0b0b] p-6">
+            <div className="rounded-[2rem] border border-white/10 bg-[#171717] p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-200">
                   <Mail className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-red-200/70">Human-ready outputs</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-violet-200/70">Human-ready outputs</p>
                   <h3 className="font-heading text-2xl font-semibold">Less noise, more signal.</h3>
                 </div>
               </div>
@@ -314,12 +314,12 @@ export default function LandingPage() {
                   "Outreach templates keep communication professional and fast.",
                 ].map((line) => (
                   <div key={line} className="flex items-start gap-3 rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
-                    <BadgeCheck className="mt-0.5 h-4 w-4 text-red-200" />
+                    <BadgeCheck className="mt-0.5 h-4 w-4 text-violet-200" />
                     <span>{line}</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-6 rounded-3xl border border-red-400/15 bg-red-400/10 p-4 text-sm text-red-100">
+              <div className="mt-6 rounded-3xl border border-violet-500/15 bg-violet-500/10 p-4 text-sm text-violet-100">
                 <div className="flex items-start gap-3">
                   <KeyRound className="mt-0.5 h-4 w-4" />
                   <p>Security and compliance stay active across every stage of the flow.</p>
