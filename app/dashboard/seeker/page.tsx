@@ -64,14 +64,14 @@ export default function SeekerDashboard() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="seeker" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Seeker overview" onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 space-y-6 p-4 lg:p-6">
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-              <Badge className="rounded-full border-red-400/20 bg-red-400/10 px-3 py-1 text-red-100">
+              <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 px-3 py-1 text-violet-100">
                 {resumeMeta ? "Resume status: parsed" : "Resume status: demo"}
               </Badge>
               <h2 className="mt-5 font-heading text-4xl font-semibold tracking-tight">
@@ -83,11 +83,11 @@ export default function SeekerDashboard() {
                   : "Once a resume is uploaded, parsing, skills extraction, and job matching will appear here."}
               </p>
               {resumeMeta ? (
-                <p className="mt-3 text-xs uppercase tracking-[0.22em] text-red-200/70">Latest resume: {resumeMeta.fileName}</p>
+                <p className="mt-3 text-xs uppercase tracking-[0.22em] text-violet-200/70">Latest resume: {resumeMeta.fileName}</p>
               ) : null}
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link href="/dashboard/seeker/upload">
-                  <Button className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300">Refresh resume</Button>
+                  <Button className="rounded-full bg-violet-500 text-white hover:bg-violet-400">Refresh resume</Button>
                 </Link>
                 <Link href="/dashboard/seeker/jobs">
                   <Button variant="outline" className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
@@ -106,7 +106,7 @@ export default function SeekerDashboard() {
               ].map((item) => (
                 <Card key={item.label} className="rounded-[1.75rem] border-white/10 bg-white/5">
                   <CardContent className="p-5">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-400/10 text-violet-200">
                       <item.icon className="h-5 w-5" />
                     </div>
                     <p className="mt-5 text-3xl font-semibold tracking-tight text-white">{item.value}</p>
@@ -118,7 +118,7 @@ export default function SeekerDashboard() {
           </motion.section>
 
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardHeader>
                 <CardTitle className="font-heading text-2xl">Your flow, live</CardTitle>
                 <p className="text-sm text-slate-400">Every stage your resume passes through before recruiters see it.</p>
@@ -126,7 +126,7 @@ export default function SeekerDashboard() {
               <CardContent className="space-y-3">
                 {seekerFlowSteps.map((step) => (
                   <div key={step.title} className="flex items-start gap-3 rounded-3xl border border-white/10 bg-white/5 p-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-400/10 text-violet-200">
                       <step.icon className="h-4 w-4" />
                     </div>
                     <div>
@@ -138,7 +138,7 @@ export default function SeekerDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardHeader>
                 <CardTitle className="font-heading text-2xl">Ranking readiness</CardTitle>
                 <p className="text-sm text-slate-400">A quick view of how prepared your profile is for ranking.</p>
@@ -147,29 +147,29 @@ export default function SeekerDashboard() {
                 <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
                   <div className="mb-3 flex items-center justify-between text-sm">
                     <span className="text-slate-300">Readiness score</span>
-                    <span className="text-red-200">{readinessScore}%</span>
+                    <span className="text-violet-200">{readinessScore}%</span>
                   </div>
                   <Progress value={readinessScore} className="h-2 bg-white/10" />
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-                    <p className="text-xs uppercase tracking-[0.22em] text-red-200/80">Category</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-violet-200/80">Category</p>
                     <p className="mt-2 font-heading text-2xl font-semibold text-white">{resumeExtraction?.routedCategory ?? "Not parsed"}</p>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-                    <p className="text-xs uppercase tracking-[0.22em] text-red-200/80">Skills detected</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-violet-200/80">Skills detected</p>
                     <p className="mt-2 font-heading text-2xl font-semibold text-white">{skillsDetected}</p>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-                    <p className="text-xs uppercase tracking-[0.22em] text-red-200/80">Confidence</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-violet-200/80">Confidence</p>
                     <p className="mt-2 font-heading text-2xl font-semibold text-white">{resumeExtraction?.confidence ?? 0}%</p>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-                    <p className="text-xs uppercase tracking-[0.22em] text-red-200/80">Tone</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-violet-200/80">Tone</p>
                     <p className="mt-2 font-heading text-2xl font-semibold text-white">{resumeExtraction?.sentiment.label ?? "Pending"}</p>
                   </div>
                 </div>
-                <div className="rounded-[1.6rem] border border-red-400/15 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
+                <div className="rounded-[1.6rem] border border-violet-400/15 bg-violet-400/10 p-4 text-sm leading-6 text-violet-100">
                   <div className="flex items-start gap-3">
                     <Sparkles className="mt-0.5 h-4 w-4" />
                     <p>Boost readiness by adding one flagship project with measurable impact.</p>
@@ -181,13 +181,13 @@ export default function SeekerDashboard() {
 
           <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="font-heading text-2xl">Resume extraction</CardTitle>
                     <p className="mt-1 text-sm text-slate-400">Agent router and sentiment analysis highlights from your latest upload.</p>
                   </div>
-                  <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                  <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">
                     {resumeExtraction?.confidence ?? 0}% confidence
                   </Badge>
                 </CardHeader>
@@ -212,7 +212,7 @@ export default function SeekerDashboard() {
                   </div>
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
                     <div className="flex items-start gap-3">
-                      <ScanSearch className="mt-0.5 h-4 w-4 text-red-300" />
+                      <ScanSearch className="mt-0.5 h-4 w-4 text-violet-300" />
                       <p>{resumeExtraction?.sentiment.insights?.[0] ?? "Upload a resume to see insights here."}</p>
                     </div>
                   </div>
@@ -221,7 +221,7 @@ export default function SeekerDashboard() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="font-heading text-2xl">Best current job match</CardTitle>
@@ -245,7 +245,7 @@ export default function SeekerDashboard() {
                           </div>
                           <div className="text-right">
                             <p className="font-heading text-3xl font-semibold tracking-tight text-white">{job.match}%</p>
-                            <p className="text-xs uppercase tracking-[0.24em] text-red-200">match</p>
+                            <p className="text-xs uppercase tracking-[0.24em] text-violet-200">match</p>
                           </div>
                         </div>
                       </div>
@@ -256,7 +256,7 @@ export default function SeekerDashboard() {
                     </div>
                   )}
                   <Link href="/dashboard/seeker/jobs">
-                    <Button className="w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
+                    <Button className="w-full rounded-full bg-violet-500 text-white hover:bg-violet-400">
                       Continue to applications
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -270,3 +270,4 @@ export default function SeekerDashboard() {
     </div>
   )
 }
+
