@@ -12,10 +12,10 @@ import { useAuth } from "@/lib/auth-context"
 import { seekerApplications } from "@/lib/mock-data"
 
 const statusMap = {
-  pending: { icon: Clock, label: "Pending", className: "border-red-400/20 bg-red-400/10 text-red-100" },
-  reviewing: { icon: ScanSearch, label: "Reviewing", className: "border-rose-400/20 bg-rose-400/10 text-rose-100" },
-  accepted: { icon: CheckCircle2, label: "Accepted", className: "border-red-300/30 bg-red-300/10 text-red-100" },
-  rejected: { icon: XCircle, label: "Rejected", className: "border-rose-400/20 bg-rose-400/10 text-rose-100" },
+  pending: { icon: Clock, label: "Pending", className: "border-violet-400/20 bg-violet-400/10 text-violet-100" },
+  reviewing: { icon: ScanSearch, label: "Reviewing", className: "border-lime-300/35 bg-lime-300/15 text-lime-100" },
+  accepted: { icon: CheckCircle2, label: "Accepted", className: "border-violet-300/30 bg-violet-300/10 text-violet-100" },
+  rejected: { icon: XCircle, label: "Rejected", className: "border-lime-300/35 bg-lime-300/15 text-lime-100" },
 }
 
 export default function ApplicationsPage() {
@@ -40,7 +40,7 @@ export default function ApplicationsPage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="seeker" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Applications" onMenuClick={() => setSidebarOpen(true)} />
@@ -59,19 +59,19 @@ export default function ApplicationsPage() {
               { label: "Accepted", value: statusCounts.accepted ?? 0, icon: CheckCircle2 },
               { label: "Avg match score", value: averageScore, icon: Mail },
             ].map((item) => (
-              <Card key={item.label} className="rounded-[1.6rem] border-white/10 bg-[#1b0b0b]">
+              <Card key={item.label} className="rounded-[1.6rem] border-white/10 bg-[#171717]">
                 <CardContent className="p-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-400/10 text-violet-200">
                     <item.icon className="h-4 w-4" />
                   </div>
                   <p className="mt-4 text-2xl font-semibold text-white">{item.value}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.22em] text-red-200/80">{item.label}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.22em] text-violet-200/80">{item.label}</p>
                 </CardContent>
               </Card>
             ))}
           </section>
 
-          <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+          <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
             <CardHeader>
               <CardTitle className="font-heading text-2xl">Application timeline</CardTitle>
             </CardHeader>
@@ -85,14 +85,14 @@ export default function ApplicationsPage() {
                         <p className="font-medium text-white">{application.position}</p>
                         <p className="mt-1 text-sm text-slate-400">{application.company} - {application.date}</p>
                         <p className="mt-3 flex items-center gap-2 text-sm text-slate-300">
-                          <Mail className="h-4 w-4 text-red-300" />
+                          <Mail className="h-4 w-4 text-violet-300" />
                           {application.email}
                         </p>
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <p className="font-heading text-3xl font-semibold tracking-tight text-white">{application.score}</p>
-                          <p className="text-xs uppercase tracking-[0.22em] text-red-200">match score</p>
+                          <p className="text-xs uppercase tracking-[0.22em] text-violet-200">match score</p>
                         </div>
                         <Badge className={`rounded-full border px-3 py-1 ${status.className}`}>
                           <status.icon className="mr-1 h-4 w-4" />
@@ -110,3 +110,4 @@ export default function ApplicationsPage() {
     </div>
   )
 }
+
