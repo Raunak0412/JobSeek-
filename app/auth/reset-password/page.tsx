@@ -55,7 +55,7 @@ function ResetPasswordContent() {
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
           <div className="flex items-center gap-3">
-            <ShieldCheck className="h-4 w-4 text-red-300" />
+            <ShieldCheck className="h-4 w-4 text-violet-400" />
             <span>{authMode === "demo" ? `Updating password for ${email}` : "Set a new password for your Supabase account session."}</span>
           </div>
         </div>
@@ -91,12 +91,12 @@ function ResetPasswordContent() {
         </div>
 
         {error ? (
-          <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+          <div className="rounded-2xl border border-violet-400/20 bg-violet-400/10 px-4 py-3 text-sm text-violet-100">
             {error}
           </div>
         ) : null}
 
-        <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300">
+        <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-violet-500 text-white hover:bg-violet-400">
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Save new password
         </Button>
