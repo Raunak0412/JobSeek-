@@ -68,23 +68,23 @@ export default function ForgotPasswordPage() {
         </div>
 
         {message ? (
-          <div className="rounded-2xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-100">{message}</div>
+          <div className="rounded-2xl border border-violet-500/20 bg-violet-500/10 px-4 py-3 text-sm text-violet-100">{message}</div>
         ) : null}
 
         {error ? (
-          <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+          <div className="rounded-2xl border border-violet-400/20 bg-violet-400/10 px-4 py-3 text-sm text-violet-100">
             {error}
           </div>
         ) : null}
 
-        <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300">
+        <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-violet-500 text-white hover:bg-violet-400">
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MailOpen className="mr-2 h-4 w-4" />}
           {authMode === "demo" ? "Send reset OTP" : "Send reset link"}
         </Button>
 
         <p className="text-sm text-slate-400">
           Remember your password?{" "}
-          <Link href="/auth/login" className="text-red-300 hover:text-red-200">
+          <Link href="/auth/login" className="text-violet-400 hover:text-violet-200">
             Sign in
           </Link>
         </p>
