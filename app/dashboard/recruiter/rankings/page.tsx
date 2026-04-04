@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
 import { Crown, Medal, Trophy } from "lucide-react"
@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { useAuth } from "@/lib/auth-context"
 import { getPreferredRecruiterJobId, getRankedCandidatesForJob, setActiveRecruiterJobId, useJobs } from "@/lib/demo-store"
 
-export default function RankingsPage() {
+function RankingsPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, isLoading } = useAuth()
@@ -135,6 +135,14 @@ export default function RankingsPage() {
         </main>
       </div>
     </div>
+  )
+}
+
+export default function RankingsPage() {
+  return (
+    <Suspense fallback={null}>
+      <RankingsPageContent />
+    </Suspense>
   )
 }
 

@@ -1,16 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2 } from "lucide-react"
-import { getDashboardPath, useAuth } from "@/lib/auth-context"
+import { clearPendingLoginRole, getDashboardPath, getPendingLoginRole, useAuth } from "@/lib/auth-context"
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser"
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, isLoading } = useAuth()
   const [isExchanging, setIsExchanging] = useState(true)
+  const [isResolvingRole, setIsResolvingRole] = useState(false)
   const [oauthError, setOauthError] = useState("")
 
   useEffect(() => {
@@ -50,18 +51,44 @@ export default function AuthCallbackPage() {
   }, [searchParams])
 
   useEffect(() => {
-    if (isLoading || isExchanging) return
+    if (isLoading || isExchanging || isResolvingRole) return
+
+    const expectedRole = getPendingLoginRole()
+
     if (user) {
+      if (expectedRole && user.type !== expectedRole) {
+        setIsResolvingRole(true)
+        clearPendingLoginRole()
+
+        const nextParams = new URLSearchParams({
+          oauth: "failed",
+          message: `This account is registered as ${user.type}. Please use ${user.type} sign in.`,
+        })
+
+        const supabase = getSupabaseBrowserClient()
+        if (!supabase) {
+          router.replace(`/auth/login?${nextParams.toString()}`)
+          return
+        }
+
+        void supabase.auth.signOut().finally(() => {
+          router.replace(`/auth/login?${nextParams.toString()}`)
+        })
+        return
+      }
+
+      clearPendingLoginRole()
       router.replace(getDashboardPath(user.type))
       return
     }
 
+    clearPendingLoginRole()
     const nextParams = new URLSearchParams({ oauth: "failed" })
     if (oauthError) {
       nextParams.set("message", oauthError)
     }
     router.replace(`/auth/login?${nextParams.toString()}`)
-  }, [isExchanging, isLoading, oauthError, router, user])
+  }, [isExchanging, isLoading, isResolvingRole, oauthError, router, user])
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#121212] text-white">
@@ -70,6 +97,14 @@ export default function AuthCallbackPage() {
         Completing sign in...
       </div>
     </div>
+  )
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={null}>
+      <AuthCallbackContent />
+    </Suspense>
   )
 }
 

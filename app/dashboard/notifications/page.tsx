@@ -62,6 +62,11 @@ export default function NotificationsPage() {
     return [...map.entries()]
   }, [filtered])
 
+  const openNotification = (notificationId: string, deepLink?: string) => {
+    markNotificationRead(notificationId)
+    if (deepLink) router.push(deepLink)
+  }
+
   if (isLoading) return null
 
   return (
@@ -126,14 +131,40 @@ export default function NotificationsPage() {
                             </div>
                             <div className="space-y-3 p-3">
                               {items.map((item) => (
-                                <div key={item.id} className="rounded-xl border border-white/10 bg-black/15 p-3">
+                                <div
+                                  key={item.id}
+                                  role={item.deepLink ? "button" : undefined}
+                                  tabIndex={item.deepLink ? 0 : undefined}
+                                  onClick={item.deepLink ? () => openNotification(item.id, item.deepLink) : undefined}
+                                  onKeyDown={
+                                    item.deepLink
+                                      ? (event) => {
+                                          if (event.key === "Enter" || event.key === " ") {
+                                            event.preventDefault()
+                                            openNotification(item.id, item.deepLink)
+                                          }
+                                        }
+                                      : undefined
+                                  }
+                                  className={`group rounded-xl border border-white/10 bg-black/15 p-3 transition ${
+                                    item.deepLink ? "cursor-pointer hover:border-violet-300/25 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-violet-300/40" : ""
+                                  }`}
+                                >
                                   <div className="flex items-start justify-between gap-3">
                                     <div className="flex min-w-0 gap-3">
                                       <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-violet-400/10 text-violet-200">
                                         <Bell className="h-4 w-4" />
                                       </div>
                                       <div className="min-w-0">
-                                        <p className="font-medium text-white">{item.title}</p>
+                                        <div className="flex items-center gap-2">
+                                          <p className="font-medium text-white">{item.title}</p>
+                                          {item.deepLink ? (
+                                            <span className="inline-flex items-center gap-1 rounded-full border border-violet-300/20 bg-violet-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-violet-100 opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100">
+                                              Open
+                                              <ExternalLink className="h-3 w-3" />
+                                            </span>
+                                          ) : null}
+                                        </div>
                                         <p className="mt-1 text-sm text-slate-300">{item.message}</p>
                                         <p className="mt-2 inline-flex items-center gap-1 text-xs text-slate-500">
                                           <Clock3 className="h-3 w-3" />
@@ -143,7 +174,10 @@ export default function NotificationsPage() {
                                     </div>
                                     <button
                                       type="button"
-                                      onClick={() => dismissNotification(item.id)}
+                                      onClick={(event) => {
+                                        event.stopPropagation()
+                                        dismissNotification(item.id)
+                                      }}
                                       className="rounded-lg p-1 text-slate-400 transition hover:bg-white/10 hover:text-white"
                                     >
                                       <X className="h-3.5 w-3.5" />
@@ -167,24 +201,13 @@ export default function NotificationsPage() {
                                         variant="outline"
                                         size="sm"
                                         className="h-8 rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10"
-                                        onClick={() => markNotificationRead(item.id)}
+                                        onClick={(event) => {
+                                          event.stopPropagation()
+                                          markNotificationRead(item.id)
+                                        }}
                                       >
                                         Mark read
                                       </Button>
-                                      {item.deepLink ? (
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          className="h-8 rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10"
-                                          onClick={() => {
-                                            markNotificationRead(item.id)
-                                            router.push(item.deepLink!)
-                                          }}
-                                        >
-                                          Open
-                                          <ExternalLink className="ml-1 h-3.5 w-3.5" />
-                                        </Button>
-                                      ) : null}
                                     </div>
                                   </div>
                                 </div>

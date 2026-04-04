@@ -12,7 +12,7 @@ export default function TermsOfServicePage() {
     <main className="mx-auto min-h-screen w-full max-w-4xl px-6 pb-20 pt-10 text-slate-100 lg:px-10">
       <Link
         href="/"
-        className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 transition-colors hover:border-violet-300/40 hover:text-violet-100"
+        className="glass-pill inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm text-slate-200 transition-colors hover:border-violet-300/40 hover:text-violet-100"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to home
@@ -24,7 +24,7 @@ export default function TermsOfServicePage() {
         <p className="mt-3 text-sm text-slate-400">Last updated: April 4, 2026</p>
       </header>
 
-      <section className="mt-8 space-y-6 rounded-3xl border border-white/10 bg-[#171717]/85 p-6 leading-7 text-slate-300">
+      <section className="glass-panel glass-outline mt-8 space-y-6 rounded-3xl p-6 leading-7 text-slate-300">
         <div>
           <h2 className="font-heading text-2xl font-semibold text-white">Account responsibilities</h2>
           <p className="mt-2">
@@ -66,3 +66,4 @@ export default function TermsOfServicePage() {
     </main>
   )
 }
+

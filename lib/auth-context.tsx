@@ -27,13 +27,18 @@ interface OtpRecord {
   expiresAt: number
 }
 
+type GoogleSignInOptions = {
+  preferredRole?: UserRole
+  expectedRole?: UserRole
+}
+
 interface AuthContextType {
   authMode: AuthMode
   googleAuthEnabled: boolean | null
   user: User | null
   isLoading: boolean
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>
-  signInWithGoogle: (preferredRole?: UserRole) => Promise<{ success: boolean; error?: string }>
+  login: (email: string, password: string, expectedRole?: UserRole) => Promise<{ success: boolean; error?: string; user?: User }>
+  signInWithGoogle: (options?: GoogleSignInOptions) => Promise<{ success: boolean; error?: string }>
   register: (data: {
     email: string
     password: string
@@ -59,6 +64,7 @@ const STORAGE_KEYS = {
   otps: "JobSeek_otps",
   resetEmail: "JobSeek_reset_email",
   pendingGoogleRole: "JobSeek_pending_google_role",
+  pendingLoginRole: "JobSeek_pending_login_role",
 } as const
 
 const DEMO_USERS: StoredUser[] = [
@@ -106,10 +112,10 @@ function safeWrite<T>(key: string, value: T) {
   window.localStorage.setItem(key, JSON.stringify(value))
 }
 
-function normalizeRole(value: unknown, fallback: UserRole = "seeker") {
+function parseRole(value: unknown): UserRole | null {
   if (value === "recruiter") return "recruiter"
   if (value === "seeker") return "seeker"
-  return fallback
+  return null
 }
 
 function toPublicUser(user: StoredUser): User {
@@ -158,9 +164,14 @@ function issueOtp(email: string, purpose: "verify" | "reset") {
   return otp
 }
 
+function clearStoredSession() {
+  if (typeof window === "undefined") return
+  window.localStorage.removeItem(STORAGE_KEYS.session)
+}
+
 function getPendingGoogleRole() {
   if (typeof window === "undefined") return null
-  return normalizeRole(window.localStorage.getItem(STORAGE_KEYS.pendingGoogleRole), "seeker")
+  return parseRole(window.localStorage.getItem(STORAGE_KEYS.pendingGoogleRole))
 }
 
 function setPendingGoogleRole(role: UserRole) {
@@ -171,6 +182,29 @@ function setPendingGoogleRole(role: UserRole) {
 function clearPendingGoogleRole() {
   if (typeof window === "undefined") return
   window.localStorage.removeItem(STORAGE_KEYS.pendingGoogleRole)
+}
+
+export function getPendingLoginRole() {
+  if (typeof window === "undefined") return null
+  return parseRole(window.localStorage.getItem(STORAGE_KEYS.pendingLoginRole))
+}
+
+function setPendingLoginRole(role: UserRole) {
+  if (typeof window === "undefined") return
+  window.localStorage.setItem(STORAGE_KEYS.pendingLoginRole, role)
+}
+
+export function clearPendingLoginRole() {
+  if (typeof window === "undefined") return
+  window.localStorage.removeItem(STORAGE_KEYS.pendingLoginRole)
+}
+
+function formatExistingRoleError(existingRole: UserRole, requestedRole: UserRole) {
+  if (existingRole === requestedRole) {
+    return `This email is already registered as ${existingRole}. Please sign in instead.`
+  }
+
+  return `This email is already registered for ${existingRole}. You can't add a ${requestedRole} account with the same email.`
 }
 
 function extractNameFromAuthUser(authUser: SupabaseAuthUser) {
@@ -218,9 +252,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const syncSupabaseUser = async (authUser: SupabaseAuthUser | null) => {
     if (!authUser) {
       setUser(null)
-      if (typeof window !== "undefined") {
-        window.localStorage.removeItem(STORAGE_KEYS.session)
-      }
+      clearStoredSession()
       return null
     }
 
@@ -228,7 +260,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!supabase) return null
 
     const metadata = authUser.user_metadata as Record<string, unknown> | undefined
-    const metadataRole = normalizeRole(metadata?.type ?? metadata?.role, "seeker")
+    const metadataRole = parseRole(metadata?.type ?? metadata?.role)
     const pendingRole = getPendingGoogleRole()
     let profile: ProfileRow | null = null
 
@@ -242,7 +274,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile = profileData as ProfileRow
     }
 
-    const role = normalizeRole(profile?.role ?? pendingRole ?? metadataRole, "seeker")
+    const role = parseRole(profile?.role) ?? metadataRole ?? pendingRole ?? "seeker"
     const companyFromMetadata = typeof metadata?.company === "string" ? metadata.company : null
     const nameFromMetadata =
       typeof metadata?.name === "string"
@@ -264,7 +296,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const shouldUpsert =
       !profile ||
-      Boolean(pendingRole) ||
       profile.email !== nextProfile.email ||
       profile.full_name !== nextProfile.full_name ||
       profile.role !== nextProfile.role ||
@@ -334,7 +365,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [authMode])
 
-  const login = async (email: string, password: string) => {
+  const getRegisteredRoleByEmail = async (email: string) => {
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!normalizedEmail) return null
+
+    if (authMode === "demo") {
+      const existing = getUsers().find((entry) => entry.email.toLowerCase() === normalizedEmail)
+      return existing?.type ?? null
+    }
+
+    const supabase = getSupabaseBrowserClient()
+    if (!supabase) return null
+
+    const { data, error } = await supabase.rpc("get_registered_role_by_email", { input_email: normalizedEmail })
+    if (error) {
+      const message = error.message.toLowerCase()
+      if (message.includes("get_registered_role_by_email") || message.includes("schema cache")) {
+        return null
+      }
+      return null
+    }
+
+    return parseRole(data)
+  }
+
+  const login = async (email: string, password: string, expectedRole?: UserRole) => {
     if (authMode === "demo") {
       await new Promise((resolve) => setTimeout(resolve, 450))
       const existing = getUsers().find((entry) => entry.email.toLowerCase() === email.toLowerCase())
@@ -343,6 +398,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       if (!existing.verified) {
         return { success: false, error: "Please verify your email before signing in." }
+      }
+      if (expectedRole && existing.type !== expectedRole) {
+        return { success: false, error: `This account is registered as ${existing.type}. Please use ${existing.type} sign in.` }
       }
 
       const nextUser = toPublicUser(existing)
@@ -362,10 +420,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const nextUser = await syncSupabaseUser(data.user)
+    if (nextUser && expectedRole && nextUser.type !== expectedRole) {
+      await supabase.auth.signOut()
+      setUser(null)
+      clearStoredSession()
+      return { success: false, error: `This account is registered as ${nextUser.type}. Please use ${nextUser.type} sign in.` }
+    }
+
     return { success: true, user: nextUser ?? undefined }
   }
 
-  const signInWithGoogle = async (preferredRole?: UserRole) => {
+  const signInWithGoogle = async (options?: GoogleSignInOptions) => {
     if (authMode === "demo") {
       return { success: false, error: "Google sign in requires Supabase mode. Add env keys first." }
     }
@@ -385,10 +450,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    if (preferredRole) {
-      setPendingGoogleRole(preferredRole)
+    if (options?.preferredRole) {
+      setPendingGoogleRole(options.preferredRole)
     } else {
-      setPendingGoogleRole("seeker")
+      clearPendingGoogleRole()
+    }
+
+    if (options?.expectedRole) {
+      setPendingLoginRole(options.expectedRole)
+    } else {
+      clearPendingLoginRole()
     }
 
     const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined
@@ -404,6 +475,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (error) {
       clearPendingGoogleRole()
+      clearPendingLoginRole()
       return { success: false, error: formatOAuthSignInError(error.message, "google") }
     }
 
@@ -417,12 +489,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     type: UserRole
     company?: string
   }) => {
+    const existingRole = await getRegisteredRoleByEmail(data.email)
+    if (existingRole) {
+      return { success: false, error: formatExistingRoleError(existingRole, data.type) }
+    }
+
     if (authMode === "demo") {
       await new Promise((resolve) => setTimeout(resolve, 450))
       const users = getUsers()
       const exists = users.some((entry) => entry.email.toLowerCase() === data.email.toLowerCase())
       if (exists) {
-        return { success: false, error: "An account already exists for this email." }
+        const duplicateRole = users.find((entry) => entry.email.toLowerCase() === data.email.toLowerCase())?.type ?? data.type
+        return { success: false, error: formatExistingRoleError(duplicateRole, data.type) }
       }
 
       saveUsers([
@@ -458,6 +536,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     if (error) {
+      if (error.message.toLowerCase().includes("already registered")) {
+        return { success: false, error: "This email is already registered. Please sign in instead." }
+      }
       return { success: false, error: error.message }
     }
 
@@ -627,9 +708,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     if (authMode === "demo") {
       setUser(null)
-      if (typeof window !== "undefined") {
-        window.localStorage.removeItem(STORAGE_KEYS.session)
-      }
+      clearStoredSession()
       router.push("/")
       return
     }
@@ -640,9 +719,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setUser(null)
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(STORAGE_KEYS.session)
-    }
+    clearStoredSession()
     router.push("/")
   }
 

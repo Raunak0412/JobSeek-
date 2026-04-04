@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import { AuthProvider } from "@/lib/auth-context"
-import { SmoothScrollProvider } from "@/components/site/smooth-scroll-provider"
+import { SiteChrome, SmoothScrollProvider } from "@/components/site/smooth-scroll-provider"
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
@@ -18,10 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased bg-[#121212] text-slate-100">
+      <body className="bg-brand-mesh font-sans antialiased text-slate-100">
         <AuthProvider>
           <SmoothScrollProvider />
-          {children}
+          <SiteChrome />
+          <div className="relative z-10">{children}</div>
           <Toaster />
         </AuthProvider>
       </body>

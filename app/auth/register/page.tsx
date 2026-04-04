@@ -8,6 +8,7 @@ import { AuthShell } from "@/components/auth/auth-shell"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { toast } from "@/components/ui/use-toast"
 import { getDashboardPath, useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/utils"
 
@@ -38,7 +39,13 @@ function RegisterContent() {
 
     setIsLoading(false)
     if (!result.success) {
-      setError(result.error ?? "Unable to create account.")
+      const message = result.error ?? "Unable to create account."
+      setError(message)
+      toast({
+        variant: "destructive",
+        title: "Registration blocked",
+        description: message,
+      })
       return
     }
 
@@ -53,11 +60,17 @@ function RegisterContent() {
   const handleGoogleSignIn = async () => {
     setError("")
     setIsGoogleLoading(true)
-    const result = await signInWithGoogle(role)
+    const result = await signInWithGoogle({ preferredRole: role, expectedRole: role })
     setIsGoogleLoading(false)
 
     if (!result.success) {
-      setError(result.error ?? "Unable to continue with Google.")
+      const message = result.error ?? "Unable to continue with Google."
+      setError(message)
+      toast({
+        variant: "destructive",
+        title: "Registration blocked",
+        description: message,
+      })
     }
   }
 
@@ -65,7 +78,7 @@ function RegisterContent() {
     <AuthShell
       title="Create account"
       description="Choose your role and set up your workspace in under a minute."
-      backHref="/auth/login"
+      backHref={`/auth/login?type=${role}`}
       backLabel="Back to sign in"
       eyebrow="New Account Setup"
     >
@@ -195,7 +208,7 @@ function RegisterContent() {
 
         <p className="text-sm text-slate-400">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-violet-400 hover:text-violet-200">
+          <Link href={`/auth/login?type=${role}`} className="text-violet-400 hover:text-violet-200">
             Sign in
           </Link>
         </p>

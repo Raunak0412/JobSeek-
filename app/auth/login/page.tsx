@@ -1,24 +1,32 @@
 "use client"
 
-import { Suspense, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Loader2, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react"
+import { Building2, Loader2, LockKeyhole, ShieldCheck, Sparkles, UserRound } from "lucide-react"
 import { AuthShell } from "@/components/auth/auth-shell"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { DUMMY_CREDENTIALS, getDashboardPath, useAuth } from "@/lib/auth-context"
+import { cn } from "@/lib/utils"
 
 function LoginContent() {
   const { authMode, googleAuthEnabled, login, signInWithGoogle } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const preferredRole = searchParams.get("role") ?? searchParams.get("type")
+  const initialRole = preferredRole === "recruiter" ? "recruiter" : "seeker"
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [role, setRole] = useState<"seeker" | "recruiter">(initialRole)
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+
+  useEffect(() => {
+    setRole(initialRole)
+  }, [initialRole])
 
   const banner = useMemo(() => {
     if (searchParams.get("verified")) return "Email verified. You can sign in now."
@@ -34,7 +42,7 @@ function LoginContent() {
     event.preventDefault()
     setError("")
     setIsLoading(true)
-    const result = await login(email, password)
+    const result = await login(email, password, role)
     setIsLoading(false)
 
     if (!result.success) {
@@ -54,7 +62,7 @@ function LoginContent() {
   const handleGoogleSignIn = async () => {
     setError("")
     setIsGoogleLoading(true)
-    const result = await signInWithGoogle()
+    const result = await signInWithGoogle({ preferredRole: role, expectedRole: role })
     setIsGoogleLoading(false)
 
     if (!result.success) {
@@ -65,7 +73,7 @@ function LoginContent() {
   return (
     <AuthShell
       title="Sign in"
-      description="Welcome back. Access your dashboard and continue your hiring workflow."
+      description="Choose whether you're signing in as a job seeker or recruiter. Your stored account role stays unchanged."
       backHref="/"
       backLabel="Back to home"
       eyebrow="Secure Workspace Access"
@@ -74,6 +82,46 @@ function LoginContent() {
         {banner ? (
           <div className="rounded-2xl border border-violet-400/30 bg-violet-400/10 px-4 py-3 text-sm text-violet-100">{banner}</div>
         ) : null}
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {[
+            {
+              key: "seeker" as const,
+              title: "Job seeker",
+              detail: "Sign in to resumes, matches, and your application tracker.",
+              icon: UserRound,
+            },
+            {
+              key: "recruiter" as const,
+              title: "Recruiter",
+              detail: "Sign in to hiring, ranking, and candidate outreach tools.",
+              icon: Building2,
+            },
+          ].map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => {
+                setRole(item.key)
+                setError("")
+              }}
+              className={cn(
+                "rounded-3xl border p-5 text-left transition",
+                role === item.key
+                  ? "border-violet-500/40 bg-violet-500/10 text-white"
+                  : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10"
+              )}
+            >
+              <item.icon className="h-5 w-5 text-violet-400" />
+              <p className="mt-4 font-medium">{item.title}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-400">{item.detail}</p>
+            </button>
+          ))}
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+          If this email already belongs to a recruiter or seeker account, we keep that original role and ask you to use the matching sign-in.
+        </div>
 
         {authMode === "demo" ? (
           <div className="rounded-3xl border border-violet-500/15 bg-violet-500/10 p-4">
@@ -90,18 +138,10 @@ function LoginContent() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => fillDemo("seeker")}
+                    onClick={() => fillDemo(role)}
                     className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10"
                   >
-                    Fill seeker
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => fillDemo("recruiter")}
-                    className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10"
-                  >
-                    Fill recruiter
+                    Fill {role} demo
                   </Button>
                 </div>
               </div>
@@ -183,7 +223,7 @@ function LoginContent() {
 
         <p className="text-sm text-slate-400">
           No account yet?{" "}
-          <Link href="/auth/register" className="text-violet-400 hover:text-violet-200">
+          <Link href={`/auth/register?type=${role}`} className="text-violet-400 hover:text-violet-200">
             Create one
           </Link>
         </p>

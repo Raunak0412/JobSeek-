@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { motion, useScroll, useSpring } from "framer-motion"
 import {
@@ -36,7 +36,7 @@ const sectionMotion = {
   viewport: { once: true, margin: "-70px" },
 }
 
-export default function CandidateProfilePage() {
+function CandidateProfilePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const params = useParams<{ candidateId: string }>()
@@ -398,5 +398,13 @@ export default function CandidateProfilePage() {
         </main>
       </div>
     </div>
+  )
+}
+
+export default function CandidateProfilePage() {
+  return (
+    <Suspense fallback={null}>
+      <CandidateProfilePageContent />
+    </Suspense>
   )
 }

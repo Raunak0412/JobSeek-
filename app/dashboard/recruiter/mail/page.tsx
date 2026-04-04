@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
 import { Loader2, Mail, Send, Sparkles } from "lucide-react"
@@ -24,7 +24,7 @@ import {
 } from "@/lib/demo-store"
 import { buildOfferTemplate } from "@/lib/mock-data"
 
-export default function MailPage() {
+function MailPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { toast } = useToast()
@@ -221,6 +221,14 @@ export default function MailPage() {
         </main>
       </div>
     </div>
+  )
+}
+
+export default function MailPage() {
+  return (
+    <Suspense fallback={null}>
+      <MailPageContent />
+    </Suspense>
   )
 }
 

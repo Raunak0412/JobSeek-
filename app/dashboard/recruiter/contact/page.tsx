@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
@@ -26,7 +26,7 @@ import {
 import { buildOfferTemplate } from "@/lib/mock-data"
 import { useToast } from "@/hooks/use-toast"
 
-export default function RecruiterContactPage() {
+function RecruiterContactContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { toast } = useToast()
@@ -201,6 +201,14 @@ export default function RecruiterContactPage() {
         </main>
       </div>
     </div>
+  )
+}
+
+export default function RecruiterContactPage() {
+  return (
+    <Suspense fallback={null}>
+      <RecruiterContactContent />
+    </Suspense>
   )
 }
 

@@ -79,7 +79,7 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
       </div>
 
       <div className="border-b border-white/10 p-4">
-        <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
+        <div className="glass-panel rounded-[1.6rem] p-4">
           <div className="flex items-center gap-3">
             <div className="h-11 w-11 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
               {type === "seeker" ? (
@@ -95,7 +95,7 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
               <p className="truncate text-xs text-slate-400">{user?.email ?? "user@example.com"}</p>
             </div>
           </div>
-          <div className="mt-4 rounded-2xl bg-slate-950/35 px-3 py-2 text-xs text-slate-300">
+          <div className="glass-pill mt-4 rounded-2xl px-3 py-2 text-xs text-slate-300">
             {type === "recruiter"
               ? `Recruiter workspace${user?.company ? ` - ${user.company}` : ""}`
               : "Job seeker workspace"}
@@ -162,15 +162,16 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
         initial={{ x: -300 }}
         animate={{ x: isOpen ? 0 : -300 }}
         transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed left-0 top-0 z-50 h-screen w-[280px] border-r border-white/10 bg-[#171717] lg:hidden"
+        className="glass-panel-strong fixed left-0 top-0 z-50 h-screen w-[280px] border-r border-white/10 lg:hidden"
       >
         {content}
       </motion.aside>
 
-      <aside className="sticky top-0 hidden h-screen w-[280px] flex-shrink-0 border-r border-white/10 bg-[#171717] lg:block">
+      <aside className="glass-panel-strong sticky top-0 hidden h-screen w-[280px] flex-shrink-0 border-r border-white/10 lg:block">
         {content}
       </aside>
     </>
   )
 }
+
 
