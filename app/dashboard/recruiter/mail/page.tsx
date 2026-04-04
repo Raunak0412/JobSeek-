@@ -99,13 +99,13 @@ export default function MailPage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="recruiter" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Mail studio" onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 space-y-6 p-4 lg:p-6">
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
-            <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">Formal shortlist system</Badge>
+            <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">Formal shortlist system</Badge>
             <h2 className="mt-5 font-heading text-4xl font-semibold tracking-tight">Send polished recruiter mail to the top candidates for each vacancy.</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
               The page automatically pre-selects candidates according to the number of openings for the currently selected vacancy.
@@ -113,7 +113,7 @@ export default function MailPage() {
           </motion.section>
 
           <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardHeader>
                 <CardTitle className="font-heading text-2xl">Shortlist recipients</CardTitle>
               </CardHeader>
@@ -129,7 +129,7 @@ export default function MailPage() {
                     className="w-full bg-transparent text-sm text-white outline-none"
                   >
                     {jobs.map((item) => (
-                      <option key={item.id} value={item.id} className="bg-[#1b0b0b]">
+                      <option key={item.id} value={item.id} className="bg-[#171717]">
                         {item.title}
                       </option>
                     ))}
@@ -137,7 +137,7 @@ export default function MailPage() {
                 </div>
 
                 {job ? (
-                  <div className="rounded-3xl border border-red-400/15 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
+                  <div className="rounded-3xl border border-violet-400/15 bg-violet-400/10 p-4 text-sm leading-6 text-violet-100">
                     {job.vacancies} openings detected. The top {job.vacancies} candidates are selected automatically for this mail batch.
                   </div>
                 ) : null}
@@ -155,7 +155,7 @@ export default function MailPage() {
                                 : [...current, candidate.id]
                             )
                           }}
-                          className="border-white/20 data-[state=checked]:border-red-300 data-[state=checked]:bg-red-300"
+                          className="border-white/20 data-[state=checked]:border-violet-300 data-[state=checked]:bg-violet-300"
                         />
                         <div>
                           <p className="font-medium text-white">{candidate.name}</p>
@@ -164,7 +164,7 @@ export default function MailPage() {
                       </div>
                       <div className="text-right">
                         <p className="font-heading text-3xl font-semibold tracking-tight text-white">{candidate.jobScore.score}</p>
-                        <p className="text-xs uppercase tracking-[0.24em] text-red-200">out of 10</p>
+                        <p className="text-xs uppercase tracking-[0.24em] text-violet-200">out of 10</p>
                       </div>
                     </div>
                   </div>
@@ -172,7 +172,7 @@ export default function MailPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardHeader>
                 <CardTitle className="font-heading text-2xl">Compose formal mail</CardTitle>
               </CardHeader>
@@ -187,11 +187,11 @@ export default function MailPage() {
                 </div>
                 <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
                   <div className="flex items-start gap-3">
-                    <Sparkles className="mt-0.5 h-4 w-4 text-red-300" />
+                    <Sparkles className="mt-0.5 h-4 w-4 text-violet-300" />
                     <p>Selected candidates: {selected.length}. The message body is initialized with a formal shortlist template.</p>
                   </div>
                 </div>
-                <Button onClick={handleSend} disabled={isSending || selected.length === 0} className="h-12 w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
+                <Button onClick={handleSend} disabled={isSending || selected.length === 0} className="h-12 w-full rounded-full bg-violet-500 text-white hover:bg-violet-400">
                   {isSending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
                   Send shortlist mail
                 </Button>
@@ -223,3 +223,4 @@ export default function MailPage() {
     </div>
   )
 }
+
