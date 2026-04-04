@@ -37,7 +37,7 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-red-500">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-violet-600">
                 <Briefcase className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">Jobseek</span>
