@@ -65,7 +65,7 @@ export default function NotificationsPage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type={user?.type ?? "seeker"} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Notifications" onMenuClick={() => setSidebarOpen(true)} />
@@ -73,7 +73,7 @@ export default function NotificationsPage() {
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div>
-                <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">Shared notification center</Badge>
+                <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">Shared notification center</Badge>
                 <h2 className="mt-4 font-heading text-4xl font-semibold tracking-tight">Everything happening across seeker and recruiter workflows.</h2>
                 <p className="mt-3 text-sm text-slate-300">Unread alerts: {unreadCount}. Mark as read, dismiss one item, or clear the timeline instantly.</p>
               </div>
@@ -90,7 +90,7 @@ export default function NotificationsPage() {
             </div>
           </motion.section>
 
-          <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+          <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
             <CardHeader className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div>
                 <CardTitle className="font-heading text-2xl">Notification feed</CardTitle>
@@ -106,10 +106,10 @@ export default function NotificationsPage() {
             <CardContent>
               <Tabs value={tab} onValueChange={setTab}>
                 <TabsList className="h-auto rounded-full border border-white/10 bg-white/5 p-1">
-                  <TabsTrigger value="all" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-red-400/15 data-[state=active]:text-red-100">
+                  <TabsTrigger value="all" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-violet-400/15 data-[state=active]:text-violet-100">
                     All
                   </TabsTrigger>
-                  <TabsTrigger value="unread" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-red-400/15 data-[state=active]:text-red-100">
+                  <TabsTrigger value="unread" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-violet-400/15 data-[state=active]:text-violet-100">
                     Unread
                   </TabsTrigger>
                 </TabsList>
@@ -129,7 +129,7 @@ export default function NotificationsPage() {
                                 <div key={item.id} className="rounded-xl border border-white/10 bg-black/15 p-3">
                                   <div className="flex items-start justify-between gap-3">
                                     <div className="flex min-w-0 gap-3">
-                                      <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-red-400/10 text-red-200">
+                                      <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-violet-400/10 text-violet-200">
                                         <Bell className="h-4 w-4" />
                                       </div>
                                       <div className="min-w-0">
@@ -152,7 +152,7 @@ export default function NotificationsPage() {
                                   <div className="mt-3 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                       {!item.read ? (
-                                        <span className="rounded-full border border-red-400/25 bg-red-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-red-200">
+                                        <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-violet-200">
                                           New
                                         </span>
                                       ) : null}
@@ -208,3 +208,4 @@ export default function NotificationsPage() {
     </div>
   )
 }
+
