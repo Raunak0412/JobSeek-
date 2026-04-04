@@ -116,7 +116,7 @@ export default function CandidateProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#150707] text-slate-300">
+      <div className="flex min-h-screen items-center justify-center bg-[#121212] text-slate-300">
         <div className="rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm">Loading candidate profile...</div>
       </div>
     )
@@ -124,12 +124,12 @@ export default function CandidateProfilePage() {
 
   if (!candidate) {
     return (
-      <div className="flex min-h-screen bg-[#150707] text-white">
+      <div className="flex min-h-screen bg-[#121212] text-white">
         <Sidebar type="recruiter" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex min-w-0 flex-1 flex-col">
           <Header title="Candidate profile" onMenuClick={() => setSidebarOpen(true)} />
           <main className="flex-1 p-4 lg:p-6">
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardContent className="space-y-4 p-6 text-sm text-slate-300">
                 <p>Candidate profile was not found. Please open profile again from the candidates list.</p>
                 <Link href="/dashboard/recruiter/candidates">
@@ -154,8 +154,8 @@ export default function CandidateProfilePage() {
     .join("")
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
-      <motion.div style={{ scaleX: progressScaleX }} className="fixed left-0 right-0 top-0 z-50 h-0.5 origin-left bg-red-300/80" />
+    <div className="flex min-h-screen bg-[#121212] text-white">
+      <motion.div style={{ scaleX: progressScaleX }} className="fixed left-0 right-0 top-0 z-50 h-0.5 origin-left bg-violet-300/80" />
       <Sidebar type="recruiter" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Candidate profile" onMenuClick={() => setSidebarOpen(true)} />
@@ -169,24 +169,24 @@ export default function CandidateProfilePage() {
               <div className="flex items-start gap-4">
                 <Avatar className="h-20 w-20 rounded-3xl border border-white/10">
                   <AvatarImage src={publicProfile?.photoUrl} alt={`${candidate.name} profile photo`} className="object-cover" />
-                  <AvatarFallback className="rounded-3xl bg-red-400/15 font-heading text-xl text-red-100">{initials || "JS"}</AvatarFallback>
+                  <AvatarFallback className="rounded-3xl bg-violet-400/15 font-heading text-xl text-violet-100">{initials || "JS"}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">Public seeker profile</Badge>
+                  <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">Public seeker profile</Badge>
                   <h2 className="mt-4 font-heading text-4xl font-semibold tracking-tight">{candidate.name}</h2>
-                  <p className="mt-1 text-red-100">{candidate.currentRole}</p>
+                  <p className="mt-1 text-violet-100">{candidate.currentRole}</p>
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">{publicProfile?.headline ?? candidate.summary}</p>
                   <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-slate-400">
                     <span className="inline-flex items-center gap-1.5">
-                      <MapPin className="h-4 w-4 text-red-300" />
+                      <MapPin className="h-4 w-4 text-violet-300" />
                       {candidate.location}
                     </span>
                     <span className="inline-flex items-center gap-1.5">
-                      <CalendarClock className="h-4 w-4 text-red-300" />
+                      <CalendarClock className="h-4 w-4 text-violet-300" />
                       {candidate.experience} experience
                     </span>
                     <span className="inline-flex items-center gap-1.5">
-                      <UserRound className="h-4 w-4 text-red-300" />
+                      <UserRound className="h-4 w-4 text-violet-300" />
                       {candidate.availability} availability
                     </span>
                   </div>
@@ -200,7 +200,7 @@ export default function CandidateProfilePage() {
                   </Button>
                 </Link>
                 <Button
-                  className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300"
+                  className="rounded-full bg-violet-500 text-white hover:bg-violet-400"
                   onClick={() => {
                     const query = jobId ? `?jobId=${jobId}&candidateId=${candidate.id}` : `?candidateId=${candidate.id}`
                     router.push(`/dashboard/recruiter/contact${query}`)
@@ -216,7 +216,7 @@ export default function CandidateProfilePage() {
           <section className="grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
             <div className="space-y-6">
               <motion.div {...sectionMotion}>
-                <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                   <CardHeader>
                     <CardTitle className="font-heading text-2xl">About this seeker</CardTitle>
                   </CardHeader>
@@ -238,7 +238,7 @@ export default function CandidateProfilePage() {
               </motion.div>
 
               <motion.div {...sectionMotion}>
-                <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                   <CardHeader>
                     <CardTitle className="font-heading text-2xl">Tech skills visible to recruiters</CardTitle>
                   </CardHeader>
@@ -249,7 +249,7 @@ export default function CandidateProfilePage() {
                           <div key={skill.name}>
                             <div className="mb-2 flex items-center justify-between text-sm">
                               <span className="text-slate-200">{skill.name}</span>
-                              <span className="text-red-200">{skill.level}%</span>
+                              <span className="text-violet-200">{skill.level}%</span>
                             </div>
                             <Progress value={skill.level} className="h-2 bg-white/10" />
                           </div>
@@ -261,7 +261,7 @@ export default function CandidateProfilePage() {
               </motion.div>
 
               <motion.div {...sectionMotion}>
-                <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                   <CardHeader>
                     <CardTitle className="font-heading text-2xl">Experience timeline</CardTitle>
                   </CardHeader>
@@ -274,12 +274,12 @@ export default function CandidateProfilePage() {
                               <p className="font-medium text-white">{item.role}</p>
                               <p className="text-sm text-slate-400">{item.company}</p>
                             </div>
-                            <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">{item.period}</Badge>
+                            <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">{item.period}</Badge>
                           </div>
                           <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">
                             {item.highlights.map((point) => (
                               <li key={point} className="flex items-start gap-2">
-                                <span className="mt-[0.45rem] h-1.5 w-1.5 rounded-full bg-red-300" />
+                                <span className="mt-[0.45rem] h-1.5 w-1.5 rounded-full bg-violet-300" />
                                 <span>{point}</span>
                               </li>
                             ))}
@@ -295,26 +295,26 @@ export default function CandidateProfilePage() {
 
             <div className="space-y-6">
               <motion.div {...sectionMotion}>
-                <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                   <CardHeader>
                     <CardTitle className="font-heading text-2xl">Match and highlights</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="rounded-[1.5rem] border border-red-400/20 bg-red-400/10 p-4">
-                      <p className="text-xs uppercase tracking-[0.22em] text-red-200">Score for selected vacancy</p>
+                    <div className="rounded-[1.5rem] border border-violet-400/20 bg-violet-400/10 p-4">
+                      <p className="text-xs uppercase tracking-[0.22em] text-violet-200">Score for selected vacancy</p>
                       <p className="mt-2 font-heading text-5xl font-semibold tracking-tight">{rankedCandidate?.jobScore.score ?? "N/A"}</p>
-                      <p className="mt-1 text-sm text-red-100">{job ? `${job.title} at ${job.company}` : "Open from candidates list to map a vacancy score."}</p>
+                      <p className="mt-1 text-sm text-violet-100">{job ? `${job.title} at ${job.company}` : "Open from candidates list to map a vacancy score."}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {(rankedCandidate?.jobScore.matchedSkills ?? candidate.skills.slice(0, 4)).map((skill) => (
-                        <Badge key={skill} className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                        <Badge key={skill} className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">
                           {skill}
                         </Badge>
                       ))}
                     </div>
                     <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
                       <div className="flex items-start gap-2">
-                        <Sparkles className="mt-0.5 h-4 w-4 text-red-300" />
+                        <Sparkles className="mt-0.5 h-4 w-4 text-violet-300" />
                         <p>{rankedCandidate?.jobScore.routeReason ?? "Profile details are visible exactly as shared by the seeker in their public profile."}</p>
                       </div>
                     </div>
@@ -323,7 +323,7 @@ export default function CandidateProfilePage() {
               </motion.div>
 
               <motion.div {...sectionMotion}>
-                <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                   <CardHeader>
                     <CardTitle className="font-heading text-2xl">Social links</CardTitle>
                   </CardHeader>
@@ -341,7 +341,7 @@ export default function CandidateProfilePage() {
                           >
                             <a href={link.href} target="_blank" rel="noreferrer">
                               <span className="inline-flex items-center gap-2">
-                                <Icon className="h-4 w-4 text-red-300" />
+                                <Icon className="h-4 w-4 text-violet-300" />
                                 {link.label}
                               </span>
                               <ExternalLink className="h-4 w-4 text-slate-400" />
@@ -357,7 +357,7 @@ export default function CandidateProfilePage() {
               </motion.div>
 
               <motion.div {...sectionMotion}>
-                <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                   <CardHeader className="flex flex-row items-start justify-between gap-4">
                     <div>
                       <CardTitle className="font-heading text-2xl">Resume preview</CardTitle>
