@@ -114,14 +114,14 @@ export default function PostJobPage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="recruiter" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Post vacancy" onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 space-y-6 p-4 lg:p-6">
           <form onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Vacancy details</CardTitle>
                   <p className="text-sm text-slate-400">The agent router compares this job description with uploaded resumes and scores matching candidates.</p>
@@ -207,7 +207,7 @@ export default function PostJobPage() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="font-heading text-2xl">Required skills</CardTitle>
@@ -237,7 +237,7 @@ export default function PostJobPage() {
                       placeholder="Add a skill"
                       className="h-12 rounded-2xl border-white/10 bg-white/5 text-white"
                     />
-                    <Button type="button" onClick={addSkill} className="rounded-2xl bg-red-400 px-5 text-slate-950 hover:bg-red-300">
+                    <Button type="button" onClick={addSkill} className="rounded-2xl bg-violet-500 px-5 text-white hover:bg-violet-400">
                       Add
                     </Button>
                   </div>
@@ -253,12 +253,12 @@ export default function PostJobPage() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="space-y-6">
-              <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
+              <Button type="submit" disabled={isSubmitting} className="h-12 w-full rounded-full bg-violet-500 text-white hover:bg-violet-400">
                 {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
                 Post vacancy
               </Button>
 
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Launch controls</CardTitle>
                 </CardHeader>
@@ -272,30 +272,30 @@ export default function PostJobPage() {
                   <div className="grid gap-3">
                     <Link
                       href={activeJobId ? `/dashboard/recruiter/rankings?jobId=${activeJobId}` : "/dashboard/recruiter/rankings"}
-                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-red-400/30 hover:bg-white/10"
+                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-violet-400/30 hover:bg-white/10"
                     >
                       <span className="inline-flex items-center gap-2">
-                        <Trophy className="h-4 w-4 text-red-300" />
+                        <Trophy className="h-4 w-4 text-violet-300" />
                         Open rank list
                       </span>
                       <ArrowRight className="h-4 w-4 text-slate-400" />
                     </Link>
                     <Link
                       href={activeJobId ? `/dashboard/recruiter/candidates?jobId=${activeJobId}` : "/dashboard/recruiter/candidates"}
-                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-red-400/30 hover:bg-white/10"
+                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-violet-400/30 hover:bg-white/10"
                     >
                       <span className="inline-flex items-center gap-2">
-                        <Users className="h-4 w-4 text-red-300" />
+                        <Users className="h-4 w-4 text-violet-300" />
                         Review candidates
                       </span>
                       <ArrowRight className="h-4 w-4 text-slate-400" />
                     </Link>
                     <Link
                       href={activeJobId ? `/dashboard/recruiter/mail?jobId=${activeJobId}` : "/dashboard/recruiter/mail"}
-                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-red-400/30 hover:bg-white/10"
+                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:border-violet-400/30 hover:bg-white/10"
                     >
                       <span className="inline-flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-red-300" />
+                        <Mail className="h-4 w-4 text-violet-300" />
                         Open outreach studio
                       </span>
                       <ArrowRight className="h-4 w-4 text-slate-400" />
@@ -304,16 +304,16 @@ export default function PostJobPage() {
                 </CardContent>
               </Card>
 
-              <Card className="relative overflow-hidden rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
-                <div className="pointer-events-none absolute -left-14 -top-14 h-40 w-40 rounded-full bg-red-500/20 blur-3xl" />
-                <div className="pointer-events-none absolute -bottom-14 -right-10 h-44 w-44 rounded-full bg-orange-400/20 blur-3xl" />
+              <Card className="relative overflow-hidden rounded-[1.75rem] border-white/10 bg-[#171717]">
+                <div className="pointer-events-none absolute -left-14 -top-14 h-40 w-40 rounded-full bg-violet-500/20 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-14 -right-10 h-44 w-44 rounded-full bg-lime-300/20 blur-3xl" />
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">3D activity deck</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="relative h-44 rounded-[1.5rem] border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-4 [perspective:900px]">
-                    <div className="absolute left-4 top-4 h-24 w-24 rounded-3xl border border-white/20 bg-gradient-to-br from-red-400/30 to-rose-500/10 shadow-[0_24px_80px_rgba(248,113,113,0.35)] [transform:rotateY(-24deg)_rotateX(10deg)]" />
-                    <div className="absolute right-5 top-12 h-20 w-20 rounded-[1.2rem] border border-white/15 bg-gradient-to-br from-orange-400/25 to-transparent shadow-[0_20px_60px_rgba(251,146,60,0.28)] [transform:rotateY(22deg)_rotateX(-8deg)]" />
+                    <div className="absolute left-4 top-4 h-24 w-24 rounded-3xl border border-white/20 bg-gradient-to-br from-violet-400/30 to-lime-300/15 shadow-[0_24px_80px_rgba(139,92,246,0.34)] [transform:rotateY(-24deg)_rotateX(10deg)]" />
+                    <div className="absolute right-5 top-12 h-20 w-20 rounded-[1.2rem] border border-white/15 bg-gradient-to-br from-lime-300/25 to-transparent shadow-[0_20px_60px_rgba(191,226,100,0.24)] [transform:rotateY(22deg)_rotateX(-8deg)]" />
                     <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-200">
                       Vacancy posted jobs automatically sync into rank list, candidates, and outreach.
                     </div>
@@ -327,3 +327,4 @@ export default function PostJobPage() {
     </div>
   )
 }
+
