@@ -71,9 +71,10 @@ export function WorkflowTree() {
       ))}
 
       <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
-        <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">Node-edge execution map</Badge>
+        <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">Node-edge execution map</Badge>
         <Badge className="rounded-full border-white/10 bg-white/5 text-slate-200">Realtime dashboard flow</Badge>
       </div>
     </div>
   )
 }
+
