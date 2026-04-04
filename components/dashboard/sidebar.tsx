@@ -59,12 +59,12 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center justify-between border-b border-white/10 px-5">
         <Link href="/" onClick={onClose} className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-red-400 via-rose-500 to-red-600 shadow-[0_18px_48px_rgba(248,113,113,0.35)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-400 via-violet-500 to-violet-700 shadow-[0_18px_48px_rgba(139,92,246,0.35)]">
             <Briefcase className="h-5 w-5 text-white" />
           </div>
           <div>
             <p className="font-heading text-lg font-semibold tracking-tight text-white">JobSeek</p>
-            <p className="text-[10px] uppercase tracking-[0.24em] text-red-300/70">Workspace</p>
+            <p className="text-[10px] uppercase tracking-[0.24em] text-lime-200/80">Workspace</p>
           </div>
         </Link>
         <button onClick={onClose} className="rounded-xl p-2 text-slate-400 hover:bg-white/10 hover:text-white lg:hidden">
@@ -75,7 +75,7 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
       <div className="border-b border-white/10 p-4">
         <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-red-400/25 to-red-600/20 text-sm font-semibold text-white">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-400/30 to-violet-700/25 text-sm font-semibold text-white">
               {user?.name?.charAt(0).toUpperCase() ?? "U"}
             </div>
             <div className="min-w-0">
@@ -105,15 +105,15 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
               className={cn(
                 "group flex items-center justify-between rounded-2xl px-3 py-3 text-sm transition",
                 active
-                  ? "bg-red-400/10 text-white ring-1 ring-red-400/20"
+                  ? "bg-violet-400/15 text-white ring-1 ring-violet-400/30"
                   : "text-slate-400 hover:bg-white/10 hover:text-white"
               )}
             >
               <span className="flex items-center gap-3">
-                <link.icon className={cn("h-4.5 w-4.5", active ? "text-red-200" : "text-slate-500 group-hover:text-red-200")} />
+                <link.icon className={cn("h-4.5 w-4.5", active ? "text-lime-200" : "text-slate-500 group-hover:text-violet-200")} />
                 {link.label}
               </span>
-              {active ? <ChevronRight className="h-4 w-4 text-red-200" /> : null}
+              {active ? <ChevronRight className="h-4 w-4 text-lime-200" /> : null}
             </Link>
           )
         })}
@@ -123,7 +123,7 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
         <Button
           variant="ghost"
           onClick={logout}
-          className="w-full justify-start rounded-2xl px-3 py-6 text-slate-400 hover:bg-rose-500/10 hover:text-rose-200"
+          className="w-full justify-start rounded-2xl px-3 py-6 text-slate-400 hover:bg-violet-500/15 hover:text-violet-100"
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
@@ -150,14 +150,15 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
         initial={{ x: -300 }}
         animate={{ x: isOpen ? 0 : -300 }}
         transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed left-0 top-0 z-50 h-screen w-[280px] border-r border-white/10 bg-[#1b0b0b] lg:hidden"
+        className="fixed left-0 top-0 z-50 h-screen w-[280px] border-r border-white/10 bg-[#171717] lg:hidden"
       >
         {content}
       </motion.aside>
 
-      <aside className="sticky top-0 hidden h-screen w-[280px] flex-shrink-0 border-r border-white/10 bg-[#1b0b0b] lg:block">
+      <aside className="sticky top-0 hidden h-screen w-[280px] flex-shrink-0 border-r border-white/10 bg-[#171717] lg:block">
         {content}
       </aside>
     </>
   )
 }
+
