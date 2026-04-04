@@ -92,11 +92,11 @@ function RegisterContent() {
               className={cn(
                 "rounded-3xl border p-5 text-left transition",
                 role === item.key
-                  ? "border-red-400/40 bg-red-400/10 text-white"
+                  ? "border-violet-500/40 bg-violet-500/10 text-white"
                   : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10"
               )}
             >
-              <item.icon className="h-5 w-5 text-red-300" />
+              <item.icon className="h-5 w-5 text-violet-400" />
               <p className="mt-4 font-medium">{item.title}</p>
               <p className="mt-2 text-sm leading-6 text-slate-400">{item.detail}</p>
             </button>
@@ -178,10 +178,10 @@ function RegisterContent() {
           </div>
 
           {error ? (
-            <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">{error}</div>
+            <div className="rounded-2xl border border-violet-400/20 bg-violet-400/10 px-4 py-3 text-sm text-violet-100">{error}</div>
           ) : null}
 
-          <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-red-400 text-slate-950 hover:bg-red-300">
+          <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-violet-500 text-white hover:bg-violet-400">
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             {authMode === "supabase" ? "Create account" : "Continue to verification"}
           </Button>
@@ -189,7 +189,7 @@ function RegisterContent() {
 
         <p className="text-sm text-slate-400">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-red-300 hover:text-red-200">
+          <Link href="/auth/login" className="text-violet-400 hover:text-violet-200">
             Sign in
           </Link>
         </p>
