@@ -100,9 +100,9 @@ export default function CandidatesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#150707] text-slate-300">
+      <div className="flex min-h-screen items-center justify-center bg-[#121212] text-slate-300">
         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm">
-          <Loader2 className="h-4 w-4 animate-spin text-red-300" />
+          <Loader2 className="h-4 w-4 animate-spin text-violet-300" />
           Loading candidates...
         </div>
       </div>
@@ -110,7 +110,7 @@ export default function CandidatesPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="recruiter" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Candidates" onMenuClick={() => setSidebarOpen(true)} />
@@ -142,7 +142,7 @@ export default function CandidatesPage() {
                     className="bg-transparent text-sm text-white outline-none"
                   >
                     {jobs.map((item) => (
-                      <option key={item.id} value={item.id} className="bg-[#1b0b0b]">
+                      <option key={item.id} value={item.id} className="bg-[#171717]">
                         {item.title}
                       </option>
                     ))}
@@ -152,7 +152,7 @@ export default function CandidatesPage() {
             </div>
           </motion.section>
 
-          <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+          <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="font-heading text-2xl">{job?.title ?? "Select a vacancy"}</CardTitle>
@@ -160,7 +160,7 @@ export default function CandidatesPage() {
                   {job?.company ?? "-"} - {job?.vacancies ?? 0} openings - {rankedCandidates.length} strong matches
                 </p>
               </div>
-              <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">{selected.length} selected</Badge>
+              <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">{selected.length} selected</Badge>
             </CardHeader>
             <CardContent className="space-y-4">
               <ScrollArea className="h-[min(66vh,720px)] pr-4">
@@ -176,16 +176,16 @@ export default function CandidatesPage() {
                                 current.includes(candidate.id) ? current.filter((item) => item !== candidate.id) : [...current, candidate.id]
                               )
                             }
-                            className="mt-1 border-white/20 data-[state=checked]:border-red-300 data-[state=checked]:bg-red-300"
+                            className="mt-1 border-white/20 data-[state=checked]:border-violet-300 data-[state=checked]:bg-violet-300"
                           />
                           <div className="min-w-0">
                             <div className="flex items-center gap-3">
-                              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-sm font-semibold text-white">#{index + 1}</div>
+                              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-400/10 text-sm font-semibold text-white">#{index + 1}</div>
                               <div>
                                 <button
                                   type="button"
                                   onClick={() => openCandidateProfile(candidate.id)}
-                                  className="inline-flex items-center gap-1 font-medium text-white transition hover:text-red-200"
+                                  className="inline-flex items-center gap-1 font-medium text-white transition hover:text-violet-200"
                                 >
                                   {candidate.name}
                                   <ExternalLink className="h-3.5 w-3.5" />
@@ -198,12 +198,12 @@ export default function CandidatesPage() {
                             <p className="mt-3 text-sm leading-7 text-slate-300">{candidate.jobScore.routeReason}</p>
                             <div className="mt-3 flex flex-wrap gap-2">
                               {candidate.jobScore.matchedSkills.map((skill) => (
-                                <Badge key={skill} className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                                <Badge key={skill} className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">
                                   {skill}
                                 </Badge>
                               ))}
                               {candidate.jobScore.missingSkills.map((skill) => (
-                                <Badge key={skill} className="rounded-full border-rose-400/20 bg-rose-400/10 text-rose-100">
+                                <Badge key={skill} className="rounded-full border-lime-300/35 bg-lime-300/15 text-lime-100">
                                   Missing: {skill}
                                 </Badge>
                               ))}
@@ -214,7 +214,7 @@ export default function CandidatesPage() {
                         <div className="flex flex-col gap-3 xl:min-w-[220px] xl:items-end">
                           <div className="text-right">
                             <p className="font-heading text-4xl font-semibold tracking-tight text-white">{candidate.jobScore.score}</p>
-                            <p className="text-xs uppercase tracking-[0.24em] text-red-200">out of 10</p>
+                            <p className="text-xs uppercase tracking-[0.24em] text-violet-200">out of 10</p>
                             <p className="mt-2 text-sm text-slate-400">{candidate.sentiment} tone</p>
                           </div>
                           <div className="flex flex-wrap gap-2 xl:justify-end">
@@ -235,7 +235,7 @@ export default function CandidatesPage() {
                               Resume
                             </Button>
                             <Button
-                              className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300"
+                              className="rounded-full bg-violet-500 text-white hover:bg-violet-400"
                               onClick={() => {
                                 const query = jobId ? `?jobId=${jobId}&candidateId=${candidate.id}` : `?candidateId=${candidate.id}`
                                 router.push(`/dashboard/recruiter/contact${query}`)
@@ -246,7 +246,7 @@ export default function CandidatesPage() {
                             </Button>
                           </div>
                           {outreachByCandidate.has(candidate.id) ? (
-                            <p className="text-xs text-red-200">
+                            <p className="text-xs text-violet-200">
                               Contacted on {new Date(outreachByCandidate.get(candidate.id) ?? "").toLocaleString()}
                             </p>
                           ) : null}
@@ -262,7 +262,7 @@ export default function CandidatesPage() {
                 </div>
               </ScrollArea>
 
-              <div className="rounded-[1.6rem] border border-red-400/15 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
+              <div className="rounded-[1.6rem] border border-violet-400/15 bg-violet-400/10 p-4 text-sm leading-6 text-violet-100">
                 <div className="flex items-start gap-3">
                   <Sparkles className="mt-0.5 h-4 w-4" />
                   <p>Selected candidates can be carried into the mail studio, where top candidates for the opening are pre-filled automatically.</p>
@@ -275,3 +275,4 @@ export default function CandidatesPage() {
     </div>
   )
 }
+
