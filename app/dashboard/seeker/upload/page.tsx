@@ -422,14 +422,14 @@ export default function UploadResumePage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="seeker" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Resume intake" onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 space-y-6 p-4 lg:p-6">
           <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}>
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Upload from file or camera</CardTitle>
                   <p className="text-sm text-slate-400">Your resume will be parsed, routed into a category, and prepared for recruiter ranking.</p>
@@ -438,11 +438,11 @@ export default function UploadResumePage() {
                   <div
                     {...getRootProps()}
                     className={`rounded-[1.75rem] border-2 border-dashed p-8 text-center transition ${
-                      isDragActive ? "border-red-300 bg-red-400/10" : "border-white/15 bg-white/5 hover:border-red-300/40 hover:bg-white/10"
+                      isDragActive ? "border-violet-300 bg-violet-400/10" : "border-white/15 bg-white/5 hover:border-violet-300/40 hover:bg-white/10"
                     }`}
                   >
                     <input {...getInputProps()} />
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-red-400/10 text-red-200">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-violet-400/10 text-violet-200">
                       <UploadCloud className="h-8 w-8" />
                     </div>
                     <p className="mt-5 font-medium text-white">{isDragActive ? "Drop the resume here" : "Drag and drop your resume"}</p>
@@ -483,7 +483,7 @@ export default function UploadResumePage() {
                   <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-4">
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-sm text-slate-300">Processing pipeline</p>
-                      <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                      <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">
                         {phase === "idle"
                           ? "Waiting"
                           : phase === "uploading"
@@ -501,7 +501,7 @@ export default function UploadResumePage() {
                         const statusLabel = status === "done" ? "Complete" : status === "active" ? "Running" : "Queued"
                         const statusClass =
                           status === "done"
-                            ? "border-red-400/20 bg-red-400/10 text-red-100"
+                            ? "border-violet-400/20 bg-violet-400/10 text-violet-100"
                             : status === "active"
                               ? "border-white/15 bg-white/10 text-white"
                               : "border-white/10 bg-white/5 text-slate-400"
@@ -509,7 +509,7 @@ export default function UploadResumePage() {
                         return (
                           <div key={stage.title} className="flex items-start justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-3">
                             <div className="flex items-start gap-3">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-400/10 text-violet-200">
                                 <stage.icon className="h-4 w-4" />
                               </div>
                               <div>
@@ -574,7 +574,7 @@ export default function UploadResumePage() {
                     <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-400/10 text-violet-200">
                             <FileText className="h-5 w-5" />
                           </div>
                           <div>
@@ -590,7 +590,7 @@ export default function UploadResumePage() {
                             </p>
                             {phase === "routing" || phase === "complete" ? (
                               <div className="mt-2 flex flex-wrap items-center gap-2">
-                                <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                                <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">
                                   Parsed as {routedCategory}
                                 </Badge>
                                 <Badge className="rounded-full border-white/10 bg-white/5 text-slate-200">
@@ -685,7 +685,7 @@ export default function UploadResumePage() {
                               )}
                               {fileOpenUrl && (!canPreviewInline || isDocx) ? (
                                 <div className="mt-4">
-                                  <Button asChild className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
+                                  <Button asChild className="rounded-full bg-violet-500 text-white hover:bg-violet-400">
                                     <a href={fileOpenUrl} target="_blank" rel="noreferrer">
                                       Download file
                                     </a>
@@ -694,7 +694,7 @@ export default function UploadResumePage() {
                               ) : null}
                             </DialogContent>
                           </Dialog>
-                          {phase === "complete" ? <CheckCircle2 className="h-5 w-5 text-red-200" /> : <Loader2 className="h-5 w-5 animate-spin text-red-200" />}
+                          {phase === "complete" ? <CheckCircle2 className="h-5 w-5 text-violet-200" /> : <Loader2 className="h-5 w-5 animate-spin text-violet-200" />}
                         </div>
                       </div>
                       <div className="mt-4">
@@ -718,7 +718,7 @@ export default function UploadResumePage() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Parsing results</CardTitle>
                   <p className="text-sm text-slate-400">A precise, recruiter-ready summary of what the parser extracted.</p>
@@ -731,19 +731,19 @@ export default function UploadResumePage() {
                   ) : null}
                   <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-xs uppercase tracking-[0.24em] text-red-200/80">Category</p>
+                      <p className="text-xs uppercase tracking-[0.24em] text-violet-200/80">Category</p>
                       <p className="mt-2 font-heading text-3xl font-semibold text-white">{routedCategory}</p>
                     </div>
                     <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-xs uppercase tracking-[0.24em] text-red-200/80">Confidence</p>
+                      <p className="text-xs uppercase tracking-[0.24em] text-violet-200/80">Confidence</p>
                       <p className="mt-2 font-heading text-3xl font-semibold text-white">{confidenceValue}%</p>
                     </div>
                     <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-xs uppercase tracking-[0.24em] text-red-200/80">Sentiment</p>
+                      <p className="text-xs uppercase tracking-[0.24em] text-violet-200/80">Sentiment</p>
                       <p className="mt-2 font-heading text-3xl font-semibold text-white">{sentimentLabel}</p>
                     </div>
                     <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-xs uppercase tracking-[0.24em] text-red-200/80">Parse health</p>
+                      <p className="text-xs uppercase tracking-[0.24em] text-violet-200/80">Parse health</p>
                       <p className="mt-2 font-heading text-3xl font-semibold text-white">{parseHealth}%</p>
                     </div>
                   </div>
@@ -751,7 +751,7 @@ export default function UploadResumePage() {
                   <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-4">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-400/10 text-violet-200">
                           <Sparkles className="h-4 w-4" />
                         </div>
                         <div>
@@ -759,19 +759,19 @@ export default function UploadResumePage() {
                           <p className="text-sm text-slate-400">Processing time: {parseTimeLabel}. Quality checks run during extraction.</p>
                         </div>
                       </div>
-                      <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">ATS-ready</Badge>
+                      <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">ATS-ready</Badge>
                     </div>
                     <div className="mt-4 grid gap-3 sm:grid-cols-3">
                       <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-slate-200">
-                        <p className="text-xs uppercase tracking-[0.22em] text-red-200/80">Weighted skill score</p>
+                        <p className="text-xs uppercase tracking-[0.22em] text-violet-200/80">Weighted skill score</p>
                         <p className="mt-2 font-heading text-2xl font-semibold text-white">{weightedSkillAvg}%</p>
                       </div>
                       <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-slate-200">
-                        <p className="text-xs uppercase tracking-[0.22em] text-red-200/80">Section coverage</p>
+                        <p className="text-xs uppercase tracking-[0.22em] text-violet-200/80">Section coverage</p>
                         <p className="mt-2 font-heading text-2xl font-semibold text-white">{sectionHealth}%</p>
                       </div>
                       <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-slate-200">
-                        <p className="text-xs uppercase tracking-[0.22em] text-red-200/80">Format clarity</p>
+                        <p className="text-xs uppercase tracking-[0.22em] text-violet-200/80">Format clarity</p>
                         <p className="mt-2 font-heading text-2xl font-semibold text-white">{parseHealth}%</p>
                       </div>
                     </div>
@@ -780,7 +780,7 @@ export default function UploadResumePage() {
                   {hasCameraResume ? (
                     <HoverCard>
                       <HoverCardTrigger asChild>
-                        <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-4 transition hover:border-red-300/40 hover:bg-white/10">
+                        <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-4 transition hover:border-violet-300/40 hover:bg-white/10">
                           <div className="flex items-center justify-between gap-2">
                             <p className="text-sm text-slate-300">OCR snapshot</p>
                             <Badge className="rounded-full border-white/10 bg-white/5 text-slate-200">
@@ -827,7 +827,7 @@ export default function UploadResumePage() {
                               techSkills.map((skill) => (
                                 <div key={skill.name} className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-200">
                                   <span>{skill.name}</span>
-                                  <span className="text-red-200">{skill.confidence}%</span>
+                                  <span className="text-violet-200">{skill.confidence}%</span>
                                 </div>
                               ))
                             ) : (
@@ -845,7 +845,7 @@ export default function UploadResumePage() {
                               softSkills.map((skill) => (
                                 <div key={skill.name} className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-200">
                                   <span>{skill.name}</span>
-                                  <span className="text-red-200">{skill.confidence}%</span>
+                                  <span className="text-violet-200">{skill.confidence}%</span>
                                 </div>
                               ))
                             ) : (
@@ -861,7 +861,7 @@ export default function UploadResumePage() {
                         {sections.map((section) => (
                           <div key={section.name} className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-slate-200">
                             <span>{section.name}</span>
-                            <span className="text-red-200">{section.completion}</span>
+                            <span className="text-violet-200">{section.completion}</span>
                           </div>
                         ))}
                       </div>
@@ -886,7 +886,7 @@ export default function UploadResumePage() {
                     </TabsContent>
                   </Tabs>
 
-                  <div className="rounded-[1.75rem] border border-red-400/15 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
+                  <div className="rounded-[1.75rem] border border-violet-400/15 bg-violet-400/10 p-4 text-sm leading-6 text-violet-100">
                     <div className="flex items-start gap-3">
                       <ScanSearch className="mt-0.5 h-4 w-4" />
                       <p>{sentimentInsight}</p>
@@ -904,7 +904,7 @@ export default function UploadResumePage() {
                         <div key={item.label}>
                           <div className="mb-2 flex items-center justify-between text-xs text-slate-400">
                             <span>{item.label}</span>
-                            <span className="text-red-200">{item.value}%</span>
+                            <span className="text-violet-200">{item.value}%</span>
                           </div>
                           <Progress value={item.value} className="h-2 bg-white/10" />
                         </div>
@@ -914,7 +914,7 @@ export default function UploadResumePage() {
 
                   <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-400/10 text-red-200">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-400/10 text-violet-200">
                         <Brain className="h-5 w-5" />
                       </div>
                       <div>
@@ -926,7 +926,7 @@ export default function UploadResumePage() {
                 </CardContent>
               </Card>
 
-              <Card className="mt-6 rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="mt-6 rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Score and ranking insight</CardTitle>
                   <p className="text-sm text-slate-400">Resume scoring based on skills, experience, tone, and format readiness.</p>
@@ -934,24 +934,24 @@ export default function UploadResumePage() {
                 <CardContent className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-3">
                     <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-xs uppercase tracking-[0.24em] text-red-200/80">Resume score</p>
+                      <p className="text-xs uppercase tracking-[0.24em] text-violet-200/80">Resume score</p>
                       <p className="mt-2 font-heading text-3xl font-semibold text-white">{resumeScoreLabel}</p>
                       <p className="mt-1 text-xs text-slate-400">
                         {extraction ? "Based on your uploaded resume data" : "Upload a resume to compute a score"}
                       </p>
-                      <p className="mt-3 text-xs text-red-200/80">Confidence {confidenceValue}% - Tone {sentimentLabel}</p>
+                      <p className="mt-3 text-xs text-violet-200/80">Confidence {confidenceValue}% - Tone {sentimentLabel}</p>
                     </div>
                     <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-xs uppercase tracking-[0.24em] text-red-200/80">Skill depth</p>
+                      <p className="text-xs uppercase tracking-[0.24em] text-violet-200/80">Skill depth</p>
                       <p className="mt-2 font-heading text-3xl font-semibold text-white">{techSkills.length}</p>
                       <p className="mt-1 text-xs text-slate-400">Detected skills in your resume</p>
                     </div>
                     <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-xs uppercase tracking-[0.24em] text-red-200/80">Visibility</p>
+                      <p className="text-xs uppercase tracking-[0.24em] text-violet-200/80">Visibility</p>
                       <p className="mt-2 font-heading text-3xl font-semibold text-white">{percentileLabel}</p>
                       <p className="mt-1 text-xs text-slate-400">Overall resume readiness percentile</p>
                       {extraction ? (
-                        <Badge className="mt-3 rounded-full border-red-400/20 bg-red-400/10 text-red-100">{visibilityLabel}</Badge>
+                        <Badge className="mt-3 rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">{visibilityLabel}</Badge>
                       ) : (
                         <Badge className="mt-3 rounded-full border-white/10 bg-white/5 text-slate-300">Awaiting resume</Badge>
                       )}
@@ -968,7 +968,7 @@ export default function UploadResumePage() {
                         <div key={factor.label}>
                           <div className="mb-2 flex items-center justify-between text-xs text-slate-400">
                             <span>{factor.label}</span>
-                            <span className="text-red-200">{factor.value}%</span>
+                            <span className="text-violet-200">{factor.value}%</span>
                           </div>
                           <Progress value={factor.value} className="h-2 bg-white/10" />
                         </div>
@@ -980,7 +980,7 @@ export default function UploadResumePage() {
                     <p className="text-sm text-slate-300">Top detected skills</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {techSkills.length ? techSkills.slice(0, 6).map((skill, index) => (
-                        <Badge key={`${skill.name}-${index}`} className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                        <Badge key={`${skill.name}-${index}`} className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">
                           {skill.name}
                         </Badge>
                       )) : (
@@ -997,3 +997,4 @@ export default function UploadResumePage() {
     </div>
   )
 }
+
