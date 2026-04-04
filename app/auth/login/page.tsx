@@ -24,7 +24,9 @@ function LoginContent() {
     if (searchParams.get("verified")) return "Email verified. You can sign in now."
     if (searchParams.get("reset")) return "Password updated. Sign in with your new password."
     if (searchParams.get("registered")) return "Account created. Sign in to continue."
-    if (searchParams.get("oauth") === "failed") return "Google sign-in could not be completed. Please try again."
+    if (searchParams.get("oauth") === "failed") {
+      return searchParams.get("message") || "Google sign-in could not be completed. Please try again."
+    }
     return ""
   }, [searchParams])
 

@@ -138,6 +138,9 @@ function inferCategory(title: string) {
   if (lower.includes("back")) return "Backend"
   if (lower.includes("full")) return "Full Stack"
   if (lower.includes("data")) return "Data"
+  if (lower.includes("finance") || lower.includes("financial") || lower.includes("fp&a") || lower.includes("accounting")) {
+    return "Finance"
+  }
   if (lower.includes("design")) return "Design"
   if (lower.includes("ai") || lower.includes("ml")) return "AI"
   if (lower.includes("game") || lower.includes("unity") || lower.includes("unreal")) return "Game Development"
@@ -473,6 +476,7 @@ const pageSearchEntries: Record<UserRole, { id: string; title: string; subtitle:
     { id: "p-rec-candidates", title: "Candidates", subtitle: "AI-ranked candidate list", href: "/dashboard/recruiter/candidates" },
     { id: "p-rec-rankings", title: "Rankings", subtitle: "Leaderboard by role", href: "/dashboard/recruiter/rankings" },
     { id: "p-rec-mail", title: "Mail studio", subtitle: "Formal outreach", href: "/dashboard/recruiter/mail" },
+    { id: "p-rec-profile", title: "Recruiter profile", subtitle: "Hiring profile and mail updates", href: "/dashboard/recruiter/profile" },
     { id: "p-shared-notifications-recruiter", title: "Notifications", subtitle: "Alert center", href: "/dashboard/notifications" },
     { id: "p-shared-settings-recruiter", title: "Settings", subtitle: "Workspace preferences", href: "/dashboard/settings" },
   ],
@@ -827,6 +831,16 @@ function inferCategoryFromText(text: string) {
   if (text.includes("front") || text.includes("react") || text.includes("javascript") || text.includes("ui")) return "Frontend"
   if (text.includes("back") || text.includes("api") || text.includes("fastapi") || text.includes("django")) return "Backend"
   if (text.includes("full") || text.includes("node") || text.includes("express")) return "Full Stack"
+  if (
+    text.includes("finance") ||
+    text.includes("financial") ||
+    text.includes("forecast") ||
+    text.includes("budget") ||
+    text.includes("fp&a") ||
+    text.includes("power bi")
+  ) {
+    return "Finance"
+  }
   if (text.includes("data") || text.includes("analytics") || text.includes("sql") || text.includes("pipeline")) return "Data"
   if (text.includes("design") || text.includes("ux") || text.includes("figma")) return "Design"
   if (text.includes("ai") || text.includes("ml") || text.includes("llm") || text.includes("prompt")) return "AI"
@@ -869,6 +883,15 @@ function extractSkillsFromText(text: string) {
     "spark",
     "airflow",
     "etl",
+    "financial modeling",
+    "forecasting",
+    "budgeting",
+    "financial planning",
+    "variance analysis",
+    "power bi",
+    "tableau",
+    "dashboard reporting",
+    "stakeholder reporting",
     "langchain",
     "openrouter",
     "prompt",

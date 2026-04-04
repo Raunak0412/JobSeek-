@@ -317,8 +317,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     void initialize()
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      void syncSupabaseUser(session?.user ?? null)
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED") return
+
+      setIsLoading(true)
+      void syncSupabaseUser(session?.user ?? null).finally(() => {
+        if (mounted) {
+          setIsLoading(false)
+        }
+      })
     })
 
     return () => {

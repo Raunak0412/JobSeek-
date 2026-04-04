@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { getDashboardPath, useAuth } from "@/lib/auth-context"
@@ -12,20 +11,38 @@ export default function AuthCallbackPage() {
   const searchParams = useSearchParams()
   const { user, isLoading } = useAuth()
   const [isExchanging, setIsExchanging] = useState(true)
+  const [oauthError, setOauthError] = useState("")
 
   useEffect(() => {
     const exchangeCode = async () => {
-      const supabase = getSupabaseBrowserClient()
-      if (!supabase) {
+      const queryError = searchParams.get("error_description") ?? searchParams.get("error") ?? ""
+      const hashParams = typeof window !== "undefined" ? new URLSearchParams(window.location.hash.replace(/^#/, "")) : null
+      const hashError = hashParams?.get("error_description") ?? hashParams?.get("error") ?? ""
+      const authError = queryError || hashError
+      if (authError) {
+        setOauthError(authError)
         setIsExchanging(false)
         return
       }
+
+      const supabase = getSupabaseBrowserClient()
+      if (!supabase) {
+        setOauthError("Supabase is not configured in the browser.")
+        setIsExchanging(false)
+        return
+      }
+
       const code = searchParams.get("code")
       if (!code) {
         setIsExchanging(false)
         return
       }
-      await supabase.auth.exchangeCodeForSession(code)
+
+      const { error } = await supabase.auth.exchangeCodeForSession(code)
+      if (error) {
+        setOauthError(error.message)
+      }
+
       setIsExchanging(false)
     }
 
@@ -38,8 +55,13 @@ export default function AuthCallbackPage() {
       router.replace(getDashboardPath(user.type))
       return
     }
-    router.replace("/auth/login?oauth=failed")
-  }, [isExchanging, isLoading, router, user])
+
+    const nextParams = new URLSearchParams({ oauth: "failed" })
+    if (oauthError) {
+      nextParams.set("message", oauthError)
+    }
+    router.replace(`/auth/login?${nextParams.toString()}`)
+  }, [isExchanging, isLoading, oauthError, router, user])
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#121212] text-white">

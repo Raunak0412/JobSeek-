@@ -34,6 +34,10 @@ const skillMatchers: Array<{ keywords: string[]; skills: string[] }> = [
     skills: ["AWS", "Docker", "Kubernetes", "CI/CD", "Terraform"],
   },
   {
+    keywords: ["finance", "financial", "fp&a", "budget", "forecast", "accounting", "power bi", "tableau"],
+    skills: ["Financial Modeling", "Forecasting", "Excel", "Power BI", "SQL", "Budgeting"],
+  },
+  {
     keywords: ["game", "game dev", "game developer", "unity", "unreal", "godot", "gameplay", "c++", "c#", "shader", "blender"],
     skills: ["Unity", "Unreal Engine", "C#", "C++", "Gameplay Systems", "Shader Programming"],
   },
@@ -134,7 +138,7 @@ export default function PostJobPage() {
                       value={form.title}
                       onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
                       className="h-12 rounded-2xl border-white/10 bg-white/5 text-white"
-                      placeholder="Game Developer"
+                      placeholder="Finance Analyst"
                       required
                     />
                   </div>

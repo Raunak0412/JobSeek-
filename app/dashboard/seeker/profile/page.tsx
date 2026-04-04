@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent } from "react"
+import { useEffect, useMemo, useState, type ChangeEvent, type KeyboardEvent } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { MapPin, Sparkles } from "lucide-react"
+import { MapPin, Pencil, Sparkles } from "lucide-react"
 import { Header } from "@/components/dashboard/header"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Badge } from "@/components/ui/badge"
@@ -13,7 +13,10 @@ import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { useAuth } from "@/lib/auth-context"
 import { seekerProfile } from "@/lib/mock-data"
+import { getSeekerAvatarSrc, seekerAvatarStyles, useSeekerProfileDetails } from "@/lib/seeker-profile"
 import { useResumeExtraction, useResumeMeta } from "@/lib/demo-store"
+
+type EditableField = "email" | "github" | "linkedin" | "portfolio" | "availability"
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -32,6 +35,7 @@ export default function ProfilePage() {
     Backend: "Backend Platform Engineer",
     "Full Stack": "Full Stack Product Engineer",
     Data: "Data Platform Engineer",
+    Finance: "Finance Analyst",
     AI: "Applied AI Engineer",
     Design: "Product Design Lead",
     "Game Development": "Game Development Engineer",
@@ -54,68 +58,9 @@ export default function ProfilePage() {
       .slice(0, 4)
   }, [resumeMeta?.extractedText, resumeMeta?.ocrText])
 
-  const initials = useMemo(() => {
-    const name = user?.name ?? seekerProfile.name
-    return name
-      .split(" ")
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase())
-      .join("") || "JS"
-  }, [user?.name])
-
-  const avatarStyles = [
-    { id: "ember", from: "#F97316", to: "#F43F5E" },
-    { id: "ocean", from: "#38BDF8", to: "#2563EB" },
-    { id: "mint", from: "#34D399", to: "#10B981" },
-    { id: "violet", from: "#A855F7", to: "#6366F1" },
-    { id: "sunset", from: "#FDBA74", to: "#FB7185" },
-    { id: "slate", from: "#94A3B8", to: "#334155" },
-  ]
-
-  const makeAvatarDataUrl = (from: string, to: string, label: string) => {
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
-      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs>
-      <rect width="120" height="120" rx="36" fill="url(#g)"/>
-      <text x="60" y="68" text-anchor="middle" font-family="Arial" font-size="44" fill="white" font-weight="700">${label}</text>
-    </svg>`
-    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
-  }
-
-  const [profileDetails, setProfileDetails] = useState({
-    email: seekerProfile.email,
-    github: "",
-    linkedin: "",
-    portfolio: "",
-    availability: "",
-    contactNote: "",
-    experienceOverview: "",
-    avatarStyle: "ember",
-    photoDataUrl: "",
-  })
-  const [editingField, setEditingField] = useState<null | "email" | "github" | "linkedin" | "portfolio" | "availability" | "contact">(null)
-  const clickTimeoutRef = useRef<number | null>(null)
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    const stored = window.localStorage.getItem("jobseek_profile_custom")
-    if (stored) {
-      try {
-        setProfileDetails((current) => ({ ...current, ...JSON.parse(stored) }))
-      } catch {
-        return
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    window.localStorage.setItem("jobseek_profile_custom", JSON.stringify(profileDetails))
-  }, [profileDetails])
-
-  const avatarDisplay = profileDetails.photoDataUrl
-    ? <img src={profileDetails.photoDataUrl} alt="Profile avatar" className="h-full w-full object-cover" />
-    : <img src={makeAvatarDataUrl(avatarStyles.find((style) => style.id === profileDetails.avatarStyle)?.from ?? "#94A3B8", avatarStyles.find((style) => style.id === profileDetails.avatarStyle)?.to ?? "#334155", initials)} alt="Avatar" className="h-full w-full object-cover" />
+  const [profileDetails, setProfileDetails] = useSeekerProfileDetails()
+  const [editingField, setEditingField] = useState<EditableField | null>(null)
+  const avatarSrc = useMemo(() => getSeekerAvatarSrc(user?.name ?? seekerProfile.name, profileDetails), [profileDetails, user?.name])
 
   const normalizeUrl = (value: string) => {
     if (!value) return ""
@@ -129,6 +74,10 @@ export default function ProfilePage() {
     }
   }
 
+  const updateProfileField = (field: EditableField, value: string) => {
+    setProfileDetails((current) => ({ ...current, [field]: value }))
+  }
+
   const handleOpenLink = (value: string) => {
     if (!value) return
     window.open(normalizeUrl(value), "_blank", "noreferrer")
@@ -139,23 +88,66 @@ export default function ProfilePage() {
     window.location.href = `mailto:${value}`
   }
 
-  const handleDeferredOpen = (value: string, handler: (val: string) => void) => {
-    if (!value) return
-    if (clickTimeoutRef.current) {
-      window.clearTimeout(clickTimeoutRef.current)
-    }
-    clickTimeoutRef.current = window.setTimeout(() => {
-      handler(value)
-      clickTimeoutRef.current = null
-    }, 180)
-  }
-
-  const cancelDeferredOpen = () => {
-    if (clickTimeoutRef.current) {
-      window.clearTimeout(clickTimeoutRef.current)
-      clickTimeoutRef.current = null
-    }
-  }
+  const renderEditableField = ({
+    field,
+    label,
+    value,
+    placeholder,
+    emptyLabel,
+    onOpen,
+  }: {
+    field: EditableField
+    label: string
+    value: string
+    placeholder: string
+    emptyLabel: string
+    onOpen?: (value: string) => void
+  }) => (
+    <div className="space-y-2">
+      <p className="text-sm text-slate-300">{label}</p>
+      {editingField === field ? (
+        <Input
+          autoFocus
+          value={value}
+          onChange={(event) => updateProfileField(field, event.target.value)}
+          onBlur={() => setEditingField(null)}
+          onKeyDown={handleFieldKeyDown}
+          placeholder={placeholder}
+          className="h-11 rounded-xl border-white/10 bg-white/5 text-white placeholder:text-slate-500"
+        />
+      ) : (
+        <div className="flex items-center gap-2">
+          {onOpen ? (
+            <button
+              type="button"
+              onClick={() => value && onOpen(value)}
+              disabled={!value}
+              title={value || emptyLabel}
+              className={`flex h-11 min-w-0 flex-1 items-center rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm transition ${
+                value ? "text-slate-200 hover:border-violet-300/40 hover:bg-white/10" : "cursor-default text-slate-500"
+              }`}
+            >
+              <span className="truncate">{value || emptyLabel}</span>
+            </button>
+          ) : (
+            <div title={value || emptyLabel} className="flex h-11 min-w-0 flex-1 items-center rounded-xl border border-white/10 bg-white/5 px-4 text-sm">
+              <span className={`truncate ${value ? "text-slate-200" : "text-slate-500"}`}>{value || emptyLabel}</span>
+            </div>
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => setEditingField(field)}
+            className="h-11 w-11 shrink-0 rounded-xl border-white/10 bg-white/5 text-slate-200 shadow-none hover:border-violet-300/40 hover:bg-white/10 hover:text-white"
+          >
+            <Pencil className="h-4 w-4" />
+            <span className="sr-only">Edit {label}</span>
+          </Button>
+        </div>
+      )}
+    </div>
+  )
 
   const onPhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -208,12 +200,12 @@ export default function ProfilePage() {
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                   <div className="flex items-center gap-4">
                     <div className="h-16 w-16 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                      {avatarDisplay}
+                      <img src={avatarSrc} alt="Profile avatar" className="h-full w-full object-cover" />
                     </div>
                     <div className="space-y-2">
                       <div className="text-sm text-slate-300">Avatar style</div>
                       <div className="flex flex-wrap gap-2">
-                        {avatarStyles.map((style) => (
+                        {seekerAvatarStyles.map((style) => (
                           <button
                             key={style.id}
                             type="button"
@@ -244,117 +236,41 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <p className="text-sm text-slate-300">Email</p>
-                    {editingField === "email" ? (
-                      <Input
-                        autoFocus
-                        value={profileDetails.email}
-                        onChange={(event) => setProfileDetails((current) => ({ ...current, email: event.target.value }))}
-                        onBlur={() => setEditingField(null)}
-                        onKeyDown={handleFieldKeyDown}
-                        placeholder="name@email.com"
-                        className="h-11 rounded-xl border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-                      />
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => (profileDetails.email ? handleDeferredOpen(profileDetails.email, handleOpenEmail) : setEditingField("email"))}
-                        onDoubleClick={() => {
-                          cancelDeferredOpen()
-                          setEditingField("email")
-                        }}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
-                      >
-                        <span>{profileDetails.email || "Add email address"}</span>
-                        <span className="text-xs text-slate-500">Double click to edit</span>
-                      </button>
-                    )}
-                  </div>
+                  {renderEditableField({
+                    field: "email",
+                    label: "Email",
+                    value: profileDetails.email,
+                    placeholder: "name@email.com",
+                    emptyLabel: "Add email address",
+                    onOpen: handleOpenEmail,
+                  })}
 
-                  <div className="space-y-2">
-                    <p className="text-sm text-slate-300">GitHub</p>
-                    {editingField === "github" ? (
-                      <Input
-                        autoFocus
-                        value={profileDetails.github}
-                        onChange={(event) => setProfileDetails((current) => ({ ...current, github: event.target.value }))}
-                        onBlur={() => setEditingField(null)}
-                        onKeyDown={handleFieldKeyDown}
-                        placeholder="github.com/username"
-                        className="h-11 rounded-xl border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-                      />
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => (profileDetails.github ? handleDeferredOpen(profileDetails.github, handleOpenLink) : setEditingField("github"))}
-                        onDoubleClick={() => {
-                          cancelDeferredOpen()
-                          setEditingField("github")
-                        }}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
-                      >
-                        <span>{profileDetails.github || "Add GitHub link"}</span>
-                        <span className="text-xs text-slate-500">Double click to edit</span>
-                      </button>
-                    )}
-                  </div>
+                  {renderEditableField({
+                    field: "github",
+                    label: "GitHub",
+                    value: profileDetails.github,
+                    placeholder: "github.com/username",
+                    emptyLabel: "Add GitHub link",
+                    onOpen: handleOpenLink,
+                  })}
 
-                  <div className="space-y-2">
-                    <p className="text-sm text-slate-300">LinkedIn</p>
-                    {editingField === "linkedin" ? (
-                      <Input
-                        autoFocus
-                        value={profileDetails.linkedin}
-                        onChange={(event) => setProfileDetails((current) => ({ ...current, linkedin: event.target.value }))}
-                        onBlur={() => setEditingField(null)}
-                        onKeyDown={handleFieldKeyDown}
-                        placeholder="linkedin.com/in/username"
-                        className="h-11 rounded-xl border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-                      />
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => (profileDetails.linkedin ? handleDeferredOpen(profileDetails.linkedin, handleOpenLink) : setEditingField("linkedin"))}
-                        onDoubleClick={() => {
-                          cancelDeferredOpen()
-                          setEditingField("linkedin")
-                        }}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
-                      >
-                        <span>{profileDetails.linkedin || "Add LinkedIn link"}</span>
-                        <span className="text-xs text-slate-500">Double click to edit</span>
-                      </button>
-                    )}
-                  </div>
+                  {renderEditableField({
+                    field: "linkedin",
+                    label: "LinkedIn",
+                    value: profileDetails.linkedin,
+                    placeholder: "linkedin.com/in/username",
+                    emptyLabel: "Add LinkedIn link",
+                    onOpen: handleOpenLink,
+                  })}
 
-                  <div className="space-y-2">
-                    <p className="text-sm text-slate-300">Portfolio</p>
-                    {editingField === "portfolio" ? (
-                      <Input
-                        autoFocus
-                        value={profileDetails.portfolio}
-                        onChange={(event) => setProfileDetails((current) => ({ ...current, portfolio: event.target.value }))}
-                        onBlur={() => setEditingField(null)}
-                        onKeyDown={handleFieldKeyDown}
-                        placeholder="portfolio link"
-                        className="h-11 rounded-xl border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-                      />
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => (profileDetails.portfolio ? handleDeferredOpen(profileDetails.portfolio, handleOpenLink) : setEditingField("portfolio"))}
-                        onDoubleClick={() => {
-                          cancelDeferredOpen()
-                          setEditingField("portfolio")
-                        }}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
-                      >
-                        <span>{profileDetails.portfolio || "Add portfolio link"}</span>
-                        <span className="text-xs text-slate-500">Double click to edit</span>
-                      </button>
-                    )}
-                  </div>
+                  {renderEditableField({
+                    field: "portfolio",
+                    label: "Portfolio",
+                    value: profileDetails.portfolio,
+                    placeholder: "portfolio link",
+                    emptyLabel: "Add portfolio link",
+                    onOpen: handleOpenLink,
+                  })}
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
@@ -369,28 +285,13 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm text-slate-300">Availability</p>
-                    {editingField === "availability" ? (
-                      <Input
-                        autoFocus
-                        value={profileDetails.availability}
-                        onChange={(event) => setProfileDetails((current) => ({ ...current, availability: event.target.value }))}
-                        onBlur={() => setEditingField(null)}
-                        onKeyDown={handleFieldKeyDown}
-                        placeholder="Immediate / 2 weeks"
-                        className="h-11 rounded-xl border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-                      />
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setEditingField("availability")}
-                        onDoubleClick={() => setEditingField("availability")}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
-                      >
-                        <span>{profileDetails.availability || "Add availability"}</span>
-                        <span className="text-xs text-slate-500">Double click to edit</span>
-                      </button>
-                    )}
+                    {renderEditableField({
+                      field: "availability",
+                      label: "Availability",
+                      value: profileDetails.availability,
+                      placeholder: "Immediate / 2 weeks",
+                      emptyLabel: "Add availability",
+                    })}
                     <Button
                       type="button"
                       onClick={() => handleOpenEmail(profileDetails.email)}
@@ -402,7 +303,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-500">Double click any field to edit. Changes save locally on this device.</p>
+                <p className="text-xs text-slate-500">Click a contact detail to open it, or use the pencil icon to edit it. Changes save locally on this device.</p>
               </CardContent>
             </Card>
           </motion.section>

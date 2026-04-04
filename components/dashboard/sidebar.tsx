@@ -22,6 +22,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
+import { getProfileInitials, getSeekerAvatarSrc, useSeekerProfileDetails } from "@/lib/seeker-profile"
 import { cn } from "@/lib/utils"
 
 interface SidebarProps {
@@ -46,6 +47,7 @@ const recruiterLinks = [
   { href: "/dashboard/recruiter/candidates", label: "Candidates", icon: Users },
   { href: "/dashboard/recruiter/rankings", label: "Rankings", icon: Trophy },
   { href: "/dashboard/recruiter/mail", label: "Mail studio", icon: Mail },
+  { href: "/dashboard/recruiter/profile", label: "Profile", icon: User },
   { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
   { href: "/dashboard/settings", label: "Settings", icon: Settings2 },
 ]
@@ -53,7 +55,11 @@ const recruiterLinks = [
 export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
   const { user, logout } = useAuth()
+  const [seekerProfileDetails] = useSeekerProfileDetails()
   const links = type === "seeker" ? seekerLinks : recruiterLinks
+  const displayName = user?.name ?? "User"
+  const seekerAvatarSrc = getSeekerAvatarSrc(displayName, seekerProfileDetails)
+  const initials = getProfileInitials(displayName, "U")
 
   const content = (
     <div className="flex h-full flex-col">
@@ -75,8 +81,14 @@ export function Sidebar({ type, isOpen, onClose }: SidebarProps) {
       <div className="border-b border-white/10 p-4">
         <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-400/30 to-violet-700/25 text-sm font-semibold text-white">
-              {user?.name?.charAt(0).toUpperCase() ?? "U"}
+            <div className="h-11 w-11 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+              {type === "seeker" ? (
+                <img src={seekerAvatarSrc} alt={`${displayName} avatar`} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-violet-400/30 to-violet-700/25 text-sm font-semibold text-white">
+                  {initials}
+                </div>
+              )}
             </div>
             <div className="min-w-0">
               <p className="truncate font-medium text-white">{user?.name ?? "User"}</p>

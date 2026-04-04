@@ -52,15 +52,25 @@ export default function CandidatesPage() {
     setActiveRecruiterJobId(nextJobId)
   }, [jobId, jobs, preferredJobId])
 
+  const job = jobs.find((item) => item.id === jobId)
+
   const rankedCandidates = useMemo(() => {
     if (!jobId) return []
 
-    return getRankedCandidatesForJob(jobId).filter((candidate) =>
+    const matchingQuery = getRankedCandidatesForJob(jobId).filter((candidate) =>
       [candidate.name, candidate.currentRole, ...candidate.skills].join(" ").toLowerCase().includes(query.toLowerCase())
     )
-  }, [jobId, query])
 
-  const job = jobs.find((item) => item.id === jobId)
+    const relevantMatches = matchingQuery.filter(
+      (candidate) =>
+        candidate.jobScore.matchedSkills.length > 0 ||
+        candidate.jobScore.score >= 7 ||
+        (job?.category ? candidate.category.toLowerCase() === job.category.toLowerCase() : false)
+    )
+
+    return relevantMatches.length ? relevantMatches : matchingQuery
+  }, [job?.category, jobId, query])
+
   const outreachByCandidate = useMemo(() => {
     const map = new Map<string, string>()
     outreachHistory.forEach((entry) => {
