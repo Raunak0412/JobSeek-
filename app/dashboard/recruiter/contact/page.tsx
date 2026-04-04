@@ -110,14 +110,14 @@ export default function RecruiterContactPage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="recruiter" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Candidate contact" onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 space-y-6 p-4 lg:p-6">
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between rounded-[2rem] border border-white/10 bg-white/5 p-6">
             <div>
-              <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">Shortlist outreach</Badge>
+              <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">Shortlist outreach</Badge>
               <h2 className="mt-4 font-heading text-3xl font-semibold tracking-tight">Candidate details and formal response</h2>
             </div>
             <Link href={`/dashboard/recruiter/candidates${jobId ? `?jobId=${jobId}` : ""}`}>
@@ -129,12 +129,12 @@ export default function RecruiterContactPage() {
           </motion.section>
 
           {!candidate || !job ? (
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardContent className="p-6 text-sm text-slate-300">Candidate or vacancy was not found. Please go back and open contact from the candidates page.</CardContent>
             </Card>
           ) : (
             <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">{candidate.name}</CardTitle>
                   <p className="text-sm text-slate-400">{candidate.currentRole}</p>
@@ -160,14 +160,14 @@ export default function RecruiterContactPage() {
                   </div>
 
                   {candidateScore ? (
-                    <div className="rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-red-100">
+                    <div className="rounded-2xl border border-violet-400/20 bg-violet-400/10 p-4 text-violet-100">
                       Match score: {candidateScore.score}/10 for {job.title}
                     </div>
                   ) : null}
                 </CardContent>
               </Card>
 
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Send formal shortlist mail</CardTitle>
                 </CardHeader>
@@ -185,12 +185,12 @@ export default function RecruiterContactPage() {
                     <Textarea value={body} onChange={(event) => setBody(event.target.value)} className="min-h-72 rounded-[1.5rem] border-white/10 bg-white/5 text-white" />
                   </div>
                   {latestOutreach ? (
-                    <div className="rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-100">
+                    <div className="rounded-2xl border border-violet-400/20 bg-violet-400/10 p-4 text-sm text-violet-100">
                       Last sent: {new Date(latestOutreach.sentAt).toLocaleString()}
                     </div>
                   ) : null}
 
-                  <Button onClick={handleSend} disabled={isSending} className="h-12 w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
+                  <Button onClick={handleSend} disabled={isSending} className="h-12 w-full rounded-full bg-violet-500 text-white hover:bg-violet-400">
                     {isSending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
                     Send mail
                   </Button>
@@ -203,3 +203,4 @@ export default function RecruiterContactPage() {
     </div>
   )
 }
+
