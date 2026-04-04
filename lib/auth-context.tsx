@@ -186,6 +186,19 @@ function extractNameFromAuthUser(authUser: SupabaseAuthUser) {
   return email.split("@")[0]
 }
 
+function formatOAuthSignInError(message: string, provider: "google") {
+  const normalized = message.toLowerCase()
+  if (normalized.includes("provider is not enabled") || normalized.includes("unsupported provider")) {
+    if (provider === "google") {
+      return "Google sign in is disabled in Supabase. Enable Google in Supabase Dashboard -> Authentication -> Providers, then add your Google OAuth client ID and secret."
+    }
+  }
+  if (normalized.includes("redirect")) {
+    return "OAuth redirect is not configured correctly. Add your app callback URL in Supabase Dashboard -> Authentication -> URL Configuration."
+  }
+  return message
+}
+
 type ProfileRow = {
   id: string
   email: string | null
@@ -370,7 +383,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (error) {
       clearPendingGoogleRole()
-      return { success: false, error: error.message }
+      return { success: false, error: formatOAuthSignInError(error.message, "google") }
     }
 
     return { success: true }
