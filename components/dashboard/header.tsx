@@ -106,7 +106,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/10 bg-[#150707]/90 backdrop-blur-2xl">
+    <header className="sticky top-0 z-30 border-b border-white/10 bg-[#121212]/92 backdrop-blur-2xl">
       <div className="flex h-18 items-center justify-between gap-4 px-4 py-3 lg:px-6">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={onMenuClick} className="rounded-2xl text-slate-300 hover:bg-white/10 lg:hidden">
@@ -115,12 +115,12 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="font-heading text-xl font-semibold tracking-tight text-white">{title}</h1>
-              <span className="hidden rounded-full border border-red-400/20 bg-red-400/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-red-200 sm:inline-flex">
+              <span className="hidden rounded-full border border-lime-300/45 bg-lime-300/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-lime-100 sm:inline-flex">
                 AI active
               </span>
             </div>
             <p className="mt-1 flex items-center gap-1 text-xs text-slate-400">
-              <Sparkles className="h-3 w-3 text-red-300" />
+              <Sparkles className="h-3 w-3 text-lime-300" />
               Signed in as {user?.name?.split(" ")[0] ?? "user"}
             </p>
           </div>
@@ -139,13 +139,13 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                 }}
                 onFocus={() => setSearchOpen(true)}
                 placeholder="Search people, jobs, pages, skills"
-                className="h-11 w-[240px] rounded-full border-white/10 bg-white/5 pl-9 text-white placeholder:text-slate-500 lg:w-[360px]"
+                className="h-11 w-[240px] rounded-full border-white/10 bg-white/5 pl-9 text-white placeholder:text-slate-500 focus-visible:border-violet-300/60 focus-visible:ring-violet-300/35 lg:w-[360px]"
               />
             </form>
             {searchOpen && query.trim().length >= 2 ? (
               <div
                 data-lenis-prevent=""
-                className="absolute right-0 top-[3.25rem] z-40 w-[440px] rounded-2xl border border-white/10 bg-[#1b0b0b] p-2 shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
+                className="absolute right-0 top-[3.25rem] z-40 w-[440px] rounded-2xl border border-white/10 bg-[#171717] p-2 shadow-[0_24px_70px_rgba(0,0,0,0.45),0_0_0_1px_rgba(139,92,246,0.15)]"
               >
                 <div className="mb-2 space-y-1 px-2 pt-1">
                   <div className="flex items-center justify-between">
@@ -170,7 +170,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                                 className="w-full rounded-xl border border-transparent bg-white/0 px-3 py-2 text-left transition hover:border-white/10 hover:bg-white/5"
                               >
                                 <div className="flex items-start gap-3">
-                                  <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-black/20 text-red-200">
+                                  <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg border border-violet-300/25 bg-violet-400/10 text-violet-100">
                                     <TypeIcon className="h-4 w-4" />
                                   </div>
                                   <div className="min-w-0 flex-1">
@@ -202,8 +202,8 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                 <Bell className="h-4.5 w-4.5" />
                 {unreadCount > 0 ? (
                   <>
-                    <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-red-300" />
-                    <span className="absolute -right-1 -top-1 min-w-5 rounded-full border border-red-300/40 bg-[#150707] px-1 text-[10px] font-semibold text-red-200">
+                    <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-lime-300" />
+                    <span className="absolute -right-1 -top-1 min-w-5 rounded-full border border-violet-300/40 bg-[#121212] px-1 text-[10px] font-semibold text-violet-100">
                       {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                   </>
@@ -214,7 +214,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
               data-lenis-prevent=""
               align="end"
               sideOffset={10}
-              className="w-[390px] overscroll-contain border-white/10 bg-[#1b0b0b] p-0 text-white"
+              className="w-[390px] overscroll-contain border-white/10 bg-[#171717] p-0 text-white shadow-[0_24px_70px_rgba(0,0,0,0.45),0_0_0_1px_rgba(139,92,246,0.14)]"
             >
               <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
                 <div>
@@ -268,7 +268,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                         <div className="mt-3 flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             {!notification.read ? (
-                              <span className="rounded-full border border-red-400/25 bg-red-400/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-red-200">
+                              <span className="rounded-full border border-lime-300/40 bg-lime-300/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-lime-100">
                                 New
                               </span>
                             ) : null}
@@ -330,3 +330,4 @@ export function Header({ title, onMenuClick }: HeaderProps) {
     </header>
   )
 }
+
