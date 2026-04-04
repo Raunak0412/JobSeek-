@@ -50,8 +50,8 @@ export function ForRecruitersSection() {
   return (
     <section id="for-recruiters" className="relative overflow-hidden bg-zinc-950 py-24 sm:py-32">
       {/* Background decoration */}
-      <div className="absolute right-0 top-1/4 h-96 w-96 rounded-full bg-red-500/10 blur-3xl" />
-      <div className="absolute left-0 bottom-1/4 h-96 w-96 rounded-full bg-indigo-500/10 blur-3xl" />
+      <div className="absolute right-0 top-1/4 h-96 w-96 rounded-full bg-violet-600/10 blur-3xl" />
+      <div className="absolute left-0 bottom-1/4 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl" />
       
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
@@ -63,12 +63,12 @@ export function ForRecruitersSection() {
             transition={{ duration: 0.6 }}
             className="flex flex-col justify-center"
           >
-            <span className="inline-block w-fit rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400">
+            <span className="inline-block w-fit rounded-full border border-lime-500/30 bg-lime-500/10 px-4 py-1.5 text-sm font-medium text-lime-400">
               For Recruiters
             </span>
             <h2 className="mt-6 text-balance text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
               Hire smarter,{" "}
-              <span className="bg-gradient-to-r from-emerald-400 to-red-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-lime-400 to-violet-500 bg-clip-text text-transparent">
                 not harder
               </span>
             </h2>
@@ -81,7 +81,7 @@ export function ForRecruitersSection() {
               <Link href="/auth/register?type=recruiter">
                 <Button
                   size="lg"
-                  className="group h-12 gap-2 bg-gradient-to-r from-emerald-500 to-red-500 px-8 text-base font-semibold text-white hover:from-emerald-600 hover:to-red-600"
+                  className="group h-12 gap-2 bg-gradient-to-r from-lime-500 to-violet-600 px-8 text-base font-semibold text-white hover:from-lime-600 hover:to-violet-600"
                 >
                   Start Hiring Today
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -106,7 +106,7 @@ export function ForRecruitersSection() {
                 ].map((candidate, i) => (
                   <div key={i} className="flex items-center justify-between rounded-lg bg-white/5 p-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-red-500 text-xs font-bold text-white">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-violet-600 text-xs font-bold text-white">
                         #{i + 1}
                       </div>
                       <div>
@@ -115,7 +115,7 @@ export function ForRecruitersSection() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-emerald-400">{candidate.score}</p>
+                      <p className="text-lg font-bold text-lime-400">{candidate.score}</p>
                       <p className="text-xs text-zinc-500">Score</p>
                     </div>
                   </div>
@@ -141,7 +141,7 @@ export function ForRecruitersSection() {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 className="group rounded-xl border border-white/5 bg-white/5 p-5 transition-all hover:border-white/10 hover:bg-white/10"
               >
-                <benefit.icon className="h-6 w-6 text-red-400" />
+                <benefit.icon className="h-6 w-6 text-violet-500" />
                 <h3 className="mt-3 font-semibold text-white">{benefit.title}</h3>
                 <p className="mt-1 text-sm text-zinc-400">{benefit.description}</p>
               </motion.div>
