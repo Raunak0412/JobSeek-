@@ -28,7 +28,7 @@ function SettingRow({ label, hint, checked, onCheckedChange }: SettingRowProps) 
         <p className="text-sm font-medium text-white">{label}</p>
         <p className="mt-1 text-xs leading-5 text-slate-400">{hint}</p>
       </div>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} className="data-[state=checked]:bg-red-400" />
+      <Switch checked={checked} onCheckedChange={onCheckedChange} className="data-[state=checked]:bg-violet-400" />
     </div>
   )
 }
@@ -58,7 +58,7 @@ export default function SettingsPage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type={user?.type ?? "seeker"} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Settings" onMenuClick={() => setSidebarOpen(true)} />
@@ -66,7 +66,7 @@ export default function SettingsPage() {
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div>
-                <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">Workspace settings</Badge>
+                <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">Workspace settings</Badge>
                 <h2 className="mt-4 font-heading text-4xl font-semibold tracking-tight">Manage notifications, privacy, and UI behavior.</h2>
                 <p className="mt-3 text-sm text-slate-300">Settings are shared for both seeker and recruiter views on this device.</p>
               </div>
@@ -79,7 +79,7 @@ export default function SettingsPage() {
           </motion.section>
 
           <section className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardHeader>
                 <CardTitle className="font-heading text-2xl">Notifications</CardTitle>
               </CardHeader>
@@ -111,7 +111,7 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardHeader>
                 <CardTitle className="font-heading text-2xl">Privacy and profile</CardTitle>
               </CardHeader>
@@ -144,11 +144,11 @@ export default function SettingsPage() {
             </Card>
           </section>
 
-          <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+          <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
             <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <p className="inline-flex items-center gap-2 text-sm font-medium text-white">
-                  <SlidersHorizontal className="h-4 w-4 text-red-300" />
+                  <SlidersHorizontal className="h-4 w-4 text-violet-300" />
                   Quick actions
                 </p>
                 <p className="mt-2 text-sm text-slate-400">Reset to default if you want to start fresh with a clean baseline.</p>
@@ -172,10 +172,10 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+          <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
             <CardContent className="p-5">
               <div className="flex items-start gap-3">
-                <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-red-400/10 text-red-200">
+                <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-violet-400/10 text-violet-200">
                   <ShieldCheck className="h-4 w-4" />
                 </div>
                 <div>
@@ -184,7 +184,7 @@ export default function SettingsPage() {
                     Keep notifications and visibility settings aligned with your active role while switching between seeker and recruiter dashboards.
                   </p>
                   <Separator className="my-3 bg-white/10" />
-                  <p className="inline-flex items-center gap-1 text-xs text-red-200">
+                  <p className="inline-flex items-center gap-1 text-xs text-violet-200">
                     <Sparkles className="h-3.5 w-3.5" />
                     Changes are saved instantly.
                   </p>
@@ -197,3 +197,4 @@ export default function SettingsPage() {
     </div>
   )
 }
+
