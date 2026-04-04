@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function CandidateProfileLoading() {
   return (
-    <div className="min-h-screen bg-[#150707] p-4 text-white lg:p-6">
+    <div className="min-h-screen bg-[#121212] p-4 text-white lg:p-6">
       <div className="mx-auto max-w-[1400px] space-y-6">
         <Skeleton className="h-52 rounded-[2rem] border border-white/10 bg-white/5" />
         <div className="grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
