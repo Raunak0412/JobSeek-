@@ -35,21 +35,21 @@ export default function RecruiterDashboard() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="recruiter" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Recruiter overview" onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 space-y-6 p-4 lg:p-6">
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
             <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-              <Badge className="rounded-full border-red-400/20 bg-red-400/10 px-3 py-1 text-red-100">Recruitment cockpit</Badge>
+              <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 px-3 py-1 text-violet-100">Recruitment cockpit</Badge>
               <h2 className="mt-5 font-heading text-4xl font-semibold tracking-tight">Manage routed resumes, rankings, and shortlist mail from one place.</h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
                 Every vacancy syncs with the ranker system. Candidate scores are generated against job descriptions, sentiment is surfaced, and the formal outreach layer is ready when your shortlist is locked.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link href="/dashboard/recruiter/post-job">
-                  <Button className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300">Create vacancy</Button>
+                  <Button className="rounded-full bg-violet-500 text-white hover:bg-violet-400">Create vacancy</Button>
                 </Link>
                 <Link href="/dashboard/recruiter/rankings">
                   <Button variant="outline" className="rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
@@ -65,7 +65,7 @@ export default function RecruiterDashboard() {
                     resetDemoData()
                     setResetting(false)
                   }}
-                  className="rounded-full text-red-200 hover:bg-white/10 hover:text-white"
+                  className="rounded-full text-violet-200 hover:bg-white/10 hover:text-white"
                 >
                   {resetting ? "Resetting demo data..." : "Reset demo data"}
                 </Button>
@@ -79,15 +79,15 @@ export default function RecruiterDashboard() {
                 { label: "Average score", value: `${summary.averageScore}/10`, icon: Trophy },
                 { label: "Shortlist capacity", value: summary.shortlistCount, icon: Mail },
               ].map((item) => (
-                <Card key={item.label} className="group relative overflow-hidden rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                <Card key={item.label} className="group relative overflow-hidden rounded-[1.75rem] border-white/10 bg-[#171717]">
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(248,113,113,0.22),transparent_45%),radial-gradient(circle_at_85%_85%,rgba(251,146,60,0.16),transparent_35%)] opacity-70" />
                   <CardContent className="relative p-5 transition duration-300 group-hover:[transform:translateY(-4px)]">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-red-400/10 text-red-200 shadow-[0_10px_30px_rgba(248,113,113,0.2)]">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-violet-400/10 text-violet-200 shadow-[0_10px_30px_rgba(139,92,246,0.2)]">
                       <item.icon className="h-5 w-5" />
                     </div>
                     <p className="mt-5 text-3xl font-semibold tracking-tight text-white">{item.value}</p>
                     <p className="mt-2 text-sm text-slate-400">{item.label}</p>
-                    <div className="mt-4 h-1.5 w-20 rounded-full bg-gradient-to-r from-red-300 to-orange-300/80" />
+                    <div className="mt-4 h-1.5 w-20 rounded-full bg-gradient-to-r from-violet-300 to-lime-300/80" />
                   </CardContent>
                 </Card>
               ))}
@@ -95,7 +95,7 @@ export default function RecruiterDashboard() {
           </motion.section>
 
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardHeader>
                 <CardTitle className="font-heading text-2xl">Overview workbench</CardTitle>
                 <p className="text-sm text-slate-400">Tabbed cards for graph flow, vacancy board, and shortlist execution.</p>
@@ -103,13 +103,13 @@ export default function RecruiterDashboard() {
               <CardContent>
                 <Tabs defaultValue="graph" className="space-y-4">
                   <TabsList className="h-auto flex-wrap rounded-full border border-white/10 bg-white/5 p-1">
-                    <TabsTrigger value="graph" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-red-400/15 data-[state=active]:text-red-100">
+                    <TabsTrigger value="graph" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-violet-400/15 data-[state=active]:text-violet-100">
                       Workflow graph
                     </TabsTrigger>
-                    <TabsTrigger value="vacancies" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-red-400/15 data-[state=active]:text-red-100">
+                    <TabsTrigger value="vacancies" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-violet-400/15 data-[state=active]:text-violet-100">
                       Vacancy board
                     </TabsTrigger>
-                    <TabsTrigger value="shortlist" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-red-400/15 data-[state=active]:text-red-100">
+                    <TabsTrigger value="shortlist" className="rounded-full px-4 text-slate-200 data-[state=active]:bg-violet-400/15 data-[state=active]:text-violet-100">
                       Shortlist radar
                     </TabsTrigger>
                   </TabsList>
@@ -137,7 +137,7 @@ export default function RecruiterDashboard() {
                         ].map((signal) => (
                           <div key={signal.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                             <p className="inline-flex items-center gap-2 text-sm font-medium text-white">
-                              <signal.icon className="h-4 w-4 text-red-300" />
+                              <signal.icon className="h-4 w-4 text-violet-300" />
                               {signal.title}
                             </p>
                             <p className="mt-2 text-sm leading-6 text-slate-300">{signal.detail}</p>
@@ -165,7 +165,7 @@ export default function RecruiterDashboard() {
                                 </div>
                               </div>
                               <div className="text-left sm:text-right">
-                                <p className="text-sm font-medium text-red-200">{job.applicants} applicants</p>
+                                <p className="text-sm font-medium text-violet-200">{job.applicants} applicants</p>
                                 <p className="mt-1 text-xs text-slate-500">Posted {job.posted}</p>
                                 <Link href={`/dashboard/recruiter/candidates?jobId=${job.id}`}>
                                   <Button variant="outline" size="sm" className="mt-3 rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
@@ -181,7 +181,7 @@ export default function RecruiterDashboard() {
                   </TabsContent>
 
                   <TabsContent value="shortlist" className="space-y-4">
-                    <p className="text-sm text-slate-400">Top candidates currently routed for <span className="text-red-200">{featuredJobTitle}</span>.</p>
+                    <p className="text-sm text-slate-400">Top candidates currently routed for <span className="text-violet-200">{featuredJobTitle}</span>.</p>
                     <div className="space-y-3">
                       {topCandidates.map((candidate) => (
                         <div key={candidate.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -192,7 +192,7 @@ export default function RecruiterDashboard() {
                               <p className="mt-2 text-sm leading-6 text-slate-300">{candidate.jobScore.routeReason}</p>
                               <div className="mt-3 flex flex-wrap gap-2">
                                 {candidate.jobScore.matchedSkills.map((skill) => (
-                                  <Badge key={skill} className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                                  <Badge key={skill} className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">
                                     {skill}
                                   </Badge>
                                 ))}
@@ -200,7 +200,7 @@ export default function RecruiterDashboard() {
                             </div>
                             <div className="text-left sm:text-right">
                               <p className="font-heading text-3xl font-semibold tracking-tight text-white">{candidate.jobScore.score}</p>
-                              <p className="text-xs uppercase tracking-[0.22em] text-red-200">score</p>
+                              <p className="text-xs uppercase tracking-[0.22em] text-violet-200">score</p>
                               <p className="mt-2 text-sm text-slate-400">{candidate.sentiment} tone</p>
                               <Link href={`/dashboard/recruiter/candidates/${candidate.id}?jobId=${featuredJob?.id ?? ""}`}>
                                 <Button variant="outline" size="sm" className="mt-3 rounded-full border-white/10 bg-white/5 text-white hover:bg-white/10">
@@ -213,7 +213,7 @@ export default function RecruiterDashboard() {
                       ))}
                     </div>
 
-                    <div className="rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
+                    <div className="rounded-2xl border border-violet-400/20 bg-violet-400/10 p-4 text-sm leading-6 text-violet-100">
                       <div className="flex items-start gap-3">
                         <Sparkles className="mt-0.5 h-4 w-4" />
                         <p>The mail studio can instantly use these ranked candidates based on vacancy openings.</p>
@@ -221,7 +221,7 @@ export default function RecruiterDashboard() {
                     </div>
 
                     <Link href={featuredJob ? `/dashboard/recruiter/mail?jobId=${featuredJob.id}` : "/dashboard/recruiter/mail"}>
-                      <Button className="w-full rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
+                      <Button className="w-full rounded-full bg-violet-500 text-white hover:bg-violet-400">
                         Continue to shortlist mail
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
@@ -236,3 +236,4 @@ export default function RecruiterDashboard() {
     </div>
   )
 }
+
