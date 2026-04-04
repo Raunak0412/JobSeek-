@@ -42,11 +42,12 @@ export default function AuthCallbackPage() {
   }, [isExchanging, isLoading, router, user])
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#150707] text-white">
+    <div className="flex min-h-screen items-center justify-center bg-[#121212] text-white">
       <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm text-slate-200">
-        <Loader2 className="h-4 w-4 animate-spin text-red-300" />
+        <Loader2 className="h-4 w-4 animate-spin text-violet-300" />
         Completing sign in...
       </div>
     </div>
   )
 }
+
