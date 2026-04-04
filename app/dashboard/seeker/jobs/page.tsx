@@ -26,10 +26,10 @@ export default function SeekerJobsPage() {
   const jobsStore = useJobs()
   const rankingSignals = ["Skill overlap", "Experience strength", "Resume tone", "Format readiness"]
   const getVisibility = (match: number) => {
-    if (match >= 92) return { label: "Top tier", className: "border-red-400/20 bg-red-400/10 text-red-100" }
+    if (match >= 92) return { label: "Top tier", className: "border-violet-400/20 bg-violet-400/10 text-violet-100" }
     if (match >= 82) return { label: "Strong", className: "border-white/15 bg-white/10 text-white" }
     if (match >= 70) return { label: "Rising", className: "border-white/10 bg-white/5 text-slate-200" }
-    return { label: "Exploratory", className: "border-rose-400/20 bg-rose-400/10 text-rose-100" }
+    return { label: "Exploratory", className: "border-lime-300/35 bg-lime-300/15 text-lime-100" }
   }
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function SeekerJobsPage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="seeker" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Matched jobs" onMenuClick={() => setSidebarOpen(true)} />
@@ -109,7 +109,7 @@ export default function SeekerJobsPage() {
 
           <div className="space-y-4">
             {!resumeExtraction ? (
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardContent className="p-8">
                   <Empty className="border-white/10 text-slate-200">
                     <EmptyHeader>
@@ -120,7 +120,7 @@ export default function SeekerJobsPage() {
                       <EmptyDescription>Upload a resume to see matched jobs based on your skills.</EmptyDescription>
                     </EmptyHeader>
                     <EmptyContent>
-                      <Button onClick={() => router.push("/dashboard/seeker/upload")} className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
+                      <Button onClick={() => router.push("/dashboard/seeker/upload")} className="rounded-full bg-violet-500 text-white hover:bg-violet-400">
                         Upload resume
                       </Button>
                     </EmptyContent>
@@ -128,7 +128,7 @@ export default function SeekerJobsPage() {
                 </CardContent>
               </Card>
             ) : jobs.length === 0 ? (
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardContent className="p-8">
                   <Empty className="border-white/10 text-slate-200">
                     <EmptyHeader>
@@ -139,7 +139,7 @@ export default function SeekerJobsPage() {
                       <EmptyDescription>Try a different keyword or clear your search to see all ranked roles.</EmptyDescription>
                     </EmptyHeader>
                     <EmptyContent>
-                      <Button onClick={() => setQuery("")} className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300">
+                      <Button onClick={() => setQuery("")} className="rounded-full bg-violet-500 text-white hover:bg-violet-400">
                         Clear search
                       </Button>
                     </EmptyContent>
@@ -153,13 +153,13 @@ export default function SeekerJobsPage() {
                 const visibility = getVisibility(job.match)
                 return (
                   <motion.div key={job.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
-                    <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+                    <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                       <CardContent className="p-5">
                         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-3">
                               <h3 className="font-heading text-2xl font-semibold tracking-tight text-white">{job.title}</h3>
-                              <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">{job.match}% match</Badge>
+                              <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">{job.match}% match</Badge>
                               <Badge className={`rounded-full border px-2 py-0.5 ${visibility.className}`}>{visibility.label}</Badge>
                             </div>
                             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-slate-400">
@@ -174,12 +174,12 @@ export default function SeekerJobsPage() {
                             <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300">{job.summary}</p>
                             <div className="mt-4 flex flex-wrap gap-2">
                               {job.matchedSkills.map((skill) => (
-                                <Badge key={skill} className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">
+                                <Badge key={skill} className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">
                                   {skill}
                                 </Badge>
                               ))}
                               {job.missingSkills.map((skill) => (
-                                <Badge key={skill} className="rounded-full border-rose-400/20 bg-rose-400/10 text-rose-100">
+                                <Badge key={skill} className="rounded-full border-lime-300/35 bg-lime-300/15 text-lime-100">
                                   Missing: {skill}
                                 </Badge>
                               ))}
@@ -189,14 +189,14 @@ export default function SeekerJobsPage() {
                           <div className="flex w-full flex-col gap-3 lg:w-auto lg:min-w-[220px]">
                             <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
                               <div className="flex items-start gap-3">
-                                <ScanSearch className="mt-0.5 h-4 w-4 text-red-300" />
+                                <ScanSearch className="mt-0.5 h-4 w-4 text-violet-300" />
                                 <p>{job.applicants} applicants already in this pipeline. Strong profile alignment improves recruiter visibility.</p>
                               </div>
                             </div>
                             <Button
                               onClick={() => handleApply(job.id)}
                               disabled={isApplied || isSubmitting}
-                              className="rounded-full bg-red-400 text-slate-950 hover:bg-red-300"
+                              className="rounded-full bg-violet-500 text-white hover:bg-violet-400"
                             >
                               {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : isApplied ? <CheckCircle2 className="mr-2 h-4 w-4" /> : null}
                               {isApplied ? "Application sent" : "Apply now"}
@@ -224,3 +224,4 @@ export default function SeekerJobsPage() {
     </div>
   )
 }
+
