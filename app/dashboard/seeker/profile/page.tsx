@@ -174,7 +174,7 @@ export default function ProfilePage() {
   if (isLoading) return null
 
   return (
-    <div className="flex min-h-screen bg-[#150707] text-white">
+    <div className="flex min-h-screen bg-[#121212] text-white">
       <Sidebar type="seeker" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header title="Profile" onMenuClick={() => setSidebarOpen(true)} />
@@ -182,25 +182,25 @@ export default function ProfilePage() {
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
             <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
               <div>
-                <Badge className="rounded-full border-red-400/20 bg-red-400/10 text-red-100">{resumeExtraction?.routedCategory ?? "Resume"} profile</Badge>
+                <Badge className="rounded-full border-violet-400/20 bg-violet-400/10 text-violet-100">{resumeExtraction?.routedCategory ?? "Resume"} profile</Badge>
                 <h2 className="mt-5 font-heading text-4xl font-semibold tracking-tight">{user?.name ?? seekerProfile.name}</h2>
-                <p className="mt-2 text-lg text-red-100">{computedTitle}</p>
+                <p className="mt-2 text-lg text-violet-100">{computedTitle}</p>
                 <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300">{seekerProfile.about}</p>
-                {resumeMeta ? <p className="mt-3 text-xs uppercase tracking-[0.22em] text-red-200/70">Latest resume: {resumeMeta.fileName}</p> : null}
+                {resumeMeta ? <p className="mt-3 text-xs uppercase tracking-[0.22em] text-violet-200/70">Latest resume: {resumeMeta.fileName}</p> : null}
                 <p className="mt-4 flex items-center gap-2 text-sm text-slate-400">
-                  <MapPin className="h-4 w-4 text-red-300" />
+                  <MapPin className="h-4 w-4 text-violet-300" />
                   {seekerProfile.location}
                 </p>
               </div>
               <div className="text-right">
                 <p className="font-heading text-5xl font-semibold tracking-tight">{profileScore}</p>
-                <p className="text-xs uppercase tracking-[0.24em] text-red-200">AI score out of 10</p>
+                <p className="text-xs uppercase tracking-[0.24em] text-violet-200">AI score out of 10</p>
               </div>
             </div>
           </motion.section>
 
           <motion.section initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 }}>
-            <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+            <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
               <CardHeader>
                 <CardTitle className="font-heading text-2xl">Profile details</CardTitle>
               </CardHeader>
@@ -218,7 +218,7 @@ export default function ProfilePage() {
                             key={style.id}
                             type="button"
                             onClick={() => setProfileDetails((current) => ({ ...current, avatarStyle: style.id, photoDataUrl: "" }))}
-                            className={`h-10 w-10 rounded-xl border border-white/10 transition ${profileDetails.avatarStyle === style.id ? "ring-2 ring-red-300/70" : "hover:border-red-300/40"}`}
+                            className={`h-10 w-10 rounded-xl border border-white/10 transition ${profileDetails.avatarStyle === style.id ? "ring-2 ring-violet-300/70" : "hover:border-violet-300/40"}`}
                             style={{ background: `linear-gradient(135deg, ${style.from}, ${style.to})` }}
                           />
                         ))}
@@ -264,7 +264,7 @@ export default function ProfilePage() {
                           cancelDeferredOpen()
                           setEditingField("email")
                         }}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-red-300/40 hover:bg-white/10"
+                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
                       >
                         <span>{profileDetails.email || "Add email address"}</span>
                         <span className="text-xs text-slate-500">Double click to edit</span>
@@ -292,7 +292,7 @@ export default function ProfilePage() {
                           cancelDeferredOpen()
                           setEditingField("github")
                         }}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-red-300/40 hover:bg-white/10"
+                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
                       >
                         <span>{profileDetails.github || "Add GitHub link"}</span>
                         <span className="text-xs text-slate-500">Double click to edit</span>
@@ -320,7 +320,7 @@ export default function ProfilePage() {
                           cancelDeferredOpen()
                           setEditingField("linkedin")
                         }}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-red-300/40 hover:bg-white/10"
+                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
                       >
                         <span>{profileDetails.linkedin || "Add LinkedIn link"}</span>
                         <span className="text-xs text-slate-500">Double click to edit</span>
@@ -348,7 +348,7 @@ export default function ProfilePage() {
                           cancelDeferredOpen()
                           setEditingField("portfolio")
                         }}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-red-300/40 hover:bg-white/10"
+                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
                       >
                         <span>{profileDetails.portfolio || "Add portfolio link"}</span>
                         <span className="text-xs text-slate-500">Double click to edit</span>
@@ -365,7 +365,7 @@ export default function ProfilePage() {
                       onChange={(event) => setProfileDetails((current) => ({ ...current, contactNote: event.target.value }))}
                       placeholder="Tell recruiters the best way to reach you."
                       rows={3}
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 transition focus:outline-none focus:ring-2 focus:ring-red-300/40"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 transition focus:outline-none focus:ring-2 focus:ring-violet-300/40"
                     />
                   </div>
                   <div className="space-y-2">
@@ -385,7 +385,7 @@ export default function ProfilePage() {
                         type="button"
                         onClick={() => setEditingField("availability")}
                         onDoubleClick={() => setEditingField("availability")}
-                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-red-300/40 hover:bg-white/10"
+                        className="flex h-11 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-left text-sm text-slate-200 transition hover:border-violet-300/40 hover:bg-white/10"
                       >
                         <span>{profileDetails.availability || "Add availability"}</span>
                         <span className="text-xs text-slate-500">Double click to edit</span>
@@ -395,7 +395,7 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => handleOpenEmail(profileDetails.email)}
                       disabled={!profileDetails.email}
-                      className="h-11 w-full rounded-xl bg-red-400 text-slate-950 transition hover:bg-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="h-11 w-full rounded-xl bg-violet-500 text-white transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Contact me
                     </Button>
@@ -409,7 +409,7 @@ export default function ProfilePage() {
 
           <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
             <div className="space-y-6">
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">AI-extracted skills</CardTitle>
                 </CardHeader>
@@ -418,7 +418,7 @@ export default function ProfilePage() {
                     <div key={skill.name}>
                       <div className="mb-2 flex items-center justify-between text-sm">
                         <span className="text-slate-200">{skill.name}</span>
-                        <span className="text-red-200">{skill.confidence}%</span>
+                        <span className="text-violet-200">{skill.confidence}%</span>
                       </div>
                       <Progress value={skill.confidence} className="h-2 bg-white/10" />
                     </div>
@@ -428,7 +428,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Experience overview</CardTitle>
                 </CardHeader>
@@ -441,14 +441,14 @@ export default function ProfilePage() {
                     onChange={(event) => setProfileDetails((current) => ({ ...current, experienceOverview: event.target.value }))}
                     placeholder={experienceHighlights.length ? experienceHighlights.join(" | ") : "Add your top roles, projects, or impact highlights."}
                     rows={5}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 transition focus:outline-none focus:ring-2 focus:ring-red-300/40"
+                    className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 transition focus:outline-none focus:ring-2 focus:ring-violet-300/40"
                   />
                 </CardContent>
               </Card>
             </div>
 
             <div className="space-y-6">
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Recruiter signals</CardTitle>
                 </CardHeader>
@@ -457,12 +457,12 @@ export default function ProfilePage() {
                     <div key={signal.label}>
                       <div className="mb-2 flex items-center justify-between text-sm">
                         <span className="text-slate-200">{signal.label}</span>
-                        <span className="text-red-200">{signal.value}%</span>
+                        <span className="text-violet-200">{signal.value}%</span>
                       </div>
                       <Progress value={signal.value} className="h-2 bg-white/10" />
                     </div>
                   ))}
-                  <div className="rounded-[1.6rem] border border-red-400/15 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
+                  <div className="rounded-[1.6rem] border border-violet-400/15 bg-violet-400/10 p-4 text-sm leading-6 text-violet-100">
                     <div className="flex items-start gap-3">
                       <Sparkles className="mt-0.5 h-4 w-4" />
                       <p>Highlighting one more quantified impact will push your signal strength higher.</p>
@@ -471,7 +471,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Sentiment and confidence</CardTitle>
                 </CardHeader>
@@ -491,7 +491,7 @@ export default function ProfilePage() {
                   <div className="flex flex-wrap gap-2">
                     {resumeExtraction?.sentiment.insights?.length ? (
                       resumeExtraction.sentiment.insights.map((trait) => (
-                        <Badge key={trait} className="rounded-full border-rose-400/20 bg-rose-400/10 text-rose-100">
+                        <Badge key={trait} className="rounded-full border-lime-300/35 bg-lime-300/15 text-lime-100">
                           {trait}
                         </Badge>
                       ))
@@ -503,17 +503,17 @@ export default function ProfilePage() {
               </Card>
 
 
-              <Card className="rounded-[1.75rem] border-white/10 bg-[#1b0b0b]">
+              <Card className="rounded-[1.75rem] border-white/10 bg-[#171717]">
                 <CardHeader>
                   <CardTitle className="font-heading text-2xl">Profile completeness</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-sm text-slate-300">Completion</span>
-                    <span className="text-red-200">{profileCompletion}%</span>
+                    <span className="text-violet-200">{profileCompletion}%</span>
                   </div>
                   <Progress value={profileCompletion} className="h-2 bg-white/10" />
-                  <div className="mt-4 rounded-[1.6rem] border border-red-400/15 bg-red-400/10 p-4 text-sm leading-6 text-red-100">
+                  <div className="mt-4 rounded-[1.6rem] border border-violet-400/15 bg-violet-400/10 p-4 text-sm leading-6 text-violet-100">
                     <div className="flex items-start gap-3">
                       <Sparkles className="mt-0.5 h-4 w-4" />
                       <p>One more flagship project and a stronger portfolio link section would raise recruiter confidence further.</p>
@@ -528,4 +528,5 @@ export default function ProfilePage() {
     </div>
   )
 }
+
 
