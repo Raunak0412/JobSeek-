@@ -20,8 +20,16 @@ const supabaseUrl = toValidHttpUrl(rawSupabaseUrl)
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
 
+type SupabaseAuthSettings = {
+  external?: {
+    google?: boolean
+  }
+}
+
 let browserClient: SupabaseClient | null = null
 let didWarnInvalidSupabaseConfig = false
+let cachedAuthSettings: SupabaseAuthSettings | null = null
+let didAttemptAuthSettingsFetch = false
 
 function warnInvalidSupabaseConfigOnce() {
   if (didWarnInvalidSupabaseConfig || typeof window === "undefined") return
@@ -56,4 +64,32 @@ export function getSupabaseBrowserClient() {
     })
   }
   return browserClient
+}
+
+export async function getSupabaseAuthSettings() {
+  if (!supabaseUrl || !supabaseAnonKey) return null
+  if (cachedAuthSettings || didAttemptAuthSettingsFetch) return cachedAuthSettings
+
+  didAttemptAuthSettingsFetch = true
+  try {
+    const response = await fetch(`${supabaseUrl}/auth/v1/settings`, {
+      headers: {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
+      },
+    })
+
+    if (!response.ok) return null
+    const settings = (await response.json()) as SupabaseAuthSettings
+    cachedAuthSettings = settings
+    return cachedAuthSettings
+  } catch {
+    return null
+  }
+}
+
+export async function getSupabaseGoogleProviderEnabled() {
+  const settings = await getSupabaseAuthSettings()
+  if (!settings?.external || typeof settings.external.google !== "boolean") return null
+  return settings.external.google
 }

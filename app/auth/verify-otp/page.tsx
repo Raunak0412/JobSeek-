@@ -11,17 +11,19 @@ import { useAuth } from "@/lib/auth-context"
 function VerifyOtpContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { verifyOtp, resendOtp, getOtpPreview } = useAuth()
+  const { authMode, verifyOtp, resendOtp, getOtpPreview } = useAuth()
   const email = searchParams.get("email") ?? ""
   const purpose = searchParams.get("purpose") === "reset" ? "reset" : "verify"
   const [value, setValue] = useState("")
   const [error, setError] = useState("")
-  const [demoCode, setDemoCode] = useState(getOtpPreview(email, purpose) ?? "")
+  const [message, setMessage] = useState("")
+  const [demoCode, setDemoCode] = useState(authMode === "demo" ? getOtpPreview(email, purpose) ?? "" : "")
   const [isLoading, setIsLoading] = useState(false)
   const [isResending, setIsResending] = useState(false)
 
   const handleSubmit = async () => {
     setError("")
+    setMessage("")
     setIsLoading(true)
     const result = await verifyOtp({ email, code: value, purpose })
     setIsLoading(false)
@@ -40,17 +42,30 @@ function VerifyOtpContent() {
   }
 
   const handleResend = async () => {
+    setError("")
+    setMessage("")
     setIsResending(true)
     const result = await resendOtp(email, purpose)
     setIsResending(false)
-    setDemoCode(result.code ?? demoCode)
+    if (!result.success) {
+      setError(result.error ?? "Unable to resend verification code.")
+      return
+    }
+
+    if (authMode === "demo") {
+      setDemoCode(result.code ?? demoCode)
+      setMessage("A new OTP has been generated.")
+      return
+    }
+
+    setMessage("Verification code email resent. Check your inbox.")
   }
 
   return (
     <AuthShell
       title={purpose === "reset" ? "Enter reset OTP" : "Confirm verification OTP"}
       description="Use the six-digit code sent during the previous step to continue."
-      backHref={purpose === "reset" ? "/auth/forgot-password" : "/auth/verify-email"}
+      backHref={purpose === "reset" ? "/auth/forgot-password" : "/auth/register"}
       backLabel="Back"
     >
       <div className="space-y-6">
@@ -61,7 +76,7 @@ function VerifyOtpContent() {
             </div>
             <div>
               <p className="font-medium text-white">{email}</p>
-              <p className="text-sm text-slate-400">Demo OTP: {demoCode || "Generating..."}</p>
+              <p className="text-sm text-slate-400">{authMode === "demo" ? `Demo OTP: ${demoCode || "Generating..."}` : "Enter the 6-digit OTP from your email."}</p>
             </div>
           </div>
         </div>
@@ -85,6 +100,8 @@ function VerifyOtpContent() {
             {error}
           </div>
         ) : null}
+
+        {message ? <div className="rounded-2xl border border-lime-400/20 bg-lime-400/10 px-4 py-3 text-sm text-lime-100">{message}</div> : null}
 
         <Button
           type="button"

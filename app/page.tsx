@@ -39,6 +39,14 @@ type DailyQuote = {
   author: string
 }
 
+type PipelineInsight = {
+  id: string
+  label: string
+  title: string
+  detail: string
+  icon: LucideIcon
+}
+
 const trilogyCards: TrilogyCard[] = [
   {
     id: "capture",
@@ -128,6 +136,43 @@ const dailyQuotes: DailyQuote[] = [
     quote: "Trust grows when every score can be explained in plain language.",
     author: "JobSeek Team",
   },
+]
+
+const pipelineInsights: PipelineInsight[] = [
+  {
+    id: "confidence",
+    label: "01",
+    title: "Data confidence gates",
+    detail: "Files pass format checks, duplicate detection, and parsing guards before they reach ranking.",
+    icon: ShieldCheck,
+  },
+  {
+    id: "explainable",
+    label: "02",
+    title: "Explainable scoring trail",
+    detail: "Shortlist priorities stay auditable, so teams can review why one profile was ranked above another.",
+    icon: LineChart,
+  },
+  {
+    id: "activation",
+    label: "03",
+    title: "Activation-ready routing",
+    detail: "Approved candidates move into outreach sequences with reusable recruiter templates and status checkpoints.",
+    icon: Mail,
+  },
+]
+
+const pipelinePulse = [
+  "Role fit scores refresh as new resumes arrive in the same queue.",
+  "Recruiter actions are logged so every status movement can be traced.",
+  "Consent and policy controls can pause outreach before any message is sent.",
+]
+
+const policyLinks = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+  { label: "Cookie Settings", href: "/cookie-settings" },
+  { label: "Global Reach", href: "/global-reach" },
 ]
 
 function getDailyQuoteIndex(date: Date) {
@@ -281,12 +326,12 @@ export default function LandingPage() {
             </div>
 
             <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300">
-              The flow below shows exactly how data moves from upload to outreach. The layout is compact, readable, and designed for faster
-              understanding on both mobile and desktop.
+              The flow below shows exactly how data moves from upload to outreach. Each stage is separated so teams can review intake quality, ranking
+              logic, and recruiter actions without jumping between tools.
             </p>
 
             <div className="relative mt-10">
-              <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-violet-400/40 to-lime-300/40 md:hidden" />
+              <div className="absolute bottom-6 left-6 top-6 w-px bg-gradient-to-b from-violet-400/40 to-lime-300/40 md:hidden" />
               <div className="absolute left-[8%] right-[8%] top-11 hidden h-px bg-gradient-to-r from-violet-400/35 via-violet-300/25 to-lime-300/40 md:block" />
 
               <ol className="relative grid gap-4 md:grid-cols-5 md:gap-3" aria-label="JobSeek workflow">
@@ -313,33 +358,90 @@ export default function LandingPage() {
                 ))}
               </ol>
             </div>
-
-            <div className="mt-8 space-y-4">
-              <article className="rounded-2xl border border-violet-300/20 bg-gradient-to-r from-violet-500/10 to-lime-300/10 p-5">
-                <p className="text-xs uppercase tracking-[0.22em] text-violet-200/80">Quote of the day</p>
-                <blockquote className="mt-3 font-heading text-2xl leading-snug text-white sm:text-3xl">
-                  “{todayQuote.quote}”
-                </blockquote>
-                <p className="mt-3 text-sm font-medium text-lime-200">- {todayQuote.author}</p>
-              </article>
-
-              <article className="rounded-2xl border border-slate-300/25 bg-slate-100/95 px-5 py-4 text-slate-700">
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="font-semibold text-slate-900">JobSeek</p>
-                    <p className="mt-1 text-xs text-slate-500">© {currentYear} JobSeek Recruitment Workspace. All rights reserved.</p>
-                  </div>
-                  <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-600" aria-label="Policy links">
-                    <li>Privacy Policy</li>
-                    <li>Terms of Service</li>
-                    <li>Cookie Settings</li>
-                    <li>Global Reach</li>
-                  </ul>
-                </div>
-              </article>
-            </div>
-
           </motion.div>
+
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.08 }}
+            className="mt-6 grid gap-4 lg:grid-cols-3"
+          >
+            {pipelineInsights.map((insight) => (
+              <article
+                key={insight.id}
+                className="rounded-2xl border border-white/10 bg-[linear-gradient(160deg,rgba(139,92,246,0.09),rgba(12,12,12,0.85)_38%,rgba(191,226,100,0.08))] p-5 shadow-[0_16px_40px_rgba(4,4,4,0.32)]"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/15 text-violet-100">
+                    <insight.icon className="h-4.5 w-4.5" />
+                  </div>
+                  <span className="rounded-full border border-white/15 px-2.5 py-1 text-[11px] font-medium text-slate-300">{insight.label}</span>
+                </div>
+                <h3 className="mt-4 font-heading text-xl font-semibold tracking-tight text-white">{insight.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-300">{insight.detail}</p>
+              </article>
+            ))}
+          </motion.div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-[1.35fr_0.65fr]">
+            <motion.article
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.45, delay: 0.12 }}
+              className="rounded-2xl border border-violet-300/20 bg-gradient-to-r from-violet-500/10 to-lime-300/10 p-6"
+            >
+              <p className="text-xs uppercase tracking-[0.22em] text-violet-200/80">Quote of the day</p>
+              <blockquote className="mt-3 font-heading text-2xl leading-snug text-white sm:text-3xl">"{todayQuote.quote}"</blockquote>
+              <p className="mt-3 text-sm font-medium text-lime-200">- {todayQuote.author}</p>
+            </motion.article>
+
+            <motion.aside
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.45, delay: 0.16 }}
+              className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm"
+            >
+              <p className="text-xs uppercase tracking-[0.22em] text-violet-200/75">Pipeline pulse</p>
+              <ul className="mt-3 space-y-3 text-sm leading-6 text-slate-300">
+                {pipelinePulse.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-lime-300" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.aside>
+          </div>
+
+          <motion.footer
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.45, delay: 0.2 }}
+            className="mt-6 rounded-2xl border border-white/10 bg-[#161616]/75 px-5 py-4 text-slate-300 backdrop-blur-sm"
+          >
+            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="font-semibold text-white">JobSeek</p>
+                <p className="mt-1 text-xs text-slate-400">(c) {currentYear} JobSeek Recruitment Workspace. All rights reserved.</p>
+              </div>
+              <ul className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-slate-300" aria-label="Policy links">
+                {policyLinks.map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1.5 transition-colors hover:border-violet-300/40 hover:bg-violet-400/10 hover:text-violet-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300/50"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.footer>
         </section>
       </main>
     </div>

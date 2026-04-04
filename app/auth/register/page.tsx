@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 function RegisterContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { authMode, register, signInWithGoogle } = useAuth()
+  const { authMode, googleAuthEnabled, register, signInWithGoogle } = useAuth()
   const preferredRole = searchParams.get("role") ?? searchParams.get("type")
   const initialRole = preferredRole === "recruiter" ? "recruiter" : "seeker"
   const [role, setRole] = useState<"seeker" | "recruiter">(initialRole)
@@ -43,7 +43,7 @@ function RegisterContent() {
     }
 
     if (result.requiresEmailVerification) {
-      router.push(`/auth/verify-email?email=${encodeURIComponent(form.email)}&purpose=verify`)
+      router.push(`/auth/verify-otp?email=${encodeURIComponent(form.email)}&purpose=verify`)
       return
     }
 
@@ -104,6 +104,11 @@ function RegisterContent() {
         </div>
 
         {authMode === "supabase" ? (
+          googleAuthEnabled === false ? (
+            <div className="rounded-2xl border border-violet-400/20 bg-violet-400/10 px-4 py-3 text-sm text-violet-100">
+              Google signup is disabled in Supabase. Enable Google provider in Supabase Authentication settings to continue.
+            </div>
+          ) : (
           <Button
             type="button"
             variant="outline"
@@ -114,6 +119,7 @@ function RegisterContent() {
             {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Continue with Google as {role}
           </Button>
+          )
         ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -183,7 +189,7 @@ function RegisterContent() {
 
           <Button type="submit" disabled={isLoading} className="h-12 w-full rounded-2xl bg-violet-500 text-white hover:bg-violet-400">
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {authMode === "supabase" ? "Create account" : "Continue to verification"}
+            {authMode === "supabase" ? "Create account and send OTP" : "Continue to verification"}
           </Button>
         </form>
 

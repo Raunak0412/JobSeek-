@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { DUMMY_CREDENTIALS, getDashboardPath, useAuth } from "@/lib/auth-context"
 
 function LoginContent() {
-  const { authMode, login, signInWithGoogle } = useAuth()
+  const { authMode, googleAuthEnabled, login, signInWithGoogle } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [email, setEmail] = useState("")
@@ -104,6 +104,10 @@ function LoginContent() {
                 </div>
               </div>
             </div>
+          </div>
+        ) : googleAuthEnabled === false ? (
+          <div className="rounded-2xl border border-violet-400/20 bg-violet-400/10 px-4 py-3 text-sm text-violet-100">
+            Google sign in is disabled in Supabase. Enable Google provider in Supabase Authentication settings to use it.
           </div>
         ) : (
           <Button

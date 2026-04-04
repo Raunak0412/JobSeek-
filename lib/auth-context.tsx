@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { useRouter } from "next/navigation"
 import type { User as SupabaseAuthUser } from "@supabase/supabase-js"
 import type { UserRole } from "@/lib/mock-data"
-import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase-browser"
+import { getSupabaseBrowserClient, getSupabaseGoogleProviderEnabled, isSupabaseConfigured } from "@/lib/supabase-browser"
 
 export type AuthMode = "supabase" | "demo"
 
@@ -29,6 +29,7 @@ interface OtpRecord {
 
 interface AuthContextType {
   authMode: AuthMode
+  googleAuthEnabled: boolean | null
   user: User | null
   isLoading: boolean
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>
@@ -46,7 +47,7 @@ interface AuthContextType {
     code: string
     purpose: "verify" | "reset"
   }) => Promise<{ success: boolean; error?: string }>
-  resendOtp: (email: string, purpose: "verify" | "reset") => Promise<{ success: boolean; code?: string }>
+  resendOtp: (email: string, purpose: "verify" | "reset") => Promise<{ success: boolean; code?: string; error?: string }>
   resetPassword: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   getOtpPreview: (email: string, purpose: "verify" | "reset") => string | null
   logout: () => void
@@ -210,6 +211,7 @@ type ProfileRow = {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [googleAuthEnabled, setGoogleAuthEnabled] = useState<boolean | null>(null)
   const router = useRouter()
   const authMode: AuthMode = useMemo(() => (isSupabaseConfigured ? "supabase" : "demo"), [])
 
@@ -292,6 +294,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       safeWrite(STORAGE_KEYS.users, getUsers())
       const session = safeRead<User | null>(STORAGE_KEYS.session, null)
       setUser(session)
+      setGoogleAuthEnabled(false)
       setIsLoading(false)
       return
     }
@@ -305,8 +308,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true
 
     const initialize = async () => {
-      const { data } = await supabase.auth.getSession()
+      const [{ data }, googleEnabled] = await Promise.all([supabase.auth.getSession(), getSupabaseGoogleProviderEnabled()])
       if (!mounted) return
+      setGoogleAuthEnabled(googleEnabled)
       await syncSupabaseUser(data.session?.user ?? null)
       if (mounted) setIsLoading(false)
     }
@@ -362,6 +366,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = getSupabaseBrowserClient()
     if (!supabase) {
       return { success: false, error: "Supabase is not configured. Add env keys first." }
+    }
+
+    const googleEnabled = await getSupabaseGoogleProviderEnabled()
+    if (googleEnabled === false) {
+      setGoogleAuthEnabled(false)
+      return {
+        success: false,
+        error:
+          "Google sign in is disabled in Supabase. Enable Google in Supabase Dashboard -> Authentication -> Providers, then add Google OAuth client ID and secret.",
+      }
     }
 
     if (preferredRole) {
@@ -424,7 +438,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: "Supabase is not configured. Add env keys first." }
     }
 
-    const emailRedirectTo = typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined
     const { data: signUpData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -434,7 +447,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           type: data.type,
           company: data.company ?? null,
         },
-        emailRedirectTo,
       },
     })
 
@@ -511,15 +523,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: "Supabase is not configured. Add env keys first." }
     }
 
-    const type = purpose === "verify" ? "signup" : "recovery"
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: code,
-      type,
-    })
+    if (purpose === "verify") {
+      const verifyWithEmailType = await supabase.auth.verifyOtp({
+        email,
+        token: code,
+        type: "email",
+      })
 
-    if (error) {
-      return { success: false, error: error.message }
+      if (verifyWithEmailType.error) {
+        const verifyWithSignupType = await supabase.auth.verifyOtp({
+          email,
+          token: code,
+          type: "signup",
+        })
+        if (verifyWithSignupType.error) {
+          return { success: false, error: verifyWithEmailType.error.message }
+        }
+      }
+    } else {
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: code,
+        type: "recovery",
+      })
+
+      if (error) {
+        return { success: false, error: error.message }
+      }
     }
 
     const { data } = await supabase.auth.getSession()
@@ -536,16 +566,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const supabase = getSupabaseBrowserClient()
     if (!supabase) {
-      return { success: false, code: undefined }
+      return { success: false, code: undefined, error: "Supabase is not configured. Add env keys first." }
     }
 
     if (purpose === "reset") {
-      return { success: false, code: undefined }
+      return { success: false, code: undefined, error: "Reset OTP resend is not supported in Supabase mode. Use reset link flow." }
     }
 
     const { error } = await supabase.auth.resend({ email, type: "signup" })
     if (error) {
-      return { success: false, code: undefined }
+      return { success: false, code: undefined, error: error.message }
     }
 
     return { success: true, code: undefined }
@@ -613,6 +643,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         authMode,
+        googleAuthEnabled,
         user,
         isLoading,
         login,

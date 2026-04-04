@@ -14,7 +14,7 @@ function VerifyEmailContent() {
   return (
     <AuthShell
       title="Verify your email"
-      description="Before entering the product, confirm the email address tied to your account."
+      description="Before entering the product, enter the OTP sent to your email address."
       backHref="/auth/register"
       backLabel="Back to registration"
     >
@@ -24,15 +24,18 @@ function VerifyEmailContent() {
             <MailCheck className="h-6 w-6" />
           </div>
           <p className="mt-5 text-base leading-7 text-slate-300">
-            We created your account for <span className="font-medium text-white">{email}</span>. Check your inbox and click the verification link sent by Supabase Auth.
+            We created your account for <span className="font-medium text-white">{email}</span>. Check your inbox and enter the 6-digit OTP code sent by
+            Supabase Auth.
           </p>
         </div>
 
-        <div className="rounded-3xl border border-violet-500/15 bg-violet-500/10 p-4 text-sm leading-6 text-violet-100">After verification, return here and sign in with your email/password or Google.</div>
+        <div className="rounded-3xl border border-violet-500/15 bg-violet-500/10 p-4 text-sm leading-6 text-violet-100">
+          If the OTP is delayed, check spam/promotions, then use resend on the OTP screen.
+        </div>
 
-        <Link href="/auth/login?registered=1">
+        <Link href={`/auth/verify-otp?email=${encodeURIComponent(email)}&purpose=verify`}>
           <Button className="h-12 w-full rounded-2xl bg-violet-500 text-white hover:bg-violet-400">
-            Go to sign in
+            Enter OTP
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>
