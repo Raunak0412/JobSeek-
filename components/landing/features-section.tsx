@@ -17,49 +17,49 @@ const features = [
     icon: FileText,
     title: "Smart Resume Parsing",
     description: "Upload your resume via camera or file picker. Our AI extracts skills, experience, and qualifications instantly.",
-    gradient: "from-indigo-500 to-blue-500",
+    gradient: "from-violet-400 to-violet-700",
   },
   {
     icon: Brain,
     title: "AI Skill Extraction",
     description: "Advanced NLP algorithms identify and categorize your skills, matching them with job requirements accurately.",
-    gradient: "from-purple-500 to-pink-500",
+    gradient: "from-violet-500 to-lime-400",
   },
   {
     icon: BarChart3,
     title: "Intelligent Ranking",
     description: "Get scored out of 10 based on how well your profile matches job descriptions. See where you stand.",
-    gradient: "from-red-500 to-teal-500",
+    gradient: "from-violet-700 to-violet-400",
   },
   {
     icon: Target,
     title: "Sentiment Analysis",
     description: "AI analyzes resume tone - detecting confident vs passive language to help improve your presentation.",
-    gradient: "from-orange-500 to-red-500",
+    gradient: "from-lime-400 to-violet-600",
   },
   {
     icon: Users,
     title: "Auto-Categorization",
     description: "Resumes are automatically routed to relevant job categories, helping recruiters find candidates faster.",
-    gradient: "from-green-500 to-emerald-500",
+    gradient: "from-lime-600 to-violet-500",
   },
   {
     icon: Mail,
     title: "Automated Outreach",
     description: "Recruiters can send formal selection emails to top candidates with a single click.",
-    gradient: "from-blue-500 to-indigo-500",
+    gradient: "from-violet-500 to-violet-300",
   },
   {
     icon: Zap,
     title: "Real-time Updates",
     description: "Track your application status and receive instant notifications when recruiters view your profile.",
-    gradient: "from-yellow-500 to-orange-500",
+    gradient: "from-lime-400 to-violet-400",
   },
   {
     icon: Shield,
     title: "Privacy First",
     description: "Your data is encrypted and secure. Control who sees your information with granular privacy settings.",
-    gradient: "from-slate-500 to-zinc-600",
+    gradient: "from-zinc-500 to-slate-400",
   },
 ]
 
@@ -88,7 +88,7 @@ export function FeaturesSection() {
   return (
     <section id="features" className="relative bg-zinc-950 py-24 sm:py-32">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-950/10 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-950/10 to-transparent" />
       
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -98,12 +98,12 @@ export function FeaturesSection() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <span className="inline-block rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1.5 text-sm font-medium text-red-400">
+          <span className="inline-block rounded-full border border-violet-600/30 bg-violet-600/10 px-4 py-1.5 text-sm font-medium text-violet-500">
             Features
           </span>
           <h2 className="mt-6 text-balance text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
             Everything you need to{" "}
-            <span className="bg-gradient-to-r from-indigo-400 to-red-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-violet-300 via-violet-400 to-lime-300 bg-clip-text text-transparent">
               land your dream job
             </span>
           </h2>
