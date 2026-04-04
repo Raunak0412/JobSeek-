@@ -9,28 +9,28 @@ const steps = [
     icon: Upload,
     title: "Upload Your Resume",
     description: "Use your camera or file picker to upload your resume. Our AI instantly extracts your skills, experience, and qualifications.",
-    color: "from-indigo-500 to-purple-500",
+    color: "from-violet-500 to-violet-700",
   },
   {
     step: "02",
     icon: Search,
     title: "AI Analyzes & Matches",
     description: "Our intelligent algorithms match your profile against thousands of job listings, categorizing you into relevant fields.",
-    color: "from-purple-500 to-pink-500",
+    color: "from-violet-500 to-lime-500",
   },
   {
     step: "03",
     icon: CheckCircle,
     title: "Get Ranked & Scored",
     description: "Receive a score out of 10 based on how well you match each position. Understand your strengths and areas for improvement.",
-    color: "from-pink-500 to-red-500",
+    color: "from-lime-500 to-violet-400",
   },
   {
     step: "04",
     icon: Send,
     title: "Connect with Recruiters",
     description: "Top candidates receive automated formal emails from recruiters. Track your application status in real-time.",
-    color: "from-red-500 to-indigo-500",
+    color: "from-violet-700 to-lime-400",
   },
 ]
 
@@ -45,12 +45,12 @@ export function HowItWorksSection() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <span className="inline-block rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-sm font-medium text-purple-400">
+          <span className="inline-block rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm font-medium text-violet-400">
             How It Works
           </span>
           <h2 className="mt-6 text-balance text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
             Your path to the{" "}
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-violet-300 via-violet-400 to-lime-300 bg-clip-text text-transparent">
               perfect job
             </span>
           </h2>
@@ -62,7 +62,7 @@ export function HowItWorksSection() {
         <div className="mt-16 lg:mt-24">
           <div className="relative">
             {/* Connection line */}
-            <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-indigo-500 via-purple-500 to-red-500 opacity-20 lg:block" />
+            <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-violet-500 via-violet-400 to-lime-400 opacity-20 lg:block" />
             
             <div className="space-y-12 lg:space-y-24">
               {steps.map((step, index) => (
